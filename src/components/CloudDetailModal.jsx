@@ -11,18 +11,26 @@ export default function CloudDetailModal({ cloud, skies, onClose, onDelete, onMo
 
   useEffect(() => {
     return () => {
-      if (audioRef.current) audioRef.current.pause();
+      if (audioRef.current) {
+        try { audioRef.current.pause(); } catch (e) {}
+      }
       if (stopAudioFnRef.current) stopAudioFnRef.current();
       if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
   }, []);
 
-  const handleTogglePlay = () => {
+  const handleTogglePlay = async () => {
     if (isPlaying) {
-      if (audioRef.current) audioRef.current.pause();
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
       if (stopAudioFnRef.current) stopAudioFnRef.current();
       if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
       setIsPlaying(false);
+      setPlaybackProgress(0);
     } else {
       setIsPlaying(true);
       setPlaybackProgress(0);
@@ -37,30 +45,37 @@ export default function CloudDetailModal({ cloud, skies, onClose, onDelete, onMo
         if (progress >= 100) {
           clearInterval(progressIntervalRef.current);
           setIsPlaying(false);
+          setPlaybackProgress(0);
         }
       }, 100);
 
       if (cloud.audioUrl) {
-        if (!audioRef.current) {
-          audioRef.current = new Audio(cloud.audioUrl);
-          audioRef.current.onended = () => {
+        try {
+          const audio = new Audio(cloud.audioUrl);
+          audioRef.current = audio;
+          audio.onended = () => {
             setIsPlaying(false);
-            setPlaybackProgress(100);
+            setPlaybackProgress(0);
             if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
           };
-        }
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(() => {
-          stopAudioFnRef.current = playSynthesizedHum(duration, () => {
+          await audio.play();
+        } catch (err) {
+          console.warn('Real audio playback blocked/failed, playing soothing chime:', err);
+          const stopFn = await playSynthesizedHum(duration, () => {
             setIsPlaying(false);
-            setPlaybackProgress(100);
+            setPlaybackProgress(0);
+            if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
           });
-        });
+          stopAudioFnRef.current = stopFn;
+        }
       } else {
-        stopAudioFnRef.current = playSynthesizedHum(duration, () => {
+        // Fallback for sample clouds: plays the gentle chime
+        const stopFn = await playSynthesizedHum(duration, () => {
           setIsPlaying(false);
-          setPlaybackProgress(100);
+          setPlaybackProgress(0);
+          if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
         });
+        stopAudioFnRef.current = stopFn;
       }
     }
   };
@@ -111,14 +126,14 @@ export default function CloudDetailModal({ cloud, skies, onClose, onDelete, onMo
               </button>
               <div>
                 <span className="text-xs font-bold block text-white">
-                  {isPlaying ? 'Playing Voice...' : 'Original Voice Record'}
+                  {isPlaying ? 'Playing Voice...' : 'Listen to Voice'}
                 </span>
                 <span className="text-[10px] text-white/60">
                   Duration: 0:{cloud.duration < 10 ? `0${cloud.duration}` : cloud.duration}s
                 </span>
               </div>
             </div>
-            <Volume2 className="w-4 h-4 text-teal-300 animate-pulse" />
+            <Volume2 className={`w-4 h-4 ${isPlaying ? 'text-teal-300 animate-pulse' : 'text-white/40'}`} />
           </div>
 
           {/* Progress bar */}

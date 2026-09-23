@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Square, Play, Pause, ArrowRight, Check, X, Sparkles, Volume2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { playSynthesizedHum } from '../utils/audioHelper';
+import { playSynthesizedHum, blobToDataURL } from '../utils/audioHelper';
 
 export default function VoiceRecorderModal({ skies, onClose, onSaveCloud }) {
   // Step state: 'record' -> 'label' -> 'choose_sky'
@@ -81,11 +81,19 @@ export default function VoiceRecorderModal({ skies, onClose, onSaveCloud }) {
           }
         };
 
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-          const url = URL.createObjectURL(blob);
-          setAudioBlobUrl(url);
-          stream.getTracks().forEach((track) => track.stop());
+        mediaRecorder.onstop = async () => {
+          try {
+            const mimeType = mediaRecorder.mimeType || 'audio/webm';
+            const blob = new Blob(audioChunksRef.current, { type: mimeType });
+            const dataUrl = await blobToDataURL(blob);
+            setAudioBlobUrl(dataUrl);
+          } catch (e) {
+            const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+            setAudioBlobUrl(URL.createObjectURL(blob));
+          }
+          try {
+            stream.getTracks().forEach((track) => track.stop());
+          } catch (e) {}
         };
 
         mediaRecorder.start();
@@ -119,23 +127,32 @@ export default function VoiceRecorderModal({ skies, onClose, onSaveCloud }) {
   };
 
   // Playback preview
-  const handleTogglePlay = () => {
+  const handleTogglePlay = async () => {
     if (isPlaying) {
-      if (audioRef.current) audioRef.current.pause();
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
       if (stopAudioFnRef.current) stopAudioFnRef.current();
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
       if (audioBlobUrl) {
-        if (!audioRef.current) {
-          audioRef.current = new Audio(audioBlobUrl);
-          audioRef.current.onended = () => setIsPlaying(false);
+        try {
+          const audio = new Audio(audioBlobUrl);
+          audioRef.current = audio;
+          audio.onended = () => setIsPlaying(false);
+          await audio.play();
+        } catch (err) {
+          console.warn('Real audio preview failed, playing chime:', err);
+          const stopFn = await playSynthesizedHum(recordingSeconds || 5, () => setIsPlaying(false));
+          stopAudioFnRef.current = stopFn;
         }
-        audioRef.current.play().catch(() => {
-          stopAudioFnRef.current = playSynthesizedHum(recordingSeconds || 5, () => setIsPlaying(false));
-        });
       } else {
-        stopAudioFnRef.current = playSynthesizedHum(recordingSeconds || 5, () => setIsPlaying(false));
+        const stopFn = await playSynthesizedHum(recordingSeconds || 5, () => setIsPlaying(false));
+        stopAudioFnRef.current = stopFn;
       }
     }
   };
