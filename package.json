@@ -12,7 +12,8 @@
     "icons": "node scripts/figma-icons.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "deploy": "vite build && gh-pages -d dist --dotfiles --message \"deploy: build from main\""
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "eslint-plugin-react-refresh": "^0.5.7",
     "fflate": "^0.8.3",
     "fzstd": "^0.1.1",
+    "gh-pages": "^6.3.0",
     "globals": "^17.12.0",
     "kiwi-schema": "^0.5.0",
     "prettier": "^3.9.9",

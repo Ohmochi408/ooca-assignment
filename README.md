@@ -8,6 +8,7 @@ Topic: **The 2-Minute Mental Health Experience** (OOCA Assignment)
 ---
 
 ## 🔗 Project Deliverables
+- **Working web link:** [https://ohmochi408.github.io/ooca-assignment/](https://ohmochi408.github.io/ooca-assignment/) *(design system parity page: [/design-system.html](https://ohmochi408.github.io/ooca-assignment/design-system.html))*
 - **GitHub Repository:** [https://github.com/Ohmochi408/ooca-assignment](https://github.com/Ohmochi408/ooca-assignment)
 - **Figma Design:** [`ooca CI for UX_UI Assignment_Latest Ver..fig`](./ooca%20CI%20for%20UX_UI%20Assignment_Latest%20Ver..fig) *(Import directly into Figma)* — the app follows the **Ideate2 → Main Design** frames
 - **OOCA CI source for the design tokens:** [`ooca CI for UX_UI Assignment (Copy).fig`](./ooca%20CI%20for%20UX_UI%20Assignment%20(Copy).fig)
@@ -82,6 +83,9 @@ npm run dev
 # Lint (ESLint + React Hooks rules) and format (Prettier)
 npm run lint
 npm run format
+
+# Deploy to GitHub Pages (builds, then pushes dist/ to the gh-pages branch)
+npm run deploy
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to experience the interactive prototype.
