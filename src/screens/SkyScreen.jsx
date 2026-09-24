@@ -42,7 +42,7 @@ function Dots({ count, index, onPick, labels }) {
   );
 }
 
-// ── Time Sky: the five skies of one day ──────────────────────────────────────
+// ── Time Sky: the six skies of one day ──────────────────────────────────────
 function TimeSky({ clouds, colorOf, nav, setNav, onOpenCloud, newCloudId, onOpenAbout }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const today = dateKey();
@@ -52,8 +52,8 @@ function TimeSky({ clouds, colorOf, nav, setNav, onOpenCloud, newCloudId, onOpen
 
   const cloudsIn = (pid) => clouds.filter((c) => dateKey(c.timestamp) === nav.date && getSkyPeriod(new Date(c.timestamp)) === pid);
   const go = (i) => {
-    if (i < 0) return setNav({ date: addDays(nav.date, -1), period: 'night' });
-    if (i >= SKY_PERIODS.length) return setNav({ date: addDays(nav.date, 1), period: 'dawn' });
+    if (i < 0) return setNav({ date: addDays(nav.date, -1), period: SKY_PERIODS.at(-1).id });
+    if (i >= SKY_PERIODS.length) return setNav({ date: addDays(nav.date, 1), period: SKY_PERIODS[0].id });
     setNav({ ...nav, period: SKY_PERIODS[i].id });
   };
   const atLatest = nav.date >= today && idx === SKY_PERIODS.length - 1;
@@ -62,7 +62,7 @@ function TimeSky({ clouds, colorOf, nav, setNav, onOpenCloud, newCloudId, onOpen
     <>
       <SkyCarousel
         key={nav.date}
-        label="Time Sky — five skies of the day"
+        label="Time Sky — six skies of the day"
         count={SKY_PERIODS.length}
         index={idx}
         onIndexChange={go}
@@ -90,7 +90,7 @@ function TimeSky({ clouds, colorOf, nav, setNav, onOpenCloud, newCloudId, onOpen
           <Icon name="calendar" size={22} className="text-turquoise-500" />
           <span className="min-w-0">
             <span className="block text-subheader1 truncate">{formatLongDate(nav.date)}</span>
-            <span className="flex items-center gap-1.5 text-body5 text-bluegray-600">
+            <span className="flex items-center gap-1.5 text-body5 text-bluegray-600 whitespace-nowrap">
               <span className={`sky-${period.id} w-3 h-3 rounded-full`} />
               {period.label} · {period.range}
             </span>

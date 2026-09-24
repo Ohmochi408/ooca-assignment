@@ -2,7 +2,7 @@
 const STORAGE_KEY = 'ooca_thought_clouds_v1';
 const SKIES_KEY = 'ooca_user_skies_v1';
 
-// icon = OOCA DS icon name (src/icons), style = which of the 5 time-of-day skies this space uses,
+// icon = OOCA DS icon name (src/icons), style = which of the 6 time-of-day skies this space uses,
 // color = OOCA color token for the sky's dot / accent
 export const DEFAULT_SKIES = [
   { id: 'tonight', name: 'Tonight', icon: 'moon', style: 'night', color: 'blue-500', description: 'Things I want to leave here tonight.' },
@@ -41,7 +41,8 @@ const hoursAgoAt = (h, m) => {
 };
 
 export const INITIAL_CLOUDS = [
-  { id: 'cloud-1', label: "Couldn't sleep, early thoughts", timestamp: hoursAgoAt(5, 20), duration: 7, skyId: 'unsaid', skyName: "Things I Can't Say", audioUrl: null, frequency: [20, 35, 45, 50, 40, 30, 25, 15, 10] },
+  { id: 'cloud-1', label: "Couldn't sleep, early thoughts", timestamp: hoursAgoAt(2, 10), duration: 7, skyId: 'unsaid', skyName: "Things I Can't Say", audioUrl: null, frequency: [20, 35, 45, 50, 40, 30, 25, 15, 10] },
+  { id: 'cloud-6', label: 'Quiet walk before work', timestamp: hoursAgoAt(6, 30), duration: 8, skyId: 'people', skyName: 'People', audioUrl: null, frequency: [15, 30, 40, 55, 45, 35, 30, 20, 10] },
   { id: 'cloud-2', label: 'Morning commute & crowded train', timestamp: hoursAgoAt(8, 20), duration: 6, skyId: 'tonight', skyName: 'Tonight', audioUrl: null, frequency: [30, 45, 60, 40, 75, 50, 65, 40, 20] },
   { id: 'cloud-3', label: 'Call with Mom about weekend', timestamp: hoursAgoAt(12, 43), duration: 9, skyId: 'people', skyName: 'People', audioUrl: null, frequency: [25, 55, 80, 70, 85, 60, 45, 30, 15] },
   { id: 'cloud-4', label: "Tomorrow's presentation deck", timestamp: hoursAgoAt(17, 47), duration: 14, skyId: 'work', skyName: 'Work', audioUrl: null, frequency: [40, 60, 90, 85, 95, 75, 50, 40, 30] },

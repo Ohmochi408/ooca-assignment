@@ -4,7 +4,7 @@ import Sheet from './Sheet';
 import { SKY_PERIODS, getSkyPeriod } from '../utils/skyPeriods';
 import { dateKey, fromKey } from '../utils/dates';
 
-// Pick a day (days with clouds are marked) and one of the five skies of that day.
+// Pick a day (days with clouds are marked) and one of the six skies of that day.
 export default function CalendarSheet({ date, period, clouds, onApply, onClose }) {
   const today = dateKey();
   const [month, setMonth] = useState(() => {
@@ -69,7 +69,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
       </div>
 
       <p className="text-body4 text-bluegray-400 uppercase mb-2">Sky</p>
-      <div className="grid grid-cols-5 gap-2 mb-6">
+      <div className="grid grid-cols-6 gap-1.5 mb-6">
         {SKY_PERIODS.map((p) => {
           const n = byDay[day]?.[p.id] ?? 0;
           return (

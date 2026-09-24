@@ -1,27 +1,26 @@
-// Five sky periods across the day. Gaps between the brief's ranges are folded into the nearest period.
-// Night covers both ends of a calendar day (00:00–05:00 and 19:00–24:00), so every cloud belongs to
-// exactly one (date, period) pair on the day it was recorded.
+// Six equal sky periods of 4 hours. Dawn holds sunrise (~06:00 in Thailand), Sunset holds sundown (~18:00).
+// Ids are stable (saved in My Skies styles): 'day' is shown as "Afternoon".
 export const SKY_PERIODS = [
-  { id: 'dawn', label: 'Dawn', range: '05:00–06:00', from: 5, to: 6 },
-  { id: 'morning', label: 'Morning', range: '06:00–10:00', from: 6, to: 10 },
-  { id: 'day', label: 'Midday', range: '10:00–16:00', from: 10, to: 16 },
-  { id: 'sunset', label: 'Sunset', range: '16:00–19:00', from: 16, to: 19 },
-  { id: 'night', label: 'Night', range: '19:00–05:00', from: 19, to: 29 },
+  { id: 'midnight', label: 'Midnight', range: '00:00–04:00', from: 0, to: 4 },
+  { id: 'dawn', label: 'Dawn', range: '04:00–08:00', from: 4, to: 8 },
+  { id: 'morning', label: 'Morning', range: '08:00–12:00', from: 8, to: 12 },
+  { id: 'day', label: 'Afternoon', range: '12:00–16:00', from: 12, to: 16 },
+  { id: 'sunset', label: 'Sunset', range: '16:00–20:00', from: 16, to: 20 },
+  { id: 'night', label: 'Night', range: '20:00–24:00', from: 20, to: 24 },
 ];
 
 export const periodById = (id) => SKY_PERIODS.find((p) => p.id === id) ?? SKY_PERIODS[0];
-export const periodIndex = (id) => SKY_PERIODS.findIndex((p) => p.id === id);
+export const periodIndex = (id) => Math.max(0, SKY_PERIODS.findIndex((p) => p.id === id));
+
+const hours = (date) => date.getHours() + date.getMinutes() / 60;
 
 export function getSkyPeriod(date = new Date()) {
-  const hr = date.getHours() + date.getMinutes() / 60;
-  const current = [...SKY_PERIODS].reverse().find((p) => hr >= p.from);
-  return (current ?? SKY_PERIODS.at(-1)).id; // before 05:00 is still night
+  const hr = hours(date);
+  return (SKY_PERIODS.find((p) => hr >= p.from && hr < p.to) ?? SKY_PERIODS.at(-1)).id;
 }
 
-// 0…1 position of a moment inside its period (night wraps past midnight)
+// 0…1 position of a moment inside its period
 export function fractionInPeriod(date) {
   const p = periodById(getSkyPeriod(date));
-  let hr = date.getHours() + date.getMinutes() / 60;
-  if (p.id === 'night' && hr < 5) hr += 24;
-  return Math.min(1, Math.max(0, (hr - p.from) / (p.to - p.from)));
+  return Math.min(1, Math.max(0, (hours(date) - p.from) / (p.to - p.from)));
 }

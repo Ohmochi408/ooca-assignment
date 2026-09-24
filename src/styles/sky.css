@@ -6,7 +6,7 @@
   --sky-midnight: color-mix(in srgb, var(--color-blue-900) 30%, var(--color-gray-900));
 }
 
-/* 1. Dawn / Twilight — 05:00–06:00: deep blue → rose → warm gold at the horizon */
+/* 2. Dawn — 04:00–08:00 (sunrise): deep blue → rose → warm gold at the horizon */
 .sky-dawn {
   background:
     radial-gradient(120% 45% at 50% 105%, color-mix(in srgb, var(--color-marigo-300) 70%, transparent) 0%, transparent 70%),
@@ -18,7 +18,7 @@
       var(--color-marigo-300) 100%);
 }
 
-/* 2. Morning — 06:00–10:00: light blue, soft pale-gold light */
+/* 3. Morning — 08:00–12:00: light blue, soft pale-gold light */
 .sky-morning {
   background:
     radial-gradient(70% 40% at 85% 12%, color-mix(in srgb, var(--color-marigo-100) 85%, transparent) 0%, transparent 70%),
@@ -29,7 +29,7 @@
       var(--color-marigo-100) 100%);
 }
 
-/* 3. Midday — 10:00–15:00: deep, saturated blue; brightest light */
+/* 4. Afternoon — 12:00–16:00: deep, saturated blue; brightest light */
 .sky-day {
   background:
     radial-gradient(55% 32% at 50% -6%, color-mix(in srgb, var(--color-white) 55%, transparent) 0%, transparent 70%),
@@ -40,7 +40,7 @@
       var(--color-blue-200) 100%);
 }
 
-/* 4. Sunset / Dusk — 16:00–18:30: orange, red, pink, gold → back into twilight */
+/* 5. Sunset — 16:00–20:00 (sundown): orange, red, pink, gold → back into twilight */
 .sky-sunset {
   background:
     radial-gradient(110% 40% at 50% 100%, color-mix(in srgb, var(--color-marigo-400) 75%, transparent) 0%, transparent 70%),
@@ -52,7 +52,7 @@
       var(--color-marigo-500) 100%);
 }
 
-/* 5. Night — 19:00–04:00: midnight blue to black, with stars */
+/* 6. Night — 20:00–24:00: midnight blue with the last blue at the horizon, first stars */
 .sky-night {
   background:
     radial-gradient(1px 1px at 12% 18%, var(--color-white) 99%, transparent),
@@ -67,5 +67,26 @@
     linear-gradient(180deg,
       var(--color-black) 0%,
       var(--sky-midnight) 55%,
-      var(--color-bluegray-900) 100%);
+      var(--color-bluegray-800) 100%);
+}
+
+/* 1. Midnight — 00:00–04:00: the darkest sky, more stars, a faint moon glow */
+.sky-midnight {
+  background:
+    radial-gradient(1px 1px at 8% 12%, var(--color-white) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 18% 34%, var(--color-white) 99%, transparent),
+    radial-gradient(1px 1px at 31% 8%, color-mix(in srgb, var(--color-white) 70%, transparent) 99%, transparent),
+    radial-gradient(1px 1px at 42% 26%, var(--color-white) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 57% 44%, color-mix(in srgb, var(--color-white) 80%, transparent) 99%, transparent),
+    radial-gradient(1px 1px at 66% 14%, var(--color-white) 99%, transparent),
+    radial-gradient(1px 1px at 81% 52%, color-mix(in srgb, var(--color-white) 60%, transparent) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 92% 22%, var(--color-white) 99%, transparent),
+    radial-gradient(1px 1px at 24% 62%, color-mix(in srgb, var(--color-white) 50%, transparent) 99%, transparent),
+    radial-gradient(1px 1px at 48% 70%, color-mix(in srgb, var(--color-white) 40%, transparent) 99%, transparent),
+    radial-gradient(1px 1px at 74% 76%, color-mix(in srgb, var(--color-white) 40%, transparent) 99%, transparent),
+    radial-gradient(30% 16% at 78% 10%, color-mix(in srgb, var(--color-blue-100) 22%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg,
+      var(--color-black) 0%,
+      color-mix(in srgb, var(--sky-midnight) 60%, var(--color-black)) 60%,
+      var(--sky-midnight) 100%);
 }

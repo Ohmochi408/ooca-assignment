@@ -268,7 +268,7 @@ export default function DesignSystem() {
       </Section>
 
       <Section id="skies" title="Time-of-day skies" count="5 backgrounds built from OOCA color tokens — src/styles/sky.css (not a Figma frame; concept exploration)">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {SKY_PERIODS.map((p) => (
             <figure key={p.id} className="flex flex-col gap-2">
               <div className={`sky-${p.id} relative h-80 rounded-ooca-24 overflow-hidden shadow-elevation-4`}>

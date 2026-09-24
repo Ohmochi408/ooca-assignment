@@ -1,7 +1,7 @@
 import React from 'react';
 import { SKY_PERIODS } from '../utils/skyPeriods';
 
-// All five skies stay mounted so switching period cross-fades (styles in src/styles/sky.css)
+// All six skies stay mounted so switching period cross-fades (styles in src/styles/sky.css)
 export default function SkyBackground({ period, className = '' }) {
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">

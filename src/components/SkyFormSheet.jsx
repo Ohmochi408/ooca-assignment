@@ -4,7 +4,7 @@ import Sheet from './Sheet';
 import { SKY_PERIODS } from '../utils/skyPeriods';
 import { SKY_ICON_CHOICES } from '../utils/storageHelper';
 
-// Create a new sky, or edit one: name first (required), then its icon and which of the five skies it looks like.
+// Create a new sky, or edit one: name first (required), then its icon and which of the six skies it looks like.
 export default function SkyFormSheet({ sky, onSave, onClose }) {
   const editing = Boolean(sky);
   const [name, setName] = useState(sky?.name ?? '');
@@ -55,7 +55,7 @@ export default function SkyFormSheet({ sky, onSave, onClose }) {
 
         <fieldset>
           <legend className="text-body4 text-bluegray-500 mb-2">Sky</legend>
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-6 gap-1.5">
             {SKY_PERIODS.map((p) => (
               <button key={p.id} type="button" onClick={() => setStyle(p.id)} aria-pressed={style === p.id} className={`flex flex-col items-center gap-1 p-1 rounded-ooca-8 border-2 cursor-pointer ${style === p.id ? 'border-turquoise-500' : 'border-transparent'}`}>
                 <span className={`sky-${p.id} w-full h-12 rounded-ooca-8`} />
