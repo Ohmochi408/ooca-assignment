@@ -1,31 +1,35 @@
 import React from 'react';
 import Icon from '../components/Icon';
-import SkyBackground from '../components/SkyBackground';
+import { SkyBackdrop } from '../components/SkyBackground';
+import ScreenHeader from '../components/ScreenHeader';
 import useVoiceRecorder, { MAX_RECORDING_SEC } from '../utils/useVoiceRecorder';
 import { formatDuration } from '../utils/format';
+
+function MicNotice({ children }) {
+  return (
+    <p role="alert" className="flex items-start gap-2 text-left text-body4 text-white bg-black/40 rounded-ooca-8 px-3 py-2 max-w-[300px]">
+      <Icon name="info" size={16} className="shrink-0 mt-px" />
+      {children}
+    </p>
+  );
+}
 
 const rise = (ms) => ({ '--rise-delay': `${ms}ms` });
 
 // Recording happens over the sky the user was looking at when they tapped "Add a thought".
 export default function RecordScreen({ sky, onBack, onDone }) {
   const rec = useVoiceRecorder();
-  const { phase, elapsed, levels } = rec;
+  const { phase, elapsed, levels, mic } = rec;
 
   const finish = () => onDone({ duration: Math.max(1, elapsed), audioUrl: rec.audioUrl, frequency: rec.waveform() });
 
   return (
     <div className="relative h-full overflow-hidden">
-      <SkyBackground period={sky} />
-      {/* Keeps white text readable on the brighter skies */}
-      <div className="fade-in absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40" />
+      <SkyBackdrop period={sky} fade />
 
       <div className="relative h-full flex flex-col items-center justify-between px-6 py-8">
-        <div style={rise(0)} className="rise-in w-full flex items-center justify-between">
-          <button onClick={onBack} className="flex items-center gap-1 text-subheader2 text-white/80 hover:text-white cursor-pointer">
-            <Icon name="arrow-left" size={18} /> Back
-          </button>
-          <span className="text-h4 text-white select-none">ooca</span>
-          <span className="w-16" />
+        <div style={rise(0)} className="rise-in w-full">
+          <ScreenHeader onBack={onBack} onSky />
         </div>
 
         <div className="flex flex-col items-center gap-8 flex-1 justify-center w-full">
@@ -63,32 +67,35 @@ export default function RecordScreen({ sky, onBack, onDone }) {
           </div>
 
           {/* Status */}
-          <div style={rise(270)} className="rise-in min-h-[112px] flex flex-col items-center justify-start gap-3 text-center">
+          <div style={rise(270)} className="rise-in min-h-[140px] flex flex-col items-center justify-start gap-3 text-center">
             {phase === 'idle' && <p className="text-subheader2 text-white/80">Tap to start · up to {MAX_RECORDING_SEC} seconds</p>}
 
             {phase === 'recording' && (
               <>
-                <div className="flex items-end gap-1 h-8" aria-hidden="true">
+                {mic === 'asking' && <p className="text-body4 text-white/85">Allow the microphone to record your voice</p>}
+                {mic === 'off' && <MicNotice>Your microphone isn't available, so your voice won't be kept. You can still finish — the cloud will play a soft chime instead.</MicNotice>}
+                {mic !== 'off' && <div className="flex items-end gap-1 h-8" aria-hidden="true">
                   {levels.map((l, i) => (
                     <span key={i} className="w-1.5 rounded-full bg-white transition-[height] duration-100" style={{ height: `${Math.round(l * 100)}%` }} />
                   ))}
-                </div>
+                </div>}
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-flamingo-500 animate-pulse" />
                   <span className="text-h1 text-white tabular-nums">{formatDuration(elapsed)}</span>
                 </div>
-                <p className="text-body3 text-white/80">Tap to stop</p>
+                <p className="text-body3 text-white/85">Tap to stop · {formatDuration(MAX_RECORDING_SEC - elapsed)} left</p>
               </>
             )}
 
             {phase === 'saved' && (
               <>
                 <p className="text-subheader2 text-white/85">Saved · {formatDuration(elapsed)}</p>
-                {!rec.micAvailable && (
-                  <p className="text-body5 text-white bg-black/30 rounded-ooca-8 px-3 py-2 max-w-[280px]">Microphone wasn't available, so this cloud has no voice — it will play a soft chime instead.</p>
-                )}
+                {mic === 'off' && <MicNotice>No voice was kept — this cloud will play a soft chime.</MicNotice>}
                 <button onClick={finish} disabled={rec.micAvailable && !rec.audioUrl} data-loading={rec.micAvailable && !rec.audioUrl ? 'true' : undefined} className="ooca-btn ooca-btn-primary ooca-btn-turquoise">
                   See your cloud <Icon name="arrow-right" size={18} />
+                </button>
+                <button onClick={rec.reset} className="min-h-11 px-3 flex items-center gap-1 rounded-ooca-pill text-subheader2 text-white/85 hover:text-white cursor-pointer">
+                  <Icon name="mic" size={16} /> Record again
                 </button>
               </>
             )}

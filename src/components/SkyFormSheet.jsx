@@ -71,7 +71,7 @@ export default function SkyFormSheet({ sky, onSave, onClose }) {
             {editing ? 'Save changes' : 'Create sky'}
           </button>
         </div>
-        {!valid && <p className="text-body5 text-bluegray-400 -mt-2 text-center">Give your sky a name to create it.</p>}
+        {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name to create it.</p>}
       </form>
     </Sheet>
   );

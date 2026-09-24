@@ -11,3 +11,13 @@ export default function SkyBackground({ period, className = '' }) {
     </div>
   );
 }
+
+// A sky with a darkening scrim so white text stays readable on the brighter periods
+export function SkyBackdrop({ period, fade = false }) {
+  return (
+    <>
+      <SkyBackground period={period} />
+      <div className={`absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40 ${fade ? 'fade-in' : ''}`} aria-hidden="true" />
+    </>
+  );
+}

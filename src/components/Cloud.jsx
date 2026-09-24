@@ -16,17 +16,22 @@ export function CloudShape({ width, fill = 'var(--color-white)', shine = false, 
   );
 }
 
+// Longer labels get a wider cloud, so two lines hold most names instead of cutting them off
+export const cloudWidth = (label = '') => (label.length <= 16 ? 132 : label.length <= 24 ? 150 : 168);
+export const cloudHeight = (width) => (width * 142) / 220;
+
 // A thought cloud floating in the Time Sky
 export function SkyCloud({ cloud, color, onClick, style, isNew }) {
+  const width = cloudWidth(cloud.label);
   return (
-    <button onClick={onClick} style={style} className="absolute -translate-x-1/2 cursor-pointer group" aria-label={`Open ${cloud.label}`}>
-      <div className={`relative transition-transform duration-300 group-hover:-translate-y-1.5 ${isNew ? 'cloud-pop' : ''}`}>
-        <CloudShape width={132} />
+    <button onClick={onClick} style={style} title={cloud.label} className="absolute -translate-x-1/2 cursor-pointer group" aria-label={`Open ${cloud.label}`}>
+      <div className={`relative transition-transform duration-300 group-hover:-translate-y-1.5 ${isNew ? 'cloud-arrive' : ''}`}>
+        <CloudShape width={width} />
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-5 pb-2 px-6">
           <p className="text-body4 text-bluegray-800 w-full text-center line-clamp-2 break-words">{cloud.label}</p>
           <div className="flex items-center gap-1 mt-1">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: `var(--color-${color})` }} />
-            <span className="text-small text-bluegray-500">{formatDuration(cloud.duration)}</span>
+            <span className="text-body5 text-bluegray-600">{formatDuration(cloud.duration)}</span>
           </div>
         </div>
       </div>

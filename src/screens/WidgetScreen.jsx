@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Icon from '../components/Icon';
 import SkyBackground from '../components/SkyBackground';
 import { CloudShape } from '../components/Cloud';
+import { SKY_PERIODS, getSkyPeriod } from '../utils/skyPeriods';
+import { dateKey } from '../utils/dates';
 
 // Phone home screen with the ooca widget — the entry point of the 2-minute flow.
 export default function WidgetScreen({ period, clouds, onOpenSky, onAddThought }) {
@@ -11,7 +13,10 @@ export default function WidgetScreen({ period, clouds, onOpenSky, onAddThought }
     return () => clearInterval(t);
   }, []);
 
-  const latest = [...clouds].sort((a, b) => b.timestamp - a.timestamp).slice(0, 3);
+  // Two clouds fit with their names readable; the count covers the rest
+  const latest = [...clouds].sort((a, b) => b.timestamp - a.timestamp).slice(0, 2);
+  const today = dateKey(now);
+  const todayCount = (pid) => clouds.filter((c) => dateKey(c.timestamp) === today && getSkyPeriod(new Date(c.timestamp)) === pid).length;
   const dock = [
     { bg: 'bg-blue-500', icon: 'home' },
     { bg: 'bg-flamingo-500', icon: 'chat' },
@@ -39,7 +44,7 @@ export default function WidgetScreen({ period, clouds, onOpenSky, onAddThought }
       </div>
 
       {/* ooca widget */}
-      <div className="relative mt-12 w-full px-5">
+      <div className="relative mt-10 w-full px-5 flex flex-col gap-3">
         <div className="w-full rounded-ooca-24 bg-white/90 backdrop-blur-md shadow-elevation-8 p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -49,12 +54,14 @@ export default function WidgetScreen({ period, clouds, onOpenSky, onAddThought }
             <span className="text-body4 text-bluegray-500">{clouds.length} thoughts</span>
           </div>
 
-          <button onClick={onOpenSky} className="relative block w-full h-28 rounded-ooca-16 overflow-hidden mb-3 cursor-pointer" aria-label="Open your sky">
+          <button onClick={() => onOpenSky()} className="relative block w-full h-28 rounded-ooca-16 overflow-hidden mb-3 cursor-pointer" aria-label="Open your sky">
             <SkyBackground period={period} />
             {latest.map((c, i) => (
-              <div key={c.id} className="absolute top-4 -translate-x-1/2" style={{ left: `${20 + i * 30}%` }}>
-                <CloudShape width={78} />
-                <p className="absolute inset-x-3 top-1/2 -translate-y-1/4 text-center text-small text-bluegray-800 truncate">{c.label}</p>
+              <div key={c.id} className="absolute top-3 -translate-x-1/2" style={{ left: `${28 + i * 44}%` }}>
+                <CloudShape width={124} />
+                <p className="absolute inset-x-5 top-6 bottom-2 flex items-center justify-center text-center text-body5 text-bluegray-800">
+                  <span className="line-clamp-2">{c.label}</span>
+                </p>
               </div>
             ))}
           </button>
@@ -67,7 +74,34 @@ export default function WidgetScreen({ period, clouds, onOpenSky, onAddThought }
             </button>
           </div>
         </div>
-        <p className="text-body5 text-white/50 text-center mt-4">Tap the sky to look back, or + Add to say something</p>
+        {/* Today's six skies at a glance — tap one to open it */}
+        <div className="w-full rounded-ooca-24 bg-white/90 backdrop-blur-md shadow-elevation-8 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-subheader1 text-bluegray-800">Today's skies</p>
+            <span className="text-body5 text-bluegray-600">{SKY_PERIODS.reduce((n, p) => n + todayCount(p.id), 0)} today</span>
+          </div>
+          <div className="grid grid-cols-6 gap-1.5">
+            {SKY_PERIODS.map((p) => {
+              const n = todayCount(p.id);
+              const isNow = p.id === period;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => onOpenSky(p.id)}
+                  aria-current={isNow ? 'time' : undefined}
+                  aria-label={`${p.label}, ${p.range}, ${n} thought${n === 1 ? '' : 's'}${isNow ? ', now' : ''}`}
+                  className="flex flex-col items-center gap-1 cursor-pointer group"
+                >
+                  <span className={`sky-${p.id} relative w-full h-11 rounded-ooca-8 flex items-center justify-center transition-transform group-hover:-translate-y-0.5 ${isNow ? 'ring-2 ring-turquoise-500 ring-offset-2' : ''}`}>
+                    {n > 0 && <span className="min-w-5 h-5 px-1 rounded-ooca-pill bg-white text-body4 text-bluegray-800 flex items-center justify-center">{n}</span>}
+                  </span>
+                  <span className={`text-body5 ${isNow ? 'text-turquoise-900' : 'text-bluegray-600'}`}>{isNow ? 'Now' : p.range.slice(0, 2)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <p className="text-body5 text-white/85 text-center mt-1">Tap a sky to look back, or Add to say something</p>
       </div>
 
       {/* Dock */}

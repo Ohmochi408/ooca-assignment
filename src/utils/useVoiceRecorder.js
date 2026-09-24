@@ -11,7 +11,8 @@ export default function useVoiceRecorder() {
   const [elapsed, setElapsed] = useState(0);
   const [levels, setLevels] = useState(() => Array(WAVE_BARS).fill(0.15));
   const [audioUrl, setAudioUrl] = useState(null);
-  const [micAvailable, setMicAvailable] = useState(true);
+  // asking (permission prompt open) | on | off — known as soon as recording starts, not after
+  const [mic, setMic] = useState('asking');
 
   const recorderRef = useRef(null);
   const chunksRef = useRef([]);
@@ -35,15 +36,21 @@ export default function useVoiceRecorder() {
     clearInterval(timerRef.current);
     clearInterval(levelTimerRef.current);
     if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
-    else cleanup();
+    else {
+      cleanup();
+      setMic((m) => (m === 'asking' ? 'off' : m)); // stopped before the mic ever opened
+    }
     setPhase('saved');
   };
 
   const start = async () => {
     setElapsed(0);
     setAudioUrl(null);
+    setMic('asking');
+    setLevels(Array(WAVE_BARS).fill(0.15));
     chunksRef.current = [];
     samplesRef.current = [];
+    recorderRef.current = null;
     setPhase('recording');
     activeRef.current = true;
 
@@ -59,10 +66,11 @@ export default function useVoiceRecorder() {
       if (!activeRef.current) {
         // Stopped while the permission prompt was open — nothing was recorded
         stream.getTracks().forEach((t) => t.stop());
-        setMicAvailable(false);
+        setMic('off');
         return;
       }
       streamRef.current = stream;
+      setMic('on');
 
       const recorder = new MediaRecorder(stream);
       recorderRef.current = recorder;
@@ -92,12 +100,17 @@ export default function useVoiceRecorder() {
       }
     } catch (err) {
       console.warn('Microphone unavailable — continuing without audio:', err);
-      setMicAvailable(false);
-      if (!activeRef.current) return;
-      levelTimerRef.current = setInterval(() => {
-        setLevels((prev) => [...prev.slice(1), 0.15 + Math.random() * 0.5]);
-      }, 150);
+      setMic('off'); // no fake waveform: the screen says plainly that nothing is being heard
     }
+  };
+
+  // Throw the take away and go back to idle
+  const reset = () => {
+    activeRef.current = false;
+    cleanup();
+    setPhase('idle');
+    setElapsed(0);
+    setAudioUrl(null);
   };
 
   // Downsample the whole recording into a small waveform stored with the cloud
@@ -111,5 +124,5 @@ export default function useVoiceRecorder() {
     });
   };
 
-  return { phase, elapsed, levels, audioUrl, micAvailable, start, stop, waveform };
+  return { phase, elapsed, levels, audioUrl, mic, micAvailable: mic !== 'off', start, stop, reset, waveform };
 }

@@ -7,6 +7,12 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* Keyboard focus: dark ring with a white gap, visible on white surfaces and on every sky */
+  :focus-visible {
+    outline: 2px solid var(--color-bluegray-900);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--color-white);
+  }
 }
 
 /* Screen change */
@@ -34,6 +40,22 @@
 @keyframes cloud-pop {
   from { transform: scale(0.4); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* A just-placed cloud rises from below and settles into its sky */
+.cloud-arrive {
+  animation: cloud-arrive 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes cloud-arrive {
+  0% { transform: translateY(360px) scale(0.7); opacity: 0; }
+  35% { opacity: 1; }
+  80% { transform: translateY(-8px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Toast */
+.toast-in {
+  animation: rise-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 /* Sky → Record: everything in front of the sky falls away, the sky itself stays */
@@ -67,7 +89,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen-fade, .cloud-float, .cloud-pop, .rise-in, .fade-in { animation: none; }
+  .screen-fade, .cloud-float, .cloud-pop, .cloud-arrive, .rise-in, .fade-in, .toast-in { animation: none; }
   .fg { transition: none; }
 }
 

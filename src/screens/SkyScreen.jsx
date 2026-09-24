@@ -12,32 +12,25 @@ import { dateKey, addDays, formatLongDate } from '../utils/dates';
 
 const glass = 'bg-white/75 backdrop-blur-sm text-bluegray-800';
 
-function Arrow({ dir, onClick, disabled, label }) {
+// Earlier / later controls sit in one row with the page dots, below the clouds —
+// so they never cover a cloud, and swiping always has a tap alternative.
+function Pager({ count, index, onPick, labels, prev, next, prevLabel, nextLabel, prevDisabled, nextDisabled }) {
+  const arrow = `w-11 h-11 shrink-0 rounded-full flex items-center justify-center shadow-elevation-3 transition-opacity cursor-pointer disabled:opacity-0 disabled:pointer-events-none ${glass}`;
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={label}
-      style={{ '--fg-delay': '60ms' }}
-      className={`fg absolute top-[calc(50%-68px)] -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center shadow-elevation-3 transition-opacity cursor-pointer disabled:opacity-0 disabled:pointer-events-none ${glass} ${dir === 'left' ? 'left-2' : 'right-2'}`}
-    >
-      <Icon name={dir === 'left' ? 'back' : 'next'} size={20} />
-    </button>
-  );
-}
-
-function Dots({ count, index, onPick, labels }) {
-  return (
-    <div className="fg absolute bottom-[152px] inset-x-0 z-20 flex justify-center gap-1.5" style={{ '--fg-delay': '60ms' }}>
-      {Array.from({ length: count }, (_, i) => (
-        <button
-          key={i}
-          onClick={() => onPick(i)}
-          aria-label={labels?.[i] ?? `Page ${i + 1}`}
-          aria-current={i === index}
-          className={`h-2 rounded-full transition-all cursor-pointer ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
-        />
-      ))}
+    <div className="fg absolute bottom-[148px] inset-x-0 z-20 px-4 flex items-center justify-between" style={{ '--fg-delay': '60ms' }}>
+      <button onClick={prev} disabled={prevDisabled} aria-label={prevLabel} className={arrow}>
+        <Icon name="back" size={20} />
+      </button>
+      <div className="flex items-center">
+        {Array.from({ length: count }, (_, i) => (
+          <button key={i} onClick={() => onPick(i)} aria-label={labels?.[i] ?? `Page ${i + 1}`} aria-current={i === index} className="group min-w-6 h-11 px-0.5 flex items-center justify-center cursor-pointer">
+            <span className={`block h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/60 group-hover:bg-white/90'}`} />
+          </button>
+        ))}
+      </div>
+      <button onClick={next} disabled={nextDisabled} aria-label={nextLabel} className={arrow}>
+        <Icon name="next" size={20} />
+      </button>
     </div>
   );
 }
@@ -101,14 +94,22 @@ function TimeSky({ clouds, colorOf, nav, setNav, onOpenCloud, newCloudId, onOpen
             Today
           </button>
         )}
-        <button onClick={onOpenAbout} className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label="About this concept">
+        <button onClick={onOpenAbout} className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label="About this concept">
           <Icon name="info" size={20} />
         </button>
       </div>
 
-      <Arrow dir="left" label="Earlier sky" onClick={() => go(idx - 1)} />
-      <Arrow dir="right" label="Later sky" onClick={() => go(idx + 1)} disabled={atLatest} />
-      <Dots count={SKY_PERIODS.length} index={idx} onPick={go} labels={SKY_PERIODS.map((p) => p.label)} />
+      <Pager
+        count={SKY_PERIODS.length}
+        index={idx}
+        onPick={go}
+        labels={SKY_PERIODS.map((p) => p.label)}
+        prev={() => go(idx - 1)}
+        next={() => go(idx + 1)}
+        prevLabel="Earlier sky"
+        nextLabel="Later sky"
+        nextDisabled={atLatest}
+      />
 
       {calendarOpen && (
         <CalendarSheet
@@ -168,15 +169,15 @@ function MySkies({ clouds, skies, colorOf, index, setIndex, onOpenCloud, newClou
             return (
               <button key={s.id} onClick={() => { setIndex(k); setShowAll(false); }} className="relative h-40 rounded-ooca-16 overflow-hidden text-left shadow-elevation-3 cursor-pointer group">
                 <div className={`sky-${s.style} absolute inset-0 transition-transform duration-300 group-hover:scale-105`} />
-                <div className="absolute inset-x-0 top-6 flex justify-center -space-x-6 pointer-events-none">
-                  {list.slice(-3).map((c) => (
+                <div className="absolute inset-x-0 top-6 flex justify-center -space-x-6 pointer-events-none" aria-hidden="true">
+                  {list.slice(-2).map((c) => (
                     <div key={c.id} className="scale-75"><MiniCloud cloud={c} /></div>
                   ))}
                 </div>
-                <div className="absolute bottom-2 inset-x-2 flex items-center gap-1.5 bg-white/80 backdrop-blur-sm rounded-ooca-pill pl-2 pr-2.5 py-1 text-bluegray-800">
-                  <Icon name={s.icon} size={16} />
-                  <span className="text-body4 truncate flex-1">{s.name}</span>
-                  <span className="text-small text-bluegray-500">{list.length}</span>
+                <div className="absolute bottom-2 inset-x-2 flex items-center gap-1.5 bg-white/85 backdrop-blur-sm rounded-ooca-16 pl-2 pr-2.5 py-1.5 text-bluegray-800">
+                  <Icon name={s.icon} size={16} className="shrink-0" />
+                  <span className="text-body4 line-clamp-2 flex-1 min-w-0">{s.name}</span>
+                  <span className="text-body5 text-bluegray-600">{list.length}</span>
                 </div>
               </button>
             );
@@ -222,19 +223,28 @@ function MySkies({ clouds, skies, colorOf, index, setIndex, onOpenCloud, newClou
           <p className="text-body5 text-bluegray-600 truncate mt-0.5">{sky.description}</p>
         </div>
         <div className="flex flex-col gap-2">
-          <button onClick={() => setShowAll(true)} className={`w-10 h-10 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label="Show all skies">
+          <button onClick={() => setShowAll(true)} className={`w-11 h-11 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label="Show all skies">
             <Icon name="grid" size={20} />
           </button>
-          <button onClick={() => setForm(sky)} className={`w-10 h-10 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label={`Edit ${sky.name}`}>
+          <button onClick={() => setForm(sky)} className={`w-11 h-11 rounded-full flex items-center justify-center shadow-elevation-3 cursor-pointer ${glass}`} aria-label={`Edit ${sky.name}`}>
             <Icon name="edit" size={18} />
           </button>
         </div>
       </div>
 
       {/* Loops: after the last sky comes the first again */}
-      <Arrow dir="left" label="Previous sky" onClick={() => carousel.current?.step(-1)} disabled={skies.length < 2} />
-      <Arrow dir="right" label="Next sky" onClick={() => carousel.current?.step(1)} disabled={skies.length < 2} />
-      <Dots count={skies.length} index={i} onPick={setIndex} labels={skies.map((s) => s.name)} />
+      <Pager
+        count={skies.length}
+        index={i}
+        onPick={setIndex}
+        labels={skies.map((s) => s.name)}
+        prev={() => carousel.current?.step(-1)}
+        next={() => carousel.current?.step(1)}
+        prevLabel="Previous sky"
+        nextLabel="Next sky"
+        prevDisabled={skies.length < 2}
+        nextDisabled={skies.length < 2}
+      />
       {sheet}
     </>
   );
@@ -246,9 +256,9 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
     const k = skies.findIndex((s) => s.id === cloud.skyId);
     return skyColor(skies[k], k);
   };
-  const shared = { clouds, colorOf, onOpenCloud, newCloudId };
-  // The sky currently on screen — the record screen keeps it as its background
+  // The sky currently on screen — the record and detail screens keep it as their background
   const currentSky = view === 'time' ? timeNav.period : skies[Math.min(myIndex, skies.length - 1)]?.style;
+  const shared = { clouds, colorOf, onOpenCloud: (cloud) => onOpenCloud(cloud, currentSky), newCloudId };
 
   return (
     <div className={`relative h-full overflow-hidden ${leaving ? 'sky-leaving' : ''}`}>
@@ -270,7 +280,7 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
               role="tab"
               aria-selected={view === v}
               onClick={() => setView(v)}
-              className={`flex items-center gap-1.5 px-5 py-2 rounded-ooca-pill text-subheader1 transition-colors cursor-pointer ${view === v ? 'bg-turquoise-500 text-white shadow-elevation-1' : 'text-bluegray-500 hover:text-bluegray-800'}`}
+              className={`flex items-center gap-1.5 px-5 h-11 rounded-ooca-pill text-subheader1 transition-colors cursor-pointer ${view === v ? 'bg-turquoise-500 text-white shadow-elevation-1' : 'text-bluegray-500 hover:text-bluegray-800'}`}
             >
               <Icon name={icon} size={18} />
               {label}
