@@ -12,15 +12,7 @@ export const SKY_PERIODS = [
 export const periodById = (id) => SKY_PERIODS.find((p) => p.id === id) ?? SKY_PERIODS[0];
 export const periodIndex = (id) => Math.max(0, SKY_PERIODS.findIndex((p) => p.id === id));
 
-const hours = (date) => date.getHours() + date.getMinutes() / 60;
-
 export function getSkyPeriod(date = new Date()) {
-  const hr = hours(date);
+  const hr = date.getHours() + date.getMinutes() / 60;
   return (SKY_PERIODS.find((p) => hr >= p.from && hr < p.to) ?? SKY_PERIODS.at(-1)).id;
-}
-
-// 0…1 position of a moment inside its period
-export function fractionInPeriod(date) {
-  const p = periodById(getSkyPeriod(date));
-  return Math.min(1, Math.max(0, (hours(date) - p.from) / (p.to - p.from)));
 }

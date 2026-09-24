@@ -9,7 +9,8 @@ Topic: **The 2-Minute Mental Health Experience** (OOCA Assignment)
 
 ## 🔗 Project Deliverables
 - **GitHub Repository:** [https://github.com/Ohmochi408/ooca-assignment](https://github.com/Ohmochi408/ooca-assignment)
-- **Figma Design & CI Source:** [`ooca CI for UX_UI Assignment (Copy).fig`](./ooca%20CI%20for%20UX_UI%20Assignment%20(Copy).fig) *(Import directly into Figma)*
+- **Figma Design:** [`ooca CI for UX_UI Assignment_Latest Ver..fig`](./ooca%20CI%20for%20UX_UI%20Assignment_Latest%20Ver..fig) *(Import directly into Figma)* — the app follows the **Ideate2 → Main Design** frames
+- **OOCA CI source for the design tokens:** [`ooca CI for UX_UI Assignment (Copy).fig`](./ooca%20CI%20for%20UX_UI%20Assignment%20(Copy).fig)
 - **Product Brief / Source of Truth:** [`PRODUCT_BRIEF.md`](./PRODUCT_BRIEF.md)
 
 ---
@@ -25,27 +26,42 @@ Thought → Voice → Cloud → Sky → Meaning → Look back
 1. **Low-Friction Voice Input:**  
    *“Say it. Hum it. Sigh it. It doesn’t have to make sense.”*  
    Eliminates the cognitive friction of typing full sentences when feeling overwhelmed.
-2. **Thought Cloud Formation:**  
-   The voice morphs into a visual cloud preserving the original recording, duration, and timestamp.
+2. **A thought becomes a cloud:**  
+   While the person speaks, the thought is *“Condensing”* (rings pulse out with their voice). Each thought becomes a **Mooca** — one of five cloud characters — keeping the original recording, its length and time.
 3. **Ethical AI Assistance (Not Interpretation):**  
-   AI suggests a short label (e.g. *“Tomorrow’s presentation”*). It does **NOT** diagnose, predict emotional states, or infer mental health disorders. The user remains in full control to edit or leave it unnamed.
+   AI suggests a short name (e.g. *“Tomorrow’s presentation”*) and, for voices of 5 seconds or more, sums up what was said in a few plain points — useful for people who talk a lot. It does **NOT** diagnose, predict emotional states, or name an emotion. The name can always be changed and the summary folds away. *(In the prototype the AI is a stand-in with sample answers: `src/utils/aiSummary.js`.)*
 4. **The Sky Concept:**  
-   - **🕒 Time Sky:** Clouds laid out by when they happened, under a sky that follows the real time of day (Dawn, Morning, Midday, Sunset, Night).
-   - **☁️ My Skies:** User-defined semantic spaces (🌙 Tonight, 💼 Work, ♡ People, 🌌 Things I Can’t Say).  
+   - **🕒 Time Sky:** Thoughts laid out by when they happened. A day has six 4-hour skies (Midnight, Dawn, Morning, Afternoon, Sunset, Night) — swipe up/down through them, arrows for the day before/after, a calendar, and **Now**.
+   - **☁️ My Sky:** Spaces the user names and styles (e.g. *3AM Thoughts*, *Just wanna vent out!*), plus a **Favorites** sky that gathers every hearted thought.  
    *“The system provides the space. The user defines the meaning.”*
 5. **Replay & Reflection:**  
-   Users can tap any cloud to listen to their own voice at that specific moment in time (*“This is what you left here”*).
+   Tap a thought to listen again — the Mooca talks while its voice plays, and the timeline can be dragged to any moment. Thoughts can be dragged anywhere in their sky; each keeps its own space.
+6. **Lock-screen shortcut:**  
+   The flow starts where a thought happens: a lock-screen shortcut (*“Leave a thought here?”*) starts recording at once; swipe up opens the sky.
 
 ---
 
 ## 🛠️ Tech Stack & Engineering Highlights
 - **Framework:** React 19 + Vite 8
 - **UX base:** Screen flow and visual language from the Figma Make prototype (`Figma make/`), rebuilt on the OOCA design system
-- **Screens** (`src/screens/`): Widget → Sky (Time Sky / My Skies) → Record → Cloud created (AI label) → Place → Cloud detail
-- **Styling:** Tailwind CSS v4, mobile-first with a phone frame on desktop; five time-of-day skies in `src/styles/sky.css` built only from OOCA color tokens
-- **Audio Engine:** `MediaRecorder` capture with a live input-level waveform (Web Audio `AnalyserNode`), voice saved as a data URL in localStorage, soft synthesized chime when there is no recording
+- **Screens** (`src/screens/`): Lock screen → Sky (Time Sky / My Sky) → Record → Cloud ready (listen back, AI name + summary, pick a sky) → back to the sky
+- **Styling:** Tailwind CSS v4, mobile-first with a phone frame on desktop; six time-of-day skies in `src/styles/sky.css` built only from OOCA color tokens
+- **Audio Engine:** `MediaRecorder` capture with a live input level (Web Audio `AnalyserNode`) driving the voice rings, voice saved as a data URL in localStorage, soft synthesized chime when there is no recording
+- **Accessibility:** every icon button has a label and a tooltip, keyboard focus rings, modal sheets trap focus, sliders and pagers work with the keyboard, reduced-motion respected
 - **Design Tokens:** Generated straight from the OOCA CI `.fig` file (101 colors, 39 EN/TH text styles, 8 elevations, radii, Button variants) — see [Design System parity](#-design-system-parity)
-- **Micro-interactions:** cloud pop when placed, floating cloud on replay, cross-fading skies (disabled under `prefers-reduced-motion`)
+- **Micro-interactions:** the sky falls away into the record screen, a new thought rises into its sky, floating and talking Mooca, cross-fading skies (all disabled under `prefers-reduced-motion`)
+
+### Project structure
+```text
+src/
+  App.jsx          flow + app state (thoughts, skies, where the user is)
+  screens/         LockScreen · SkyScreen (sky/TimeSky, sky/MySkies) · RecordScreen · CloudReadyScreen
+  components/      UI pieces: CloudField (layout + drag), MoocaCloud, SkyCarousel, RoundButton, Tip, sheets…
+  data/            demo content (samples.js) and the Mooca table (moocas.js)
+  utils/           recorder / playback hooks, storage, dates, sky periods, motion, AI stand-in
+  styles/          generated OOCA tokens + the six sky gradients
+  icons/           OOCA DS icons (generated)
+```
 
 ---
 
@@ -61,6 +77,9 @@ npm install
 
 # 3. Start development server
 npm run dev
+
+# Lint (ESLint + React Hooks rules)
+npm run lint
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to experience the interactive prototype.
@@ -70,17 +89,17 @@ Open [http://localhost:5173](http://localhost:5173) in your browser to experienc
 ## 🎨 Opening the Figma Design
 1. Open [Figma](https://www.figma.com/).
 2. On your dashboard / draft page, click **Import file**.
-3. Select `ooca CI for UX_UI Assignment (Copy).fig` from this folder to view all original components, OOCA CI tokens, and layout guidelines.
+3. Select `ooca CI for UX_UI Assignment_Latest Ver..fig` from this folder to view the design (Ideate2 → Main Design), the OOCA CI components and tokens.
 
 ---
 
 ## 📐 Design System Parity
-The styles are not hand-copied: `scripts/figma-tokens.mjs` decodes the `.fig` file and writes `design-tokens/ooca.tokens.json` and `src/styles/ooca-tokens.css` (Tailwind v4 `@theme`, with Tailwind's default palette, font sizes, shadows and radii switched off so only OOCA values exist).
+The styles are not hand-copied: `scripts/figma-tokens.mjs` decodes the OOCA CI `.fig` file (the `(Copy)` file, which holds the published text styles) and writes `design-tokens/ooca.tokens.json` and `src/styles/ooca-tokens.css` (Tailwind v4 `@theme`, with Tailwind's default palette, font sizes, shadows and radii switched off so only OOCA values exist).
 
 ```bash
 npm run tokens        # regenerate tokens after the Figma file changes
 npm run tokens:check  # Figma → CSS coverage + audit of src/ for off-system values
-npm run icons         # re-extract the DS icons used in the app (scripts/figma-icons.mjs → src/icons)
+npm run icons         # re-extract the DS icons used in the app from the Latest .fig (scripts/figma-icons.mjs → src/icons)
 ```
 
 Icons are the OOCA "Icon/…" components converted to SVG paths — no emoji or third-party icon set (the audit flags both).

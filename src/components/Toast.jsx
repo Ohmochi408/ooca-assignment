@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Icon from './Icon';
 
-// Short confirmation above the bottom bar, with an optional action (e.g. Undo). Announced politely.
+// Short confirmation just under the screen header (never over the cloud it talks about, or the bottom controls), with an optional action (e.g. Undo). Announced politely.
 export default function Toast({ toast, onDismiss }) {
   useEffect(() => {
     if (!toast) return;
@@ -10,11 +10,11 @@ export default function Toast({ toast, onDismiss }) {
   }, [toast, onDismiss]);
 
   return (
-    <div role="status" aria-live="polite" className="absolute inset-x-4 bottom-[204px] z-45 flex justify-center pointer-events-none">
+    <div role="status" aria-live="polite" className="absolute inset-x-4 top-[96px] z-45 flex justify-center pointer-events-none">
       {toast && (
         <div key={toast.id} className="toast-in pointer-events-auto flex items-center gap-3 max-w-full pl-4 pr-1 min-h-12 rounded-ooca-pill bg-bluegray-900 text-white shadow-elevation-6">
           {toast.icon && <Icon name={toast.icon} size={18} className="shrink-0 text-turquoise-300" />}
-          <span className="text-body4 truncate">{toast.message}</span>
+          <span className="text-subheader2 truncate">{toast.message}</span>
           {toast.action ? (
             <button
               onClick={() => {

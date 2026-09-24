@@ -15,6 +15,18 @@
   }
 }
 
+/* Type roles — every text in the app uses one of these OOCA DS styles, by what the text is:
+   screen title ........ text-h4        (20 Medium)  Time/My Sky header, Add cloud, Cloud ready, sheets
+   screen subtitle ..... text-body1     (16 Book)    line under a screen title (time • count, date, prompt)
+   section title ....... text-title2    (18 Medium)  title inside a card ("Pick your Sky")
+   item ................ text-body2     (14 Medium)  main line of a card / tile (cloud name)
+   meta / option ....... text-body3     (14 Book)    time, date, duration, dropdown options, calendar days
+   field label ......... text-body4 uppercase        small labels above a control ("Icon", "Sky")
+   hint ................ text-body4 on a sky (in a dark pill) · text-body5 on a white/grey surface
+   caption ............. text-body5     (12 Book)    counts, weekday letters, tooltips
+   button .............. text-button-small (16 Medium) — .ooca-btn and the Time/My Sky toggle
+   Colours: on a sky → white (titles) / turquoise-50 (subtitles); on surfaces → black or bluegray-800 (main), bluegray-600 (secondary). */
+
 /* Screen change */
 .screen-fade {
   animation: screen-fade-in 0.35s ease both;
@@ -24,22 +36,13 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Gentle float for the opened cloud */
+/* Gentle float for a resting Mooca */
 .cloud-float {
   animation: cloud-float 4s ease-in-out infinite;
 }
 @keyframes cloud-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
-
-/* Newly placed cloud pops into the sky */
-.cloud-pop {
-  animation: cloud-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-@keyframes cloud-pop {
-  from { transform: scale(0.4); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
 }
 
 /* A just-placed cloud rises from below and settles into its sky */
@@ -51,6 +54,15 @@
   35% { opacity: 1; }
   80% { transform: translateY(-8px) scale(1.03); }
   100% { transform: translateY(0) scale(1); }
+}
+
+/* Voice pulse: a ring leaves the cloud each time the mic hears something (strength = --ring-strength 0…1) */
+.voice-ring {
+  animation: voice-ring 1.4s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes voice-ring {
+  from { transform: scale(1); opacity: calc(0.35 + var(--ring-strength, 0.5) * 0.6); }
+  to { transform: scale(calc(1.35 + var(--ring-strength, 0.5) * 0.9)); opacity: 0; }
 }
 
 /* Toast */
@@ -89,7 +101,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen-fade, .cloud-float, .cloud-pop, .cloud-arrive, .rise-in, .fade-in, .toast-in { animation: none; }
+  .screen-fade, .cloud-float, .cloud-arrive, .rise-in, .fade-in, .toast-in { animation: none; }
+  .voice-ring { display: none; }
   .fg { transition: none; }
 }
 

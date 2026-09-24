@@ -1,8 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import tokens from '../../design-tokens/ooca.tokens.json';
 import { SKY_PERIODS } from '../utils/skyPeriods';
-import Icon, { ICON_NAMES } from '../components/Icon';
+import Icon from '../components/Icon';
 import ICONS from '../icons/ooca-icons';
+
+const ICON_NAMES = Object.keys(ICONS);
 
 // Every specimen is rendered through the CSS variables in src/styles/ooca-tokens.css,
 // then the browser's computed value is compared with the value read from the Figma file.
@@ -24,7 +26,7 @@ function useParity(ref, checks) {
   useLayoutEffect(() => {
     const cs = getComputedStyle(ref.current);
     setOk(checks.every(([prop, expected, cmp = (a, b) => a === String(b)]) => cmp(cs[prop], expected)));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- measured once, after the swatch is drawn
   return ok;
 }
 

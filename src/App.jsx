@@ -2,29 +2,32 @@ import React, { useCallback, useEffect, useState } from 'react';
 import SkyBackground from './components/SkyBackground';
 import AboutSheet from './components/AboutSheet';
 import Toast from './components/Toast';
-import WidgetScreen from './screens/WidgetScreen';
+import { randomMooca } from './data/moocas';
+import LockScreen from './screens/LockScreen';
 import SkyScreen from './screens/SkyScreen';
 import RecordScreen from './screens/RecordScreen';
-import CloudCreatedScreen from './screens/CloudCreatedScreen';
-import PlaceScreen from './screens/PlaceScreen';
-import CloudDetailScreen from './screens/CloudDetailScreen';
-import { getStoredClouds, saveClouds, getStoredSkies, saveSkies, CUSTOM_SKY_COLORS } from './utils/storageHelper';
+import CloudReadyScreen from './screens/CloudReadyScreen';
+import { getStoredClouds, saveClouds, getStoredSkies, saveSkies, FAVORITES_ID, favoritesSky, getFavoritesStyle, saveFavoritesStyle } from './utils/storageHelper';
 import { getSkyPeriod } from './utils/skyPeriods';
+import { getAudioContext } from './utils/audioHelper';
 import { dateKey } from './utils/dates';
+import { prefersReducedMotion } from './utils/motion';
 
-// Flow (PRODUCT_BRIEF §9): widget → sky → record → cloud created → place → sky → cloud detail
+// Flow (Ideate2 → Main Design): lock screen → Time Sky / My Sky → recording → Cloud ready → back to the sky
 export default function App() {
-  const [screen, setScreen] = useState('widget');
+  const [screen, setScreen] = useState('lock');
   const [clouds, setClouds] = useState(getStoredClouds);
   const [skies, setSkies] = useState(getStoredSkies);
-  const [draft, setDraft] = useState(null); // recording waiting for a label + sky
-  const [selectedId, setSelectedId] = useState(null);
+  const [favStyle, setFavStyle] = useState(getFavoritesStyle);
+  // My Sky shows Favorites first, then the user's skies (index 0 = Favorites)
+  const mySkies = [favoritesSky(favStyle), ...skies];
+  const [draft, setDraft] = useState(null); // new recording on "Cloud ready"
+  const [editingId, setEditingId] = useState(null); // saved cloud reopened on "Cloud ready"
   const [newCloudId, setNewCloudId] = useState(null);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const showToast = (t) => setToast({ id: Date.now(), ...t });
   const hideToast = useCallback(() => setToast(null), []);
-  const [detailSky, setDetailSky] = useState(null); // the sky a cloud was opened from
 
   // Sky → Record transition: foreground falls away (leaving), the sky stays as the record backdrop
   const [leaving, setLeaving] = useState(false);
@@ -36,9 +39,9 @@ export default function App() {
     setScreen(next);
   };
   const startRecording = (sky, fromSky = false) => {
+    getAudioContext(); // unlock audio inside the tap itself, so the recorder can read the voice level later
     setRecordSky(sky ?? getSkyPeriod());
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!fromSky || reduced) return goTo('record');
+    if (!fromSky || prefersReducedMotion()) return goTo('record');
     setLeaving(true);
     setTimeout(() => {
       setLeaving(false);
@@ -52,7 +55,7 @@ export default function App() {
   const [timeNav, setTimeNav] = useState(() => ({ date: dateKey(), period: getSkyPeriod() }));
   const [myIndex, setMyIndex] = useState(0);
 
-  // Ambient sky (widget + desktop backdrop) follows the real time of day
+  // Ambient sky (lock screen + desktop backdrop) follows the real time of day
   const [period, setPeriod] = useState(() => getSkyPeriod());
   useEffect(() => {
     const t = setInterval(() => setPeriod(getSkyPeriod()), 60000);
@@ -61,101 +64,104 @@ export default function App() {
 
   useEffect(() => saveClouds(clouds), [clouds]);
   useEffect(() => saveSkies(skies), [skies]);
+  useEffect(() => saveFavoritesStyle(favStyle), [favStyle]);
 
-  const selected = clouds.find((c) => c.id === selectedId);
+  const editing = clouds.find((c) => c.id === editingId);
+  const skyStyleOf = (cloud) => skies.find((s) => s.id === cloud.skyId)?.style ?? getSkyPeriod(new Date(cloud.timestamp));
+
+  const arrive = (id) => {
+    setNewCloudId(id);
+    setTimeout(() => setNewCloudId((cur) => (cur === id ? null : cur)), 2500);
+  };
+
+  // Land on the sky that now holds the cloud, and let it rise in
+  const showCloud = (cloud) => {
+    const k = skies.findIndex((s) => s.id === cloud.skyId);
+    if (k >= 0) {
+      setSkyView('mine');
+      setMyIndex(k + 1); // +1: Favorites comes first in My Sky
+    } else {
+      setSkyView('time');
+      setTimeNav({ date: dateKey(cloud.timestamp), period: getSkyPeriod(new Date(cloud.timestamp)) });
+    }
+    arrive(cloud.id);
+  };
 
   const handleRecorded = (rec) => {
-    setDraft({ ...rec, timestamp: Date.now() });
-    goTo('created', true);
+    const n = clouds.filter((c) => /^New (thought|Cloud) \d+$/.test(c.label)).length + 1;
+    setDraft({ id: `cloud-${Date.now()}`, label: `New thought ${n}`, timestamp: Date.now(), skyId: null, favorite: false, mooca: randomMooca([...clouds].sort((a, b) => b.timestamp - a.timestamp)[0]?.mooca), ...rec });
+    goTo('ready', true);
   };
 
-  const handleLabel = (label) => {
-    setDraft((d) => ({ ...d, label }));
-    goTo('place', true);
-  };
-
-  const handlePlace = (skyId) => {
-    const sky = skies.find((s) => s.id === skyId);
-    const cloud = {
-      id: `cloud-${Date.now()}`,
-      label: draft.label || 'Unnamed thought',
-      timestamp: draft.timestamp,
-      duration: draft.duration,
-      skyId,
-      skyName: sky?.name,
-      audioUrl: draft.audioUrl,
-      frequency: draft.frequency,
-    };
-    setClouds((prev) => [...prev, cloud]);
-    setNewCloudId(cloud.id);
-    setTimeout(() => setNewCloudId((id) => (id === cloud.id ? null : id)), 2500); // arrive once, not on every visit
-    setDraft(null);
-    showToast({ icon: 'check', message: `Saved to ${sky?.name ?? 'your sky'}` });
-    // Show the cloud landing in the sky the user chose
-    setSkyView('mine');
-    setMyIndex(Math.max(0, skies.findIndex((s) => s.id === skyId)));
-    goTo('sky');
-  };
-
-  const handleCreateSky = ({ name, icon, style }) => {
-    const sky = { id: `custom-${Date.now()}`, name, icon, style, color: CUSTOM_SKY_COLORS[skies.length % CUSTOM_SKY_COLORS.length], description: 'A personal space defined by you.' };
+  const createSky = ({ name, icon, style }) => {
+    const sky = { id: `custom-${Date.now()}`, name, icon, style, description: 'A personal space defined by you.' };
     setSkies((prev) => [...prev, sky]);
     return sky;
   };
 
-  const handleUpdateSky = (skyId, data) => {
-    setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)));
-    setClouds((prev) => prev.map((c) => (c.skyId === skyId ? { ...c, skyName: data.name } : c)));
-  };
-
-  const handleMove = (cloudId, skyId) => {
-    const sky = skies.find((s) => s.id === skyId);
-    setClouds((prev) => prev.map((c) => (c.id === cloudId ? { ...c, skyId, skyName: sky?.name } : c)));
+  // "Done!" on Cloud ready — for a new recording or an edited cloud
+  const handleReadyDone = (base, { label, favorite, summary, skyId, newSky }) => {
+    const sky = newSky ? createSky(newSky) : skies.find((s) => s.id === skyId);
+    const cloud = { ...base, label, favorite, summary: summary ?? null, skyId: sky?.id ?? null };
+    setClouds((prev) => (prev.some((c) => c.id === cloud.id) ? prev.map((c) => (c.id === cloud.id ? cloud : c)) : [...prev, cloud]));
+    // showCloud needs the new sky's index: it is appended last
+    if (newSky) {
+      setSkyView('mine');
+      setMyIndex(skies.length + 1); // the new sky is last, after Favorites + the existing ones
+      arrive(cloud.id);
+    } else showCloud(cloud);
+    setDraft(null);
+    setEditingId(null);
+    showToast({ icon: 'check', message: sky ? `Saved to ${sky.name}` : 'Saved to your Time Sky' });
+    goTo('sky');
   };
 
   // Removing a voice is easy to regret — it goes at once, with Undo for a few seconds
-  const handleDelete = (cloudId) => {
-    const at = clouds.findIndex((c) => c.id === cloudId);
-    const removed = clouds[at];
-    setClouds((prev) => prev.filter((c) => c.id !== cloudId));
-    goTo('sky', true);
-    if (removed) {
-      showToast({
-        icon: 'bin',
-        message: 'Thought removed',
-        action: 'Undo',
-        duration: 6000,
-        onAction: () => setClouds((prev) => [...prev.slice(0, at), removed, ...prev.slice(at)]),
-      });
-    }
+  const deleteCloud = (cloud) => {
+    const at = clouds.findIndex((c) => c.id === cloud.id);
+    setClouds((prev) => prev.filter((c) => c.id !== cloud.id));
+    showToast({
+      icon: 'bin',
+      message: 'Thought removed',
+      action: 'Undo',
+      duration: 6000,
+      onAction: () => setClouds((prev) => [...prev.slice(0, at), cloud, ...prev.slice(at)]),
+    });
   };
 
-  const openCloud = (cloud, backdrop) => {
-    setSelectedId(cloud.id);
-    setDetailSky(backdrop ?? getSkyPeriod(new Date(cloud.timestamp)));
-    goTo('detail', true);
+  const discardDraft = () => {
+    const kept = draft;
+    setDraft(null);
+    goTo('sky');
+    showToast({
+      icon: 'bin',
+      message: 'Thought discarded',
+      action: 'Undo',
+      duration: 6000,
+      onAction: () => {
+        setDraft(kept);
+        goTo('ready');
+      },
+    });
   };
 
   const screens = {
-    widget: (
-      <WidgetScreen
+    lock: (
+      <LockScreen
         period={period}
-        clouds={clouds}
-        onOpenSky={(p) => {
-          // A period from "Today's skies" opens that sky of today in Time Sky
-          if (p) {
-            setSkyView('time');
-            setTimeNav({ date: dateKey(), period: p });
-          }
+        onOpenSky={() => {
+          setSkyView('time');
+          setTimeNav({ date: dateKey(), period: getSkyPeriod() });
           goTo('sky');
         }}
         onAddThought={() => startRecording(period)}
+        onOpenAbout={() => setAboutOpen(true)}
       />
     ),
     sky: (
       <SkyScreen
         clouds={clouds}
-        skies={skies}
+        skies={mySkies}
         view={skyView}
         setView={setSkyView}
         timeNav={timeNav}
@@ -163,28 +169,40 @@ export default function App() {
         myIndex={myIndex}
         setMyIndex={setMyIndex}
         newCloudId={newCloudId}
-        onCreateSky={handleCreateSky}
-        onUpdateSky={handleUpdateSky}
         leaving={leaving}
         onAddThought={(sky) => startRecording(sky, true)}
-        onOpenCloud={openCloud}
-        onOpenAbout={() => setAboutOpen(true)}
-      />
-    ),
-    record: <RecordScreen sky={recordSky} onBack={() => goTo('sky')} onDone={handleRecorded} />,
-    created: draft && (
-      <CloudCreatedScreen
-        draft={draft}
-        sky={recordSky}
-        onBack={() => {
-          setDraft(null);
-          goTo('record', true);
+        onEditCloud={(cloud) => {
+          setEditingId(cloud.id);
+          goTo('edit');
         }}
-        onNext={handleLabel}
+        onFavorite={(cloud) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, favorite: !c.favorite } : c)))}
+        onDeleteCloud={deleteCloud}
+        onMoveCloud={(cloud, view, pos) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, pos: { ...c.pos, [view]: pos } } : c)))}
+        onCreateSky={createSky}
+        onUpdateSky={(skyId, data) => (skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s))))}
       />
     ),
-    place: draft && <PlaceScreen clouds={clouds} skies={skies} sky={recordSky} onBack={() => goTo('created', true)} onChoose={handlePlace} onCreateSky={handleCreateSky} />,
-    detail: selected && <CloudDetailScreen cloud={selected} skies={skies} backdrop={detailSky} onBack={() => goTo('sky', true)} onMove={handleMove} onDelete={handleDelete} />,
+    record: <RecordScreen sky={recordSky} onDone={handleRecorded} />,
+    ready: draft && <CloudReadyScreen key={draft.id} cloud={draft} skies={skies} backdrop={recordSky ?? period} onDone={(v) => handleReadyDone(draft, v)} onDiscard={discardDraft} />,
+    edit: editing && (
+      <CloudReadyScreen
+        key={editing.id}
+        mode="edit"
+        cloud={editing}
+        skies={skies}
+        backdrop={skyStyleOf(editing)}
+        onDone={(v) => handleReadyDone(editing, v)}
+        onCancel={() => {
+          setEditingId(null);
+          goTo('sky', true); // nothing changed — back to the same sky, same spot
+        }}
+        onDiscard={() => {
+          setEditingId(null);
+          goTo('sky');
+          deleteCloud(editing);
+        }}
+      />
+    ),
   };
 
   return (

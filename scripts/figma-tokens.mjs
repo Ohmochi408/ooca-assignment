@@ -9,9 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { unzipSync, inflateSync } from 'fflate';
-import { decompress as zstdDecompress } from 'fzstd';
-import * as kiwi from 'kiwi-schema';
+import { readFig, guid } from './fig-read.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_FIG = 'ooca CI for UX_UI Assignment (Copy).fig';
@@ -23,32 +21,9 @@ const figArg = args.includes('--fig') ? args[args.indexOf('--fig') + 1] : DEFAUL
 const FIG = path.resolve(ROOT, figArg);
 
 // ---------------------------------------------------------------------------
-// .fig decoding: zip -> canvas.fig -> "fig-kiwi" header + [schema, message] chunks
-// ---------------------------------------------------------------------------
-
-function readFigNodes(file) {
-  const zip = unzipSync(fs.readFileSync(file));
-  const canvas = Buffer.from(zip['canvas.fig']);
-  const meta = zip['meta.json'] ? JSON.parse(Buffer.from(zip['meta.json']).toString('utf8')) : {};
-  if (canvas.subarray(0, 8).toString() !== 'fig-kiwi') throw new Error('canvas.fig is not a fig-kiwi file');
-
-  const chunks = [];
-  for (let o = 12; o < canvas.length; ) {
-    const len = canvas.readUInt32LE(o);
-    chunks.push(canvas.subarray(o + 4, o + 4 + len));
-    o += 4 + len;
-  }
-  const inflate = (c) => (c[0] === 0x28 && c[1] === 0xb5 ? zstdDecompress(c) : inflateSync(c));
-  const schema = kiwi.compileSchema(kiwi.decodeBinarySchema(inflate(chunks[0])));
-  const message = schema.decodeMessage(inflate(chunks[1]));
-  return { nodes: message.nodeChanges, meta };
-}
-
-// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-const guid = (g) => (g ? `${g.sessionID}:${g.localID}` : null);
 const to255 = (x) => Math.round(x * 255);
 const hex = ({ r, g, b }) => '#' + [r, g, b].map((x) => to255(x).toString(16).padStart(2, '0')).join('').toUpperCase();
 const rgba = (c, opacity = 1) => {
@@ -92,7 +67,6 @@ function colorToken(name) {
 // ---------------------------------------------------------------------------
 
 function extract(nodes, meta) {
-  const byId = new Map(nodes.map((n) => [guid(n.guid), n]));
   const children = new Map();
   for (const n of nodes) {
     const p = guid(n.parentIndex?.guid);
@@ -317,8 +291,7 @@ function buildCss(t) {
 }
 
 function publicJson(t) {
-  const { _colorByValue, ...rest } = t;
-  return JSON.stringify(rest, null, 2) + '\n';
+  return JSON.stringify({ ...t, _colorByValue: undefined }, null, 2) + '\n';
 }
 
 // ---------------------------------------------------------------------------
@@ -430,7 +403,7 @@ function auditSource(t) {
 
 // ---------------------------------------------------------------------------
 
-const { nodes, meta } = readFigNodes(FIG);
+const { nodes, meta } = readFig(FIG);
 const tokens = extract(nodes, meta);
 
 if (args.includes('--write')) {

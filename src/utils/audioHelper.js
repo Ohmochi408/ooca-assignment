@@ -1,4 +1,4 @@
-// Audio utility for real MediaRecorder and audible relaxing ambient chime/voice synthesizer
+// Shared Web Audio context, the soft chime played when a thought has no voice, and blob → data URL for storage
 
 let audioCtx = null;
 
@@ -79,10 +79,16 @@ export async function playSynthesizedHum(durationSec = 5, onEnd = null) {
         masterGain.gain.linearRampToValueAtTime(0.0001, stopTime + 0.1);
         setTimeout(() => {
           oscs.forEach((o) => {
-            try { o.stop(); } catch (e) {}
+            try {
+              o.stop();
+            } catch {
+              // already stopped
+            }
           });
         }, 120);
-      } catch (e) {}
+      } catch {
+        // context closed — nothing left to fade
+      }
     };
   } catch (err) {
     console.warn('Audio playback error:', err);

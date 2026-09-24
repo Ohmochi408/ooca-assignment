@@ -19,12 +19,12 @@ export default function AboutSheet({ onClose }) {
         </section>
         <section>
           <h3 className="text-subheader1 text-bluegray-800 mb-1">AI: assistance, not interpretation</h3>
-          <p className="text-body3 text-bluegray-600">AI only suggests a short label such as "Tomorrow's presentation". It never diagnoses, predicts moods, or names an emotion. The user decides what a thought means.</p>
+          <p className="text-body3 text-bluegray-600">AI suggests a short name such as "Tomorrow's presentation" and, for longer voices, sums up what was said in a few plain points — helpful when someone talks a lot. It never diagnoses, predicts moods, or names an emotion; the name can always be changed and the summary folded away. The user decides what a thought means. (In this prototype the AI is a stand-in with sample answers.)</p>
         </section>
         <section>
           <h3 className="text-subheader1 text-bluegray-800 mb-1">The sky</h3>
           <p className="text-body3 text-bluegray-600">
-            <strong>Time Sky</strong> lays clouds out by when they happened, under a sky that follows the real time of day. <strong>My Skies</strong> are spaces the user names — "the system provides the space; the user defines the meaning."
+            Each thought you say out loud appears as a small cloud — a Mooca. <strong>Time Sky</strong> lays thoughts out by when they happened, under a sky that follows the real time of day. <strong>My Skies</strong> are spaces the user names — "the system provides the space; the user defines the meaning."
           </p>
         </section>
       </div>

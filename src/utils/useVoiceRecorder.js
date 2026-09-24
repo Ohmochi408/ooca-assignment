@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { blobToDataURL, getAudioContext } from './audioHelper';
 
 export const MAX_RECORDING_SEC = 60;
-const WAVE_BARS = 9;
 
-// Records from the microphone with MediaRecorder and samples the input level for a live waveform.
+// Records from the microphone with MediaRecorder and samples the input level (10× a second) for live feedback.
 // If the mic is unavailable (denied / unsupported), it still times the "recording" so the flow keeps working.
 export default function useVoiceRecorder() {
   const [phase, setPhase] = useState('idle'); // idle | recording | saved
   const [elapsed, setElapsed] = useState(0);
-  const [levels, setLevels] = useState(() => Array(WAVE_BARS).fill(0.15));
+  // A new object per sample, so the screen hears every sample — even a run of identical silent ones
+  const [sample, setSample] = useState({ level: 0, at: 0 });
   const [audioUrl, setAudioUrl] = useState(null);
   // asking (permission prompt open) | on | off — known as soon as recording starts, not after
   const [mic, setMic] = useState('asking');
@@ -19,8 +19,8 @@ export default function useVoiceRecorder() {
   const streamRef = useRef(null);
   const timerRef = useRef(null);
   const levelTimerRef = useRef(null);
-  const samplesRef = useRef([]);
   const activeRef = useRef(false);
+  const takeRef = useRef(0); // bumps on every start/reset, so a late mic answer from an older take is ignored
 
   const cleanup = () => {
     clearInterval(timerRef.current);
@@ -47,12 +47,12 @@ export default function useVoiceRecorder() {
     setElapsed(0);
     setAudioUrl(null);
     setMic('asking');
-    setLevels(Array(WAVE_BARS).fill(0.15));
+    setSample({ level: 0, at: 0 });
     chunksRef.current = [];
-    samplesRef.current = [];
     recorderRef.current = null;
     setPhase('recording');
     activeRef.current = true;
+    const take = ++takeRef.current;
 
     const startedAt = Date.now();
     timerRef.current = setInterval(() => {
@@ -63,6 +63,10 @@ export default function useVoiceRecorder() {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (take !== takeRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       if (!activeRef.current) {
         // Stopped while the permission prompt was open — nothing was recorded
         stream.getTracks().forEach((t) => t.stop());
@@ -84,6 +88,11 @@ export default function useVoiceRecorder() {
       recorder.start();
 
       const ctx = await getAudioContext();
+      // Browsers keep audio locked until a tap; if the unlock from the mic button has expired, finish it on the next tap
+      if (ctx && ctx.state !== 'running') {
+        const unlock = () => ctx.resume();
+        window.addEventListener('pointerdown', unlock, { once: true });
+      }
       if (ctx) {
         const analyser = ctx.createAnalyser();
         analyser.fftSize = 512;
@@ -93,19 +102,21 @@ export default function useVoiceRecorder() {
           analyser.getByteTimeDomainData(buf);
           let sum = 0;
           for (const v of buf) sum += ((v - 128) / 128) ** 2;
-          const level = Math.min(1, Math.sqrt(sum / buf.length) * 4);
-          samplesRef.current.push(level);
-          setLevels((prev) => [...prev.slice(1), Math.max(0.12, level)]);
+          // RMS of normal speech is ~0.02–0.15, so scale it up to a 0…1 level that reacts to a quiet voice too
+          const level = Math.min(1, Math.sqrt(sum / buf.length) * 7);
+          setSample({ level, at: Date.now() });
         }, 100);
       }
     } catch (err) {
+      if (take !== takeRef.current) return;
       console.warn('Microphone unavailable — continuing without audio:', err);
-      setMic('off'); // no fake waveform: the screen says plainly that nothing is being heard
+      setMic('off'); // no fake level: the screen says plainly that nothing is being heard
     }
   };
 
   // Throw the take away and go back to idle
   const reset = () => {
+    takeRef.current++;
     activeRef.current = false;
     cleanup();
     setPhase('idle');
@@ -113,16 +124,5 @@ export default function useVoiceRecorder() {
     setAudioUrl(null);
   };
 
-  // Downsample the whole recording into a small waveform stored with the cloud
-  const waveform = () => {
-    const s = samplesRef.current;
-    if (!s.length) return Array.from({ length: WAVE_BARS }, () => 25 + Math.round(Math.random() * 60));
-    return Array.from({ length: WAVE_BARS }, (_, i) => {
-      const chunk = s.slice(Math.floor((i * s.length) / WAVE_BARS), Math.floor(((i + 1) * s.length) / WAVE_BARS));
-      const peak = chunk.length ? Math.max(...chunk) : 0;
-      return Math.round(20 + peak * 80);
-    });
-  };
-
-  return { phase, elapsed, levels, audioUrl, mic, micAvailable: mic !== 'off', start, stop, reset, waveform };
+  return { phase, elapsed, sample, audioUrl, mic, start, stop, reset };
 }

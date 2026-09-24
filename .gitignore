@@ -30,3 +30,12 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Personal notes (kept locally, not part of the submission)
+*.pdf
+
+# Working files: design screenshots, raw exports and source images
+Design Screen/
+Mooca/
+sky-exports/
+Lock screen shortcut.png

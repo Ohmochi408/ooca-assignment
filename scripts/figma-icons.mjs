@@ -12,12 +12,16 @@ import { fileURLToPath } from 'node:url';
 import { readFig, guid } from './fig-read.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const FIG = path.join(ROOT, 'ooca CI for UX_UI Assignment (Copy).fig');
+const FIG = path.join(ROOT, 'ooca CI for UX_UI Assignment_Latest Ver..fig');
 const OUT = path.join(ROOT, 'src', 'icons', 'ooca-icons.js');
 
 // slug used in code → Figma component name
 export const ICONS = {
   mic: 'Icon/Microphone/On/Regular',
+  'mic-bold': 'Icon/Microphone/On/Bold',
+  'chevron-down': 'Icon/Arrow/Small/Open',
+  'edit-square': 'Icon/Edit/Regular',
+  'magic-bold': 'Icon/Magic wand/Bold',
   play: 'Icon/Video/Play/Bold',
   pause: 'Icon/Pause/Bold',
   'arrow-left': 'Icon/Arrow/Small/Left',
@@ -28,6 +32,8 @@ export const ICONS = {
   grid: 'Icon/Dashboard/Regular',
   list: 'Icon/List/Regular',
   add: 'Icon/Add/Circle/Regular',
+  'add-bold': 'Icon/Add/Circle/Bold',
+  'grid-bold': 'Icon/Dashboard/Bold',
   check: 'Icon/Check/Circle/Bold',
   bin: 'Icon/Bin/Regular',
   close: 'Icon/Close',
@@ -38,6 +44,8 @@ export const ICONS = {
   sunrise: 'Icon/Sunrise/Regular',
   favorite: 'Icon/Favorite/Regular',
   lock: 'Icon/Lock/Regular',
+  'lock-bold': 'Icon/Lock/Bold',
+  wifi: 'Icon/Wifi1/Bold',
   folder: 'Icon/Floder file/Regular',
   home: 'Icon/Home/Regular',
   music: 'Icon/Music note/Regular',

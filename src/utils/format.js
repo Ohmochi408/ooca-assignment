@@ -1,6 +1,5 @@
+// Counts always read "N thought(s)" — one fixed wording, so no singular/plural logic to get wrong.
+// (On screen the object is a *thought*; a cloud is just how it looks.)
+export const cloudCount = (n) => `${n} thought(s)`;
+
 export const formatDuration = (sec = 0) => `${Math.floor(sec / 60)}:${String(Math.round(sec) % 60).padStart(2, '0')}`;
-
-export const formatTime = (ms) => new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-
-export const formatNow = (d = new Date()) =>
-  `${d.toLocaleDateString([], { weekday: 'long' })} · ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;

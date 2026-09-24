@@ -18,5 +18,3 @@ export default function Icon({ name, size = 24, className = '', title }) {
     </svg>
   );
 }
-
-export const ICON_NAMES = Object.keys(ICONS);

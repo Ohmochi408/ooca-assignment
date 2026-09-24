@@ -3,6 +3,7 @@ import Icon from './Icon';
 import Sheet from './Sheet';
 import { SKY_PERIODS, getSkyPeriod } from '../utils/skyPeriods';
 import { dateKey, fromKey } from '../utils/dates';
+import { cloudCount } from '../utils/format';
 
 // Pick a day (days with clouds are marked) and one of the six skies of that day.
 export default function CalendarSheet({ date, period, clouds, onApply, onClose }) {
@@ -68,7 +69,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
         )}
       </div>
 
-      <p className="text-body4 text-bluegray-600 uppercase mb-2">Sky</p>
+      <p className="text-body4 uppercase text-bluegray-600 mb-2">Sky</p>
       <div className="grid grid-cols-6 gap-1.5 mb-6">
         {SKY_PERIODS.map((p) => {
           const n = byDay[day]?.[p.id] ?? 0;
@@ -76,14 +77,14 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
             <button key={p.id} onClick={() => setSky(p.id)} aria-pressed={sky === p.id} className={`flex flex-col items-center gap-1 p-1.5 rounded-ooca-8 border-2 cursor-pointer ${sky === p.id ? 'border-turquoise-500 bg-turquoise-50' : 'border-transparent hover:bg-gray-100'}`}>
               <span className={`sky-${p.id} w-9 h-9 rounded-full`} />
               <span className="text-small text-bluegray-700">{p.label}</span>
-              <span className="text-small text-bluegray-600">{n ? `${n} cloud${n > 1 ? 's' : ''}` : '–'}</span>
+              <span className="text-small text-bluegray-600">{n ? cloudCount(n) : '–'}</span>
             </button>
           );
         })}
       </div>
 
       <div className="flex items-center gap-3">
-        <button onClick={() => onApply(today, getSkyPeriod())} className="ooca-btn ooca-btn-secondary ooca-btn-turquoise flex-1">Today</button>
+        <button onClick={() => onApply(today, getSkyPeriod())} className="ooca-btn ooca-btn-secondary ooca-btn-turquoise flex-1">Now</button>
         <button onClick={() => onApply(day, sky)} className="ooca-btn ooca-btn-primary ooca-btn-turquoise flex-[2]">Show this sky</button>
       </div>
     </Sheet>

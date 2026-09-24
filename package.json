@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tokens": "node scripts/figma-tokens.mjs --write",
     "tokens:check": "node scripts/figma-tokens.mjs --check",
-    "icons": "node scripts/figma-icons.mjs"
+    "icons": "node scripts/figma-icons.mjs",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -31,10 +32,15 @@
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
     "fflate": "^0.8.3",
     "fzstd": "^0.1.1",
+    "globals": "^17.12.0",
     "kiwi-schema": "^0.5.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.0"

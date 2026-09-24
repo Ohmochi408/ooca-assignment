@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icon';
 
@@ -8,8 +8,10 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
 // Modal: focus moves in, Tab stays inside, Escape closes, focus returns to what opened it.
 export default function Sheet({ title, subtitle, onClose, children }) {
   const panel = useRef(null);
-  const closeRef = useRef(onClose);
-  closeRef.current = onClose;
+  const closeRef = useRef(onClose); // the key handler always calls the latest onClose
+  useLayoutEffect(() => {
+    closeRef.current = onClose;
+  });
 
   useEffect(() => {
     const opener = document.activeElement;
@@ -53,7 +55,7 @@ export default function Sheet({ title, subtitle, onClose, children }) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="pt-2.5 min-w-0">
             <h2 className="text-h4 text-bluegray-800">{title}</h2>
-            {subtitle && <p className="text-body4 text-bluegray-600 mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-body3 text-bluegray-600 mt-1">{subtitle}</p>}
           </div>
           <button onClick={onClose} aria-label="Close" className="-mr-2 w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-bluegray-500 hover:bg-gray-100 cursor-pointer">
             <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
