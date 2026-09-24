@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tokens": "node scripts/figma-tokens.mjs --write",
+    "tokens:check": "node scripts/figma-tokens.mjs --check",
+    "icons": "node scripts/figma-icons.mjs"
   },
   "repository": {
     "type": "git",
@@ -23,14 +26,16 @@
   "author": "Wittawin Archanuparb (Ohmochi408)",
   "license": "MIT",
   "dependencies": {
-    "canvas-confetti": "^1.9.4",
-    "lucide-react": "^1.47.0",
+    "@fontsource/prompt": "^5.3.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",
+    "fflate": "^0.8.3",
+    "fzstd": "^0.1.1",
+    "kiwi-schema": "^0.5.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.0"
   }

@@ -1,0 +1,10 @@
+{
+  "description": "This web app offers a calming mental health experience, guiding users through a simple reflection process to acknowledge their feelings and choose their next steps.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,92 +1,76 @@
 @import "tailwindcss";
+@import "./styles/ooca-tokens.css";
+@import "./styles/sky.css";
 
 @layer base {
   body {
-    font-family: 'Nunito', 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Custom Floating Animations */
-@keyframes float-slow {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(1deg);
-  }
+/* Screen change */
+.screen-fade {
+  animation: screen-fade-in 0.35s ease both;
+}
+@keyframes screen-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float-gentle {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-6px) scale(1.02);
-  }
+/* Gentle float for the opened cloud */
+.cloud-float {
+  animation: cloud-float 4s ease-in-out infinite;
+}
+@keyframes cloud-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-@keyframes pulse-soft {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.85;
-  }
-  50% {
-    transform: scale(1.06);
-    opacity: 1;
-  }
+/* Newly placed cloud pops into the sky */
+.cloud-pop {
+  animation: cloud-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes cloud-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-@keyframes ripple {
-  0% {
-    transform: scale(0.9);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
+/* Sky → Record: everything in front of the sky falls away, the sky itself stays */
+.fg {
+  transition: transform 0.55s cubic-bezier(0.55, 0, 0.8, 0.2), opacity 0.45s ease-in;
+  transition-delay: var(--fg-delay, 0ms);
+}
+.sky-leaving .fg {
+  transform: translateY(900px);
+  opacity: 0;
+  pointer-events: none;
 }
 
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+/* …then the record screen's elements rise in over that same sky */
+.rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-float-gentle {
-  animation: float-gentle 4.5s ease-in-out infinite;
+/* Opacity-only fade (the record screen's darkening layer) */
+.fade-in {
+  animation: fade-in 0.6s ease both;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.animate-pulse-soft {
-  animation: pulse-soft 2.5s ease-in-out infinite;
+@media (prefers-reduced-motion: reduce) {
+  .screen-fade, .cloud-float, .cloud-pop, .rise-in, .fade-in { animation: none; }
+  .fg { transition: none; }
 }
 
-.animate-ripple {
-  animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-panel-dark {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 9999px;
-}
+/* Hide scrollbars inside the phone frame */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
