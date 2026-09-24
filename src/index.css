@@ -2,6 +2,11 @@
 @import "./styles/ooca-tokens.css";
 @import "./styles/sky.css";
 
+/* Short screens (a phone turned sideways, a small laptop window): tighter vertical layouts */
+@custom-variant short (@media (max-height: 540px));
+/* Room for the lock screen's phone frame: wide enough and tall enough (a phone turned sideways is neither) */
+@custom-variant framed (@media (min-width: 640px) and (min-height: 541px));
+
 @layer base {
   body {
     font-family: var(--font-sans);
@@ -76,7 +81,7 @@
   transition-delay: var(--fg-delay, 0ms);
 }
 .sky-leaving .fg {
-  transform: translateY(900px);
+  transform: translateY(110vh);
   opacity: 0;
   pointer-events: none;
 }

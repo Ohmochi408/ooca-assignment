@@ -76,14 +76,14 @@ export default function RecordScreen({ sky, onDone }) {
       <SkyBackground period={sky} />
       <div className="fade-in absolute inset-x-0 bottom-0 h-[132px] bg-gradient-to-b from-transparent via-white/30 to-white/60" aria-hidden="true" />
 
-      <div className="relative h-full flex flex-col items-center px-6 pt-8 pb-[108px]">
+      <div className="relative h-full flex flex-col items-center px-6 pt-8 pb-[108px] short:pt-4 short:pb-20">
         <div style={riseDelay(0)} className="rise-in text-center">
           <h1 className="text-h4 text-white">What’s on your mind?</h1>
           <p className="text-body1 text-turquoise-50 mt-2 max-w-[260px]">Say it. Hum it. Sigh it. It doesn't have to make sense</p>
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center gap-10 w-full" aria-live="polite">
-          <div style={riseDelay(90)} className="rise-in relative -mb-14">
+        <div className="flex-1 flex flex-col items-center justify-center gap-10 short:gap-2 w-full" aria-live="polite">
+          <div style={riseDelay(90)} className="rise-in relative -mb-14 lg:scale-125 lg:my-6 short:scale-75 short:-my-10">
             {/* Rings sit behind the cloud body (176×112 at 40,15 inside the 256×192 image) */}
             <div className="absolute left-[40px] top-[15px] w-[176px] h-[112px] pointer-events-none" aria-hidden="true">
               <div className="absolute -inset-3 bg-white/40 blur-xl transition-opacity duration-150" style={{ borderRadius: '50%', opacity: live ? Math.min(1, level * 1.6) : 0 }} />
@@ -116,7 +116,7 @@ export default function RecordScreen({ sky, onDone }) {
         </div>
       </div>
 
-      <div style={riseDelay(240)} className="rise-in absolute bottom-[108px] inset-x-0 flex justify-center">
+      <div style={riseDelay(240)} className="rise-in absolute bottom-[108px] short:bottom-4 inset-x-0 flex justify-center">
         <button
           onClick={rec.stop}
           disabled={phase !== 'recording'}

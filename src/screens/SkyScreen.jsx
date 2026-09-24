@@ -4,6 +4,7 @@ import Tip from '../components/Tip';
 import RoundButton from '../components/RoundButton';
 import TimeSky from './sky/TimeSky';
 import MySkies from './sky/MySkies';
+import { RECORD, TOGGLE } from './sky/layout';
 
 // Ideate2 → Main Design: the sky screen — Time Sky or My Sky, with the record button and the view toggle.
 // Which sky is on screen (timeNav / myIndex) lives in App, so it is kept while visiting other screens.
@@ -69,7 +70,7 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
       <div className="fg absolute inset-x-0 bottom-0 h-[260px] pointer-events-none z-10 bg-[radial-gradient(400px_400px_at_50%_calc(100%+250px),var(--color-white),color-mix(in_srgb,var(--color-white)_50%,transparent)_50%,transparent)]" aria-hidden="true" />
 
       {/* Record */}
-      <div className="fg absolute bottom-[107px] inset-x-0 z-30 flex justify-center pointer-events-none">
+      <div className={RECORD}>
         <Tip label="Record a thought" className="pointer-events-auto">
           <button
             onClick={() => onAddThought(currentSky)}
@@ -85,7 +86,7 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
       </div>
 
       {/* Toggle (+ My Sky: all skies / new sky) */}
-      <div className="fg absolute bottom-[34px] inset-x-4 z-30 flex items-center justify-center">
+      <div className={TOGGLE}>
         {view === 'mine' && (
           <RoundButton size={40} label={showAll ? 'Back to one sky' : 'Show all skies'} tip={showAll ? 'One sky' : 'All skies'} tipSide="top-start" place="absolute left-0" pressed={showAll} onClick={() => setShowAll((s) => !s)} className={showAll ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}>
             <Icon name="grid" size={20} />

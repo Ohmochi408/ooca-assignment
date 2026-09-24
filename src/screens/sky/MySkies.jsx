@@ -8,6 +8,7 @@ import SkyBackground from '../../components/SkyBackground';
 import CloudField from '../../components/CloudField';
 import SkyFormSheet from '../../components/SkyFormSheet';
 import { cloudCount } from '../../utils/format';
+import { HEADER, ARROWS } from './layout';
 
 const shortDate = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
 
@@ -41,13 +42,15 @@ export default function MySkies({ clouds, skies, index, setIndex, cloudProps, on
   if (showAll) {
     return (
       <div className="absolute inset-0 bg-gray-100 overflow-y-auto pb-40">
-        <div className="sticky top-0 z-10 bg-gray-100/90 backdrop-blur-sm px-4 pt-8 pb-3">
-          <h1 className="text-h4 text-black">All skies</h1>
-          <p className="text-body1 text-bluegray-600 mt-2">
-            {skies.filter((s) => !s.system).length} skies · {cloudCount(clouds.filter((c) => c.skyId).length)}
-          </p>
+        <div className="sticky top-0 z-10 bg-gray-100/90 backdrop-blur-sm px-4 pt-8 pb-3 short:pt-4">
+          <div className="mx-auto max-w-[960px]">
+            <h1 className="text-h4 text-black">All skies</h1>
+            <p className="text-body1 text-bluegray-600 mt-2">
+              {skies.filter((s) => !s.system).length} skies · {cloudCount(clouds.filter((c) => c.skyId).length)}
+            </p>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 px-4 pb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 pb-6 mx-auto max-w-[992px]">
           {skies.map((s, k) => {
             const list = inSky(s);
             return (
@@ -105,7 +108,7 @@ export default function MySkies({ clouds, skies, index, setIndex, cloudProps, on
         )}
       />
 
-      <div className="fg absolute top-8 left-4 right-4 z-30 flex items-start justify-between gap-3" style={{ '--fg-delay': '180ms' }}>
+      <div className={HEADER} style={{ '--fg-delay': '180ms' }}>
         <div className="min-w-0">
           <h1 className="flex items-center gap-2 text-h4 text-white">
             <Icon name={sky.icon} size={24} className="shrink-0" />
@@ -119,7 +122,7 @@ export default function MySkies({ clouds, skies, index, setIndex, cloudProps, on
       </div>
 
       {/* Loops: after the last sky comes the first again */}
-      <div className="fg absolute bottom-[115px] inset-x-4 z-20 flex justify-between pointer-events-none [&>*]:pointer-events-auto" style={{ '--fg-delay': '60ms' }}>
+      <div className={ARROWS} style={{ '--fg-delay': '60ms' }}>
         <NavArrow dir="left" label="Previous sky" onClick={() => carousel.current?.step(-1)} hidden={skies.length < 2} />
         <NavArrow dir="right" label="Next sky" onClick={() => carousel.current?.step(1)} hidden={skies.length < 2} />
       </div>

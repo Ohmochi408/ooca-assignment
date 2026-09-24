@@ -10,6 +10,7 @@ import CalendarSheet from '../../components/CalendarSheet';
 import { SKY_PERIODS, periodById, periodIndex, getSkyPeriod } from '../../utils/skyPeriods';
 import { dateKey, addDays, formatLongDate } from '../../utils/dates';
 import { cloudCount } from '../../utils/format';
+import { HEADER, ARROWS } from './layout';
 
 const hhmm = (ms) => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
@@ -46,7 +47,7 @@ export default function TimeSky({ clouds, nav, setNav, cloudProps, onMoveCloud, 
         }}
       />
 
-      <div className="fg absolute top-8 left-4 right-4 z-30 flex items-start justify-between gap-3" style={{ '--fg-delay': '180ms' }}>
+      <div className={HEADER} style={{ '--fg-delay': '180ms' }}>
         <button onClick={() => setCalendarOpen(true)} className="text-left min-w-0 cursor-pointer" aria-label={`${formatLongDate(nav.date)}, ${period.label} — choose another day`}>
           <h1 className="text-h4 text-white">{formatLongDate(nav.date)}</h1>
           <p className="text-body1 text-turquoise-50 mt-2">
@@ -71,7 +72,7 @@ export default function TimeSky({ clouds, nav, setNav, cloudProps, onMoveCloud, 
         </div>
       </div>
 
-      <div className="fg absolute bottom-[115px] inset-x-4 z-20 flex justify-between pointer-events-none [&>*]:pointer-events-auto" style={{ '--fg-delay': '60ms' }}>
+      <div className={ARROWS} style={{ '--fg-delay': '60ms' }}>
         <NavArrow dir="left" label="Previous day" onClick={() => shiftDay(-1)} />
         <NavArrow dir="right" label="Next day" onClick={() => shiftDay(1)} hidden={nav.date >= today} />
       </div>

@@ -6,6 +6,7 @@ import { scrollBehavior } from '../utils/motion';
 // Thoughts drift left and right down the sky (Figma: 55% / 44% on Time Sky, 36% / 63% on My Sky) until the user moves them
 const DRIFT = [55, 40, 62, 44, 58, 38];
 const ROW = 236; // Mooca + card + breathing room
+const COLUMN = 300; // one more column of thoughts for every 300px of width (up to 4)
 const ITEM = 200; // item width
 const GAP = 12; // items keep at least this much air between them
 const EDGE = 8; // side margin
@@ -85,9 +86,18 @@ export default function CloudField({ clouds, metaOf, empty = EMPTY_SKY, cloudPro
   // the saved value itself isn't changed.
   const layout = {};
   const placed = [];
+  // Default spot: one drifting column on a phone; on wider screens a few columns, every other one a little lower,
+  // so they read as clouds scattered over the sky rather than a grid
+  // (never more columns than thoughts, so two thoughts spread over the sky instead of bunching on one side)
+  const cols = clamp(Math.min(Math.floor((width - 2 * EDGE) / COLUMN), sorted.length), 1, 4);
   const home = (c, i) => {
     const p = c.pos?.[view];
-    return p ? { left: leftOf(p.x), top: p.y } : { left: leftOf(DRIFT[i % DRIFT.length] / 100), top: 12 + i * ROW };
+    if (p) return { left: leftOf(p.x), top: p.y };
+    if (cols === 1) return { left: leftOf(DRIFT[i % DRIFT.length] / 100), top: 12 + i * ROW };
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const jitter = ((DRIFT[(i + row) % DRIFT.length] - 50) / 100) * 0.5; // ±~6% of a column
+    return { left: leftOf((col + 0.5 + jitter) / cols), top: 12 + row * ROW + (col % 2 ? ROW * 0.35 : 0) };
   };
   sorted
     .map((c, i) => ({ c, i }))
@@ -152,7 +162,7 @@ export default function CloudField({ clouds, metaOf, empty = EMPTY_SKY, cloudPro
     <div
       ref={box}
       data-cloud-list
-      className="fg absolute inset-x-0 top-[100px] bottom-[180px] overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-24px),transparent)]"
+      className="fg absolute inset-x-0 mx-auto max-w-[1100px] top-[100px] bottom-[180px] short:top-[76px] short:bottom-[72px] overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-24px),transparent)]"
       style={{ '--fg-delay': '120ms' }}
     >
       <div className="relative" style={{ height }}>

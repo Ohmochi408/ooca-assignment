@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import SkyBackground from './components/SkyBackground';
+import LockStage from './components/LockStage';
 import AboutSheet from './components/AboutSheet';
 import Toast from './components/Toast';
 import { randomMooca } from './data/moocas';
@@ -55,7 +55,7 @@ export default function App() {
   const [timeNav, setTimeNav] = useState(() => ({ date: dateKey(), period: getSkyPeriod() }));
   const [myIndex, setMyIndex] = useState(0);
 
-  // Ambient sky (lock screen + desktop backdrop) follows the real time of day
+  // Ambient sky (lock screen + its backdrop on larger screens) follows the real time of day
   const [period, setPeriod] = useState(() => getSkyPeriod());
   useEffect(() => {
     const t = setInterval(() => setPeriod(getSkyPeriod()), 60000);
@@ -145,15 +145,18 @@ export default function App() {
     });
   };
 
+  // Opening ooca from the lock screen always lands on the sky of right now
+  const openSkyNow = () => {
+    setSkyView('time');
+    setTimeNav({ date: dateKey(), period: getSkyPeriod() });
+    goTo('sky');
+  };
+
   const screens = {
     lock: (
       <LockScreen
         period={period}
-        onOpenSky={() => {
-          setSkyView('time');
-          setTimeNav({ date: dateKey(), period: getSkyPeriod() });
-          goTo('sky');
-        }}
+        onOpenSky={openSkyNow}
         onAddThought={() => startRecording(period)}
         onOpenAbout={() => setAboutOpen(true)}
       />
@@ -206,19 +209,21 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full flex items-center justify-center sm:p-6 bg-bluegray-900">
-      {/* Desktop backdrop: the current sky behind the phone frame */}
-      <SkyBackground period={period} className="hidden sm:block opacity-60" />
-
-      {/* ds-allow: 40px radius is the phone-frame mock, not a UI surface */}
-      <main className="relative w-full sm:max-w-[400px] h-[100dvh] sm:h-[820px] sm:rounded-[40px] overflow-hidden bg-gray-100 sm:shadow-elevation-8 sm:border-8 sm:border-bluegray-900">
-        <div key={screen} className={`h-full ${fadeScreens ? 'screen-fade' : ''}`}>
-          {screens[screen] ?? screens.sky}
-        </div>
-        <Toast toast={toast} onDismiss={hideToast} />
-        {aboutOpen && <AboutSheet onClose={() => setAboutOpen(false)} />}
-        <div id="sheet-root" />
-      </main>
-    </div>
+    // Full screen at every size: the sky fills the window, each screen lays its content out for the space it has.
+    // Only the lock screen (a phone idea) sits in a phone frame on larger screens.
+    <main className="relative h-[100dvh] w-full overflow-hidden bg-bluegray-900">
+      <div key={screen} className={`h-full ${fadeScreens ? 'screen-fade' : ''}`}>
+        {screen === 'lock' ? (
+          <LockStage period={period} onOpenWeb={openSkyNow} onOpenAbout={() => setAboutOpen(true)}>
+            {screens.lock}
+          </LockStage>
+        ) : (
+          screens[screen] ?? screens.sky
+        )}
+      </div>
+      <Toast toast={toast} onDismiss={hideToast} />
+      {aboutOpen && <AboutSheet onClose={() => setAboutOpen(false)} />}
+      <div id="sheet-root" />
+    </main>
   );
 }

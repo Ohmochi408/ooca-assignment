@@ -45,7 +45,8 @@ Thought → Voice → Cloud → Sky → Meaning → Look back
 - **Framework:** React 19 + Vite 8
 - **Design:** Figma **Ideate2 → Main Design** (the Latest `.fig`), built on the OOCA design system
 - **Screens** (`src/screens/`): Lock screen → Sky (Time Sky / My Sky) → Record → Cloud ready (listen back, AI name + summary, pick a sky) → back to the sky
-- **Styling:** Tailwind CSS v4, mobile-first with a phone frame on desktop; six time-of-day skies in `src/styles/sky.css` built only from OOCA color tokens
+- **Styling:** Tailwind CSS v4, six time-of-day skies in `src/styles/sky.css` built only from OOCA color tokens
+- **Responsive:** full screen at every size — the sky fills the window and thoughts spread into 1–4 staggered columns as it widens; Cloud ready becomes two columns (listen | decide) on large screens; sheets become centred dialogs; a phone turned sideways gets a compact layout. Only the lock screen, a phone idea, sits in a phone frame on larger screens (with “Open on web”)
 - **Audio Engine:** `MediaRecorder` capture with a live input level (Web Audio `AnalyserNode`) driving the voice rings, voice saved as a data URL in localStorage, soft synthesized chime when there is no recording
 - **Accessibility:** every icon button has a label and a tooltip, keyboard focus rings, modal sheets trap focus, sliders and pagers work with the keyboard, reduced-motion respected
 - **Design Tokens:** Generated straight from the OOCA CI `.fig` file (101 colors, 39 EN/TH text styles, 8 elevations, radii, Button variants) — see [Design System parity](#-design-system-parity)

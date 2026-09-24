@@ -4,7 +4,7 @@ import Icon from './Icon';
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-// Bottom sheet over the whole phone frame (portals into #sheet-root in App).
+// Bottom sheet on phones, centred dialog on larger screens (portals into #sheet-root in App).
 // Modal: focus moves in, Tab stays inside, Escape closes, focus returns to what opened it.
 export default function Sheet({ title, subtitle, onClose, children }) {
   const panel = useRef(null);
@@ -42,14 +42,14 @@ export default function Sheet({ title, subtitle, onClose, children }) {
   }, []);
 
   const sheet = (
-    <div className="absolute inset-0 z-50 bg-black/40 flex items-end" onClick={onClose}>
+    <div className="absolute inset-0 z-50 bg-black/40 flex items-end sm:items-center sm:justify-center sm:p-6" onClick={onClose}>
       <div
         ref={panel}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-h-[90%] overflow-y-auto bg-white rounded-t-ooca-24 px-5 pt-4 pb-6 shadow-elevation-8 screen-fade outline-none"
+        className="w-full max-h-[90%] overflow-y-auto bg-white rounded-t-ooca-24 sm:max-w-[480px] sm:rounded-ooca-24 px-5 pt-4 pb-6 shadow-elevation-8 screen-fade outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3 mb-3">

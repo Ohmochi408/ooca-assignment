@@ -41,15 +41,15 @@ export default function LockScreen({ period, onOpenSky, onAddThought, onOpenAbou
       </div>
 
       {/* Lock-screen clock (device chrome, not ooca UI) */}
-      <div className="relative mt-6 flex flex-col items-center text-white/90">
-        <Icon name="lock-bold" size={18} className="mb-3 text-white/70" />
+      <div className="relative mt-6 short:mt-1 flex flex-col items-center text-white/90">
+        <Icon name="lock-bold" size={18} className="mb-3 short:mb-1 text-white/70" />
         <p className="text-title2">{date}</p>
         {/* ds-allow: iOS-style lock-screen clock mock */}
-        <p className="text-[96px] leading-none font-bold tracking-tight tabular-nums mt-1">{time}</p>
+        <p className="text-[96px] short:text-[64px] leading-none font-bold tracking-tight tabular-nums mt-1">{time}</p>
       </div>
 
       {/* ooca's lock-screen shortcut */}
-      <div className="relative mt-auto mb-6 flex flex-col items-center gap-10">
+      <div className="relative mt-auto mb-6 short:mb-2 flex flex-col items-center gap-10 short:gap-3">
         <button
           onClick={onAddThought}
           onPointerDown={(e) => e.stopPropagation()} // a tap here is not the start of an unlock swipe
