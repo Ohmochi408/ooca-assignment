@@ -11,7 +11,7 @@ import useVoicePlayback from '../utils/useVoicePlayback';
 import useMediaQuery from '../utils/useMediaQuery';
 import { riseDelay } from '../utils/motion';
 import { SKY_PERIODS, periodById } from '../utils/skyPeriods';
-import { suggestFor, SUMMARY_FROM_SEC } from '../utils/aiSummary';
+import { nameAndPoints, noSummaryReason } from '../utils/aiSummary';
 
 const longDate = (ms) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' : style === 'dawn' ? 'sunrise' : 'star');
@@ -22,7 +22,11 @@ const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' :
 // Phone: one column. Large screens: two — listening (name, Mooca, player) on the left, deciding (summary, sky) on the right.
 export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop, onDone, onDiscard, onCancel }) {
   const voice = useVoicePlayback(cloud.audioUrl, cloud.duration);
-  const [label, setLabel] = useState(cloud.label);
+  // New voices: a name from the first words and key points from the rest (utils/aiSummary.js), worked out once.
+  // Editing keeps what was saved.
+  const [ai] = useState(() => (mode === 'new' && cloud.audioUrl ? nameAndPoints(cloud.transcript, cloud.duration) : null));
+  const suggested = ai?.title ?? null;
+  const [label, setLabel] = useState(suggested ?? cloud.label);
   const [renaming, setRenaming] = useState(false);
   const [favorite, setFavorite] = useState(Boolean(cloud.favorite));
   const [skyId, setSkyId] = useState(cloud.skyId ?? null);
@@ -31,35 +35,17 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
   const [newName, setNewName] = useState('');
   const [newStyle, setNewStyle] = useState(backdrop ?? 'midnight');
   const newSkyRef = useRef(null); // the "Name new Sky here" field
-  const nameBefore = useRef(cloud.label); // restored if a rename is cancelled or left empty
+  const nameBefore = useRef(label); // restored if a rename is cancelled or left empty
   const menuRef = useRef(null);
 
-  // AI help (new voices only): a suggested name, and for longer voices a few points of what was said.
-  // It only fills the name while the user hasn't typed their own. The summary folds away — it is never lost.
-  const asking = mode === 'new' && Boolean(cloud.audioUrl);
-  const [aiBusy, setAiBusy] = useState(asking);
-  const [suggested, setSuggested] = useState(null);
-  const [summary, setSummary] = useState(cloud.summary ?? null);
-  useEffect(() => {
-    if (!asking) return;
-    let live = true;
-    suggestFor(cloud).then((r) => {
-      if (!live) return;
-      setSuggested(r.title);
-      setLabel((l) => (l === cloud.label ? r.title : l));
-      if (nameBefore.current === cloud.label) nameBefore.current = r.title;
-      setSummary(r.summary);
-      setAiBusy(false);
-    });
-    return () => {
-      live = false;
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const summing = aiBusy && cloud.duration >= SUMMARY_FROM_SEC;
-  const hasSummary = summary?.length > 0;
+  // Key points: fold them away, or remove them when speech-to-text misheard (Undo brings them back)
+  const [summary, setSummary] = useState(ai ? ai.summary : (cloud.summary ?? null));
+  const [removedSummary, setRemovedSummary] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(true);
+  const hasSummary = summary?.length > 0;
+  const summaryNote = ai && !ai.summary ? noSummaryReason(cloud.transcript, cloud.duration) : null;
   const twoColumns = useMediaQuery('(min-width: 1024px)');
-  const compact = !twoColumns && (summing || (hasSummary && summaryOpen)); // on one column, make room for the open summary
+  const compact = !twoColumns && hasSummary && summaryOpen; // on one column, make room for the open key points
 
   const chosen = skies.find((s) => s.id === skyId);
   const canSave = label.trim() && (!creating || newName.trim());
@@ -197,10 +183,10 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                 )}
               </div>
               <p className="text-body1 text-turquoise-50">{longDate(cloud.timestamp)}</p>
-              {(aiBusy || (suggested && label === suggested && !renaming)) && (
+              {suggested && label === suggested && !renaming && (
                 <p className="-mt-2 flex items-center gap-1.5 text-body4 text-white bg-black/30 rounded-ooca-pill px-3 py-1 fade-in" aria-live="polite">
                   <Icon name="magic" size={14} />
-                  {aiBusy ? 'Finding a name…' : 'Name suggested by AI — tap it to change'}
+                  Named from your first words — tap to change
                 </p>
               )}
             </div>
@@ -225,12 +211,28 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
             </div>
           </div>
 
-          {/* Decide: the AI summary, then which sky it goes to */}
+          {/* Decide: the key points, then which sky it goes to */}
           <div className="flex-1 flex flex-col lg:justify-center">
-            {(summing || hasSummary) && <SummaryCard summing={summing} points={summary} open={summaryOpen} onToggle={() => setSummaryOpen((o) => !o)} />}
+            {(hasSummary || removedSummary || summaryNote) && (
+              <SummaryCard
+                points={summary}
+                open={summaryOpen}
+                onToggle={() => setSummaryOpen((o) => !o)}
+                removed={Boolean(removedSummary)}
+                onRemove={() => {
+                  setRemovedSummary(summary);
+                  setSummary([]); // [] = removed on purpose, and saved that way
+                }}
+                onUndo={() => {
+                  setSummary(removedSummary);
+                  setRemovedSummary(null);
+                }}
+                note={summaryNote}
+              />
+            )}
 
             {/* Pick your Sky */}
-            <div style={riseDelay(160)} className="rise-in mt-auto pt-8 lg:mt-6 lg:pt-0">
+            <div style={riseDelay(160)} className={`rise-in mt-auto lg:mt-6 lg:pt-0 ${compact ? 'pt-5' : 'pt-8'}`}>
               <div className="relative rounded-ooca-24 bg-gray-100 p-4 flex flex-col gap-4 shadow-elevation-2" ref={menuRef}>
                 <p className="text-title2 text-turquoise-900 text-center" id="pick-sky-label">
                   Pick your Sky

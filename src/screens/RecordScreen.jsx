@@ -3,6 +3,7 @@ import Icon from '../components/Icon';
 import SkyBackground from '../components/SkyBackground';
 import condensingCloud from '../assets/condensing-cloud.svg';
 import useVoiceRecorder, { MAX_RECORDING_SEC } from '../utils/useVoiceRecorder';
+import useSpeechToText, { SPEECH_LANGS, speechSupported } from '../utils/useSpeechToText';
 import { riseDelay } from '../utils/motion';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -13,6 +14,7 @@ const stopwatch = (ms) => `${pad(Math.floor(ms / 60000))}.${pad(Math.floor(ms / 
 // While they speak, the thought is "condensing" into a cloud; stopping hands it to "Cloud ready".
 export default function RecordScreen({ sky, onDone }) {
   const rec = useVoiceRecorder();
+  const words = useSpeechToText(); // what was said, for the name and key points on Cloud ready
   const { phase, elapsed, sample, mic } = rec;
   const [ms, setMs] = useState(0);
   const [dots, setDots] = useState(0);
@@ -23,8 +25,16 @@ export default function RecordScreen({ sky, onDone }) {
   // Start on open; leaving throws the take away (also keeps StrictMode's double mount clean)
   useEffect(() => {
     rec.start();
-    return () => rec.reset();
+    return () => {
+      rec.reset();
+      words.abort();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Words start once the mic is really on (after the permission prompt), so both share the same live mic
+  useEffect(() => {
+    if (mic === 'on' && phase === 'recording') words.start();
+  }, [mic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Stopwatch + "Condensing.•." dots
   useEffect(() => {
@@ -43,12 +53,14 @@ export default function RecordScreen({ sky, onDone }) {
     };
   }, [phase]);
 
-  // Once the take is saved (and the voice is encoded), go straight to the ready cloud
+  // Once the take is saved (the voice encoded and the last words in), go straight to the ready cloud
+  const heard = useRef(null);
   useEffect(() => {
     if (phase !== 'saved' || finished.current) return;
+    heard.current ??= words.stop();
     if (mic !== 'off' && !rec.audioUrl) return;
     finished.current = true;
-    onDone({ duration: Math.max(1, elapsed), audioUrl: rec.audioUrl });
+    heard.current.then((transcript) => onDone({ duration: Math.max(1, elapsed), audioUrl: rec.audioUrl, transcript }));
   }, [phase, rec.audioUrl, mic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Voice feedback: rings pulse out of the cloud when the mic hears something; the glow follows the level
@@ -80,6 +92,27 @@ export default function RecordScreen({ sky, onDone }) {
         <div style={riseDelay(0)} className="rise-in text-center">
           <h1 className="text-h4 text-white">What’s on your mind?</h1>
           <p className="text-body1 text-turquoise-50 mt-2 max-w-[260px]">Say it. Hum it. Sigh it. It doesn't have to make sense</p>
+          {/* Which language to listen for — the name and key points come from these words */}
+          {speechSupported && mic !== 'off' && (
+            <div
+              className="mt-3 inline-flex items-center gap-1 rounded-ooca-pill bg-black/30 p-1 pl-3 text-body5 text-white"
+              role="radiogroup"
+              aria-label="Language you speak in"
+            >
+              <span className="pr-1">Words in</span>
+              {SPEECH_LANGS.map((l) => (
+                <button
+                  key={l.id}
+                  role="radio"
+                  aria-checked={words.lang === l.id}
+                  onClick={() => words.setLang(l.id)}
+                  className={`min-w-10 h-7 px-2 rounded-ooca-pill cursor-pointer transition-colors ${words.lang === l.id ? 'bg-white text-turquoise-900' : 'hover:bg-white/15'}`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center gap-10 short:gap-2 w-full" aria-live="polite">

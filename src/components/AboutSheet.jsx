@@ -23,9 +23,10 @@ export default function AboutSheet({ onClose }) {
         <section>
           <h3 className="text-subheader1 text-bluegray-800 mb-1">AI: assistance, not interpretation</h3>
           <p className="text-body3 text-bluegray-600">
-            AI suggests a short name such as "Tomorrow's presentation" and, for longer voices, sums up what was said in a few plain points — helpful when
-            someone talks a lot. It never diagnoses, predicts moods, or names an emotion; the name can always be changed and the summary folded away. The user
-            decides what a thought means. (In this prototype the AI is a stand-in with sample answers.)
+            Speech-to-text (the browser's own, in Thai or English) turns the voice into words. The thought is named from its first words and, for voices of 5
+            seconds or more, keeps up to three key points — phrases the person actually said, helpful when someone talks a lot. Nothing is read into them: no
+            diagnosis, no mood, no emotion. The name can always be changed; if it misheard, the points can be removed. The words themselves are not stored. (The
+            browser sends the audio to its speech service — Google or Apple — to do this.)
           </p>
         </section>
         <section>

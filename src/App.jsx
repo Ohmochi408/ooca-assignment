@@ -119,7 +119,8 @@ export default function App() {
   // "Done!" on Cloud ready — for a new recording or an edited cloud
   const handleReadyDone = (base, { label, favorite, summary, skyId, newSky }) => {
     const sky = newSky ? createSky(newSky) : skies.find((s) => s.id === skyId);
-    const cloud = { ...base, label, favorite, summary: summary ?? null, skyId: sky?.id ?? null };
+    const { transcript: _words, ...rest } = base; // the words themselves are not kept — only the name and key points
+    const cloud = { ...rest, label, favorite, summary: summary ?? null, skyId: sky?.id ?? null };
     setClouds((prev) => (prev.some((c) => c.id === cloud.id) ? prev.map((c) => (c.id === cloud.id ? cloud : c)) : [...prev, cloud]));
     // showCloud needs the new sky's index: it is appended last
     if (newSky) {
