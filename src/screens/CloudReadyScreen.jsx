@@ -11,7 +11,7 @@ import useVoicePlayback from '../utils/useVoicePlayback';
 import useMediaQuery from '../utils/useMediaQuery';
 import { riseDelay } from '../utils/motion';
 import { SKY_PERIODS, periodById } from '../utils/skyPeriods';
-import { nameAndPoints, noSummaryReason } from '../utils/aiSummary';
+import { nameAndPoints, nameFrom, noSummaryReason } from '../utils/aiSummary';
 
 const longDate = (ms) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' : style === 'dawn' ? 'sunrise' : 'star');
@@ -22,7 +22,7 @@ const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' :
 // Phone: one column. Large screens: two — listening (name, Mooca, player) on the left, deciding (summary, sky) on the right.
 export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop, onDone, onDiscard, onCancel }) {
   const voice = useVoicePlayback(cloud.audioUrl, cloud.duration);
-  // New voices: a name from the first words and key points from the rest (utils/aiSummary.js), worked out once.
+  // New voices: a name and key points from what was said most (utils/aiSummary.js), worked out once.
   // Editing keeps what was saved.
   const [ai] = useState(() => (mode === 'new' && cloud.audioUrl ? nameAndPoints(cloud.transcript, cloud.duration) : null));
   const suggested = ai?.title ?? null;
@@ -186,7 +186,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
               {suggested && label === suggested && !renaming && (
                 <p className="-mt-2 flex items-center gap-1.5 text-body4 text-white bg-black/30 rounded-ooca-pill px-3 py-1 fade-in" aria-live="polite">
                   <Icon name="magic" size={14} />
-                  Named from your first words — tap to change
+                  Named from what you talked about most — tap to change
                 </p>
               )}
             </div>
@@ -228,6 +228,12 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                   setRemovedSummary(null);
                 }}
                 note={summaryNote}
+                onPick={(p) => {
+                  const name = nameFrom(p);
+                  setLabel(name);
+                  nameBefore.current = name;
+                }}
+                isPicked={(p) => nameFrom(p) === label}
               />
             )}
 

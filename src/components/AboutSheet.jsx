@@ -23,10 +23,10 @@ export default function AboutSheet({ onClose }) {
         <section>
           <h3 className="text-subheader1 text-bluegray-800 mb-1">AI: assistance, not interpretation</h3>
           <p className="text-body3 text-bluegray-600">
-            Speech-to-text (the browser's own, in Thai or English) turns the voice into words. The thought is named from its first words and, for voices of 5
-            seconds or more, keeps up to three key points — phrases the person actually said, helpful when someone talks a lot. Nothing is read into them: no
-            diagnosis, no mood, no emotion. The name can always be changed; if it misheard, the points can be removed. The words themselves are not stored. (The
-            browser sends the audio to its speech service — Google or Apple — to do this.)
+            Speech-to-text (the browser's own, in Thai or English) turns the voice into words. The thought is named after what was said most and, for voices of
+            5 seconds or more, keeps up to three key points — phrases the person actually said, helpful when someone talks a lot. Nothing is read into them: no
+            diagnosis, no mood, no emotion. Tap a point to name the thought after it, or type a name; if it misheard, the points can be removed. The words
+            themselves are not stored. (The browser sends the audio to its speech service — Google or Apple — to do this.)
           </p>
         </section>
         <section>

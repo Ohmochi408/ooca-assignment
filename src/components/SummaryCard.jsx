@@ -3,9 +3,10 @@ import Icon from './Icon';
 import SummaryPoints from './SummaryPoints';
 
 // Cloud ready → key points: for people who talk a lot, the gist at a glance — picked from their own words.
-// Folds to one row (tap anywhere on it to open again). "Not right?" removes it, with Undo, when it misheard.
+// Folds to one row (tap anywhere on it to open again). Tap a point to name the thought after it.
+// "Misheard?" removes the points, with Undo.
 // note: why there is no summary (e.g. the browser can't listen) — said plainly instead of making one up.
-export default function SummaryCard({ points, open, onToggle, removed, onRemove, onUndo, note }) {
+export default function SummaryCard({ points, open, onToggle, removed, onRemove, onUndo, note, onPick, isPicked }) {
   const row = 'flex items-center gap-1.5 min-h-10 text-body4 text-bluegray-600';
 
   if (note || removed) {
@@ -37,14 +38,14 @@ export default function SummaryCard({ points, open, onToggle, removed, onRemove,
       </button>
       {open && (
         <>
-          <SummaryPoints id="ai-summary-points" points={points} />
+          <SummaryPoints id="ai-summary-points" points={points} onPick={onPick} isPicked={isPicked} />
           <div className="mt-2 mb-1 flex items-center justify-between gap-2">
-            <p className="text-body5 text-bluegray-600">Speech-to-text may mishear.</p>
+            <p className="text-body5 text-bluegray-600">Tap one to use it as the name.</p>
             <button
               onClick={onRemove}
               className="shrink-0 min-h-8 -mr-2 px-2 rounded-ooca-pill text-body5 text-flamingo-500 underline underline-offset-2 hover:bg-flamingo-50 cursor-pointer"
             >
-              Not right? Remove
+              Misheard? Remove
             </button>
           </div>
         </>
