@@ -7,7 +7,11 @@ import SummaryPoints from './SummaryPoints';
 export default function SummaryCard({ summing, points, open, onToggle }) {
   const expanded = summing || open;
   return (
-    <section aria-label="AI summary" aria-busy={summing} className={`w-full rounded-ooca-24 bg-gray-100 px-4 shadow-elevation-2 fade-in ${expanded ? 'mt-6 py-2' : 'mt-4 py-1'}`}>
+    <section
+      aria-label="AI summary"
+      aria-busy={summing}
+      className={`w-full rounded-ooca-24 bg-gray-100 px-4 shadow-elevation-2 fade-in ${expanded ? 'mt-6 py-2' : 'mt-4 py-1'}`}
+    >
       {summing ? (
         <>
           <p className="flex items-center gap-1.5 min-h-10 text-body4 uppercase text-bluegray-600">
@@ -22,11 +26,14 @@ export default function SummaryCard({ summing, points, open, onToggle }) {
         </>
       ) : (
         <>
-          <button onClick={onToggle} aria-expanded={open} aria-controls="ai-summary-points" className="w-full flex items-center gap-1.5 min-h-10 text-left cursor-pointer">
+          <button
+            onClick={onToggle}
+            aria-expanded={open}
+            aria-controls="ai-summary-points"
+            className="w-full flex items-center gap-1.5 min-h-10 text-left cursor-pointer"
+          >
             <Icon name="magic" size={14} className="text-turquoise-500" />
-            <span className="flex-1 text-body4 uppercase text-bluegray-600">
-              AI summary{!open && ` · ${points.length} points`}
-            </span>
+            <span className="flex-1 text-body4 uppercase text-bluegray-600">AI summary{!open && ` · ${points.length} points`}</span>
             <Icon name="chevron-down" size={20} className={`text-bluegray-600 transition-transform ${open ? 'rotate-180' : ''}`} />
             <span className="sr-only">{open ? 'Fold summary' : 'Show summary'}</span>
           </button>

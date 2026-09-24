@@ -9,7 +9,14 @@ const SKIES_KEY = 'ooca_user_skies_v2';
 // Name and icon are fixed; the user can only change which of the six skies it looks like.
 export const FAVORITES_ID = 'favorites';
 const FAV_STYLE_KEY = 'ooca_favorites_style_v1';
-export const favoritesSky = (style) => ({ id: FAVORITES_ID, name: 'Favorites', icon: 'favorite', style, system: true, description: 'Every thought you hearted.' });
+export const favoritesSky = (style) => ({
+  id: FAVORITES_ID,
+  name: 'Favorites',
+  icon: 'favorite',
+  style,
+  system: true,
+  description: 'Every thought you hearted.',
+});
 export function getFavoritesStyle() {
   try {
     return localStorage.getItem(FAV_STYLE_KEY) || 'dawn';

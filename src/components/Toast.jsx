@@ -12,7 +12,10 @@ export default function Toast({ toast, onDismiss }) {
   return (
     <div role="status" aria-live="polite" className="absolute inset-x-4 top-[96px] z-45 flex justify-center pointer-events-none">
       {toast && (
-        <div key={toast.id} className="toast-in pointer-events-auto flex items-center gap-3 max-w-full pl-4 pr-1 min-h-12 rounded-ooca-pill bg-bluegray-900 text-white shadow-elevation-6">
+        <div
+          key={toast.id}
+          className="toast-in pointer-events-auto flex items-center gap-3 max-w-full pl-4 pr-1 min-h-12 rounded-ooca-pill bg-bluegray-900 text-white shadow-elevation-6"
+        >
           {toast.icon && <Icon name={toast.icon} size={18} className="shrink-0 text-turquoise-300" />}
           <span className="text-subheader2 truncate">{toast.message}</span>
           {toast.action ? (

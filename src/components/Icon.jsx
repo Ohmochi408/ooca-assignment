@@ -10,7 +10,15 @@ export default function Icon({ name, size = 24, className = '', title }) {
   }
   const [w, h] = icon.size;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${w} ${h}`} fill="currentColor" className={`shrink-0 ${className}`} role={title ? 'img' : undefined} aria-hidden={title ? undefined : true}>
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${w} ${h}`}
+      fill="currentColor"
+      className={`shrink-0 ${className}`}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+    >
       {title && <title>{title}</title>}
       {icon.paths.map((p, i) => (
         <path key={i} d={p.d} fillRule={p.evenodd ? 'evenodd' : undefined} clipRule={p.evenodd ? 'evenodd' : undefined} />

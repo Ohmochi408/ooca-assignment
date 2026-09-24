@@ -17,7 +17,21 @@ const EMPTY_FAVORITES = { title: 'No favorites yet', line: 'Tap ♡ on a thought
 
 // Ideate2 → "My Sky": one sky per space the user defined, after the system's Favorites sky (index 0).
 // showAll = the "All skies" grid. form = the sky sheet being edited: null | 'new' | a sky.
-export default function MySkies({ clouds, skies, index, setIndex, cloudProps, onMoveCloud, expandedId, onCreateSky, onUpdateSky, form, setForm, showAll, setShowAll }) {
+export default function MySkies({
+  clouds,
+  skies,
+  index,
+  setIndex,
+  cloudProps,
+  onMoveCloud,
+  expandedId,
+  onCreateSky,
+  onUpdateSky,
+  form,
+  setForm,
+  showAll,
+  setShowAll,
+}) {
   const carousel = useRef(null);
   const sky = skies[Math.min(index, skies.length - 1)];
   // Favorites gathers every hearted thought; any other sky holds the thoughts saved to it

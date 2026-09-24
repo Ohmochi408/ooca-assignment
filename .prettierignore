@@ -1,0 +1,9 @@
+dist
+node_modules
+Figma make
+.claude
+design-tokens
+src/icons/ooca-icons.js
+src/styles/ooca-tokens.css
+package-lock.json
+*.md

@@ -13,7 +13,21 @@ const SELECTED_OUTLINE = `drop-shadow(2px 0 0 ${T}) drop-shadow(-2px 0 0 ${T}) d
 
 // A thought in the sky: Mooca + its Preview card. Tapping opens the player; while it plays, Mooca talks.
 // Mooca is also the drag handle (grabProps from the field) — drag it to move the cloud around its sky.
-export default function MoocaCloud({ cloud, meta, expanded, onExpand, onCollapse, onFavorite, onDelete, onEdit, isNew, playingId, setPlayingId, grabProps, dragging }) {
+export default function MoocaCloud({
+  cloud,
+  meta,
+  expanded,
+  onExpand,
+  onCollapse,
+  onFavorite,
+  onDelete,
+  onEdit,
+  isNew,
+  playingId,
+  setPlayingId,
+  grabProps,
+  dragging,
+}) {
   const voice = useVoicePlayback(cloud.audioUrl, cloud.duration);
   const card = useRef(null);
 
@@ -64,7 +78,14 @@ export default function MoocaCloud({ cloud, meta, expanded, onExpand, onCollapse
       </button>
       {/* Always the item's top-right corner, whatever the Mooca's size — it never moves with the float */}
       {expanded && (
-        <RoundButton size={32} label={`Edit ${cloud.label}`} tip="Edit thought" tipSide="left" place="absolute top-0 right-0 z-10 fade-in" onClick={() => onEdit(cloud)}>
+        <RoundButton
+          size={32}
+          label={`Edit ${cloud.label}`}
+          tip="Edit thought"
+          tipSide="left"
+          place="absolute top-0 right-0 z-10 fade-in"
+          onClick={() => onEdit(cloud)}
+        >
           <Icon name="edit-square" size={16} />
         </RoundButton>
       )}
@@ -76,13 +97,18 @@ export default function MoocaCloud({ cloud, meta, expanded, onExpand, onCollapse
             <p className="text-body3 text-black">{meta}</p>
           </button>
           {/* The gist of a long voice, so it can be found again without listening to all of it */}
-          {cloud.summary?.length > 0 && (
-            <SummaryPoints points={cloud.summary} textClass="text-bluegray-800" className="-mt-2 border-t border-gray-300 pt-2" />
-          )}
+          {cloud.summary?.length > 0 && <SummaryPoints points={cloud.summary} textClass="text-bluegray-800" className="-mt-2 border-t border-gray-300 pt-2" />}
           <div className="flex flex-col gap-2">
             <VoiceProgress progress={voice.progress} duration={cloud.duration} onSeek={voice.seek} label={`Position in ${cloud.label}`} />
             <div className="flex items-center justify-between">
-              <RoundButton size={32} label={cloud.favorite ? 'Remove from favorites' : 'Add to favorites'} tip={cloud.favorite ? 'Unfavorite' : 'Favorite'} pressed={cloud.favorite} onClick={() => onFavorite(cloud)} className={cloud.favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}>
+              <RoundButton
+                size={32}
+                label={cloud.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                tip={cloud.favorite ? 'Unfavorite' : 'Favorite'}
+                pressed={cloud.favorite}
+                onClick={() => onFavorite(cloud)}
+                className={cloud.favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+              >
                 <Icon name="favorite" size={18} />
               </RoundButton>
               <RoundButton size={48} label={voice.playing ? 'Pause' : 'Play'} onClick={voice.toggle} className="bg-white text-turquoise-500 shadow-elevation-3">
@@ -95,7 +121,10 @@ export default function MoocaCloud({ cloud, meta, expanded, onExpand, onCollapse
           </div>
         </div>
       ) : (
-        <button onClick={open} className="relative w-full rounded-ooca-24 bg-gray-100 px-4 py-3 text-center shadow-elevation-2 cursor-pointer hover:bg-white transition-colors">
+        <button
+          onClick={open}
+          className="relative w-full rounded-ooca-24 bg-gray-100 px-4 py-3 text-center shadow-elevation-2 cursor-pointer hover:bg-white transition-colors"
+        >
           {/* Hearted clouds carry a small ♡, in every sky */}
           {cloud.favorite && (
             <span className="absolute top-2.5 right-3 text-turquoise-500">

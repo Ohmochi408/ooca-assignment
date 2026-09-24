@@ -7,7 +7,16 @@ import LockScreen from './screens/LockScreen';
 import SkyScreen from './screens/SkyScreen';
 import RecordScreen from './screens/RecordScreen';
 import CloudReadyScreen from './screens/CloudReadyScreen';
-import { getStoredClouds, saveClouds, getStoredSkies, saveSkies, FAVORITES_ID, favoritesSky, getFavoritesStyle, saveFavoritesStyle } from './utils/storageHelper';
+import {
+  getStoredClouds,
+  saveClouds,
+  getStoredSkies,
+  saveSkies,
+  FAVORITES_ID,
+  favoritesSky,
+  getFavoritesStyle,
+  saveFavoritesStyle,
+} from './utils/storageHelper';
 import { getSkyPeriod } from './utils/skyPeriods';
 import { getAudioContext } from './utils/audioHelper';
 import { dateKey } from './utils/dates';
@@ -89,7 +98,15 @@ export default function App() {
 
   const handleRecorded = (rec) => {
     const n = clouds.filter((c) => /^New (thought|Cloud) \d+$/.test(c.label)).length + 1;
-    setDraft({ id: `cloud-${Date.now()}`, label: `New thought ${n}`, timestamp: Date.now(), skyId: null, favorite: false, mooca: randomMooca([...clouds].sort((a, b) => b.timestamp - a.timestamp)[0]?.mooca), ...rec });
+    setDraft({
+      id: `cloud-${Date.now()}`,
+      label: `New thought ${n}`,
+      timestamp: Date.now(),
+      skyId: null,
+      favorite: false,
+      mooca: randomMooca([...clouds].sort((a, b) => b.timestamp - a.timestamp)[0]?.mooca),
+      ...rec,
+    });
     goTo('ready', true);
   };
 
@@ -153,14 +170,7 @@ export default function App() {
   };
 
   const screens = {
-    lock: (
-      <LockScreen
-        period={period}
-        onOpenSky={openSkyNow}
-        onAddThought={() => startRecording(period)}
-        onOpenAbout={() => setAboutOpen(true)}
-      />
-    ),
+    lock: <LockScreen period={period} onOpenSky={openSkyNow} onAddThought={() => startRecording(period)} onOpenAbout={() => setAboutOpen(true)} />,
     sky: (
       <SkyScreen
         clouds={clouds}
@@ -182,11 +192,22 @@ export default function App() {
         onDeleteCloud={deleteCloud}
         onMoveCloud={(cloud, view, pos) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, pos: { ...c.pos, [view]: pos } } : c)))}
         onCreateSky={createSky}
-        onUpdateSky={(skyId, data) => (skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s))))}
+        onUpdateSky={(skyId, data) =>
+          skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)))
+        }
       />
     ),
     record: <RecordScreen sky={recordSky} onDone={handleRecorded} />,
-    ready: draft && <CloudReadyScreen key={draft.id} cloud={draft} skies={skies} backdrop={recordSky ?? period} onDone={(v) => handleReadyDone(draft, v)} onDiscard={discardDraft} />,
+    ready: draft && (
+      <CloudReadyScreen
+        key={draft.id}
+        cloud={draft}
+        skies={skies}
+        backdrop={recordSky ?? period}
+        onDone={(v) => handleReadyDone(draft, v)}
+        onDiscard={discardDraft}
+      />
+    ),
     edit: editing && (
       <CloudReadyScreen
         key={editing.id}
@@ -218,7 +239,7 @@ export default function App() {
             {screens.lock}
           </LockStage>
         ) : (
-          screens[screen] ?? screens.sky
+          (screens[screen] ?? screens.sky)
         )}
       </div>
       <Toast toast={toast} onDismiss={hideToast} />

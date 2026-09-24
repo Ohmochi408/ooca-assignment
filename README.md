@@ -79,8 +79,9 @@ npm install
 # 3. Start development server
 npm run dev
 
-# Lint (ESLint + React Hooks rules)
+# Lint (ESLint + React Hooks rules) and format (Prettier)
 npm run lint
+npm run format
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to experience the interactive prototype.

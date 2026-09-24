@@ -39,10 +39,13 @@ export default function useVoicePlayback(audioUrl, durationSec) {
     setPos(0);
   };
 
-  useEffect(() => () => {
-    halt();
-    audioRef.current = null;
-  }, []);
+  useEffect(
+    () => () => {
+      halt();
+      audioRef.current = null;
+    },
+    [],
+  );
 
   const playChimeFrom = async (f, run) => {
     const startedAt = Date.now();

@@ -11,7 +11,7 @@ export function readFig(file) {
   if (canvas.subarray(0, 8).toString() !== 'fig-kiwi') throw new Error('canvas.fig is not a fig-kiwi file');
 
   const chunks = [];
-  for (let o = 12; o < canvas.length; ) {
+  for (let o = 12; o < canvas.length;) {
     const len = canvas.readUInt32LE(o);
     chunks.push(canvas.subarray(o + 4, o + 4 + len));
     o += 4 + len;

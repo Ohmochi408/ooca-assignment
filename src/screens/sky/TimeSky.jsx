@@ -41,14 +41,25 @@ export default function TimeSky({ clouds, nav, setNav, cloudProps, onMoveCloud, 
           return (
             <>
               <div className={`sky-${p.id} absolute inset-0`} />
-              <CloudField view="time" onMoveCloud={onMoveCloud} expandedId={expandedId} clouds={cloudsIn(p.id)} metaOf={(c) => hhmm(c.timestamp)} cloudProps={cloudProps} />
+              <CloudField
+                view="time"
+                onMoveCloud={onMoveCloud}
+                expandedId={expandedId}
+                clouds={cloudsIn(p.id)}
+                metaOf={(c) => hhmm(c.timestamp)}
+                cloudProps={cloudProps}
+              />
             </>
           );
         }}
       />
 
       <div className={HEADER} style={{ '--fg-delay': '180ms' }}>
-        <button onClick={() => setCalendarOpen(true)} className="text-left min-w-0 cursor-pointer" aria-label={`${formatLongDate(nav.date)}, ${period.label} — choose another day`}>
+        <button
+          onClick={() => setCalendarOpen(true)}
+          className="text-left min-w-0 cursor-pointer"
+          aria-label={`${formatLongDate(nav.date)}, ${period.label} — choose another day`}
+        >
           <h1 className="text-h4 text-white">{formatLongDate(nav.date)}</h1>
           <p className="text-body1 text-turquoise-50 mt-2">
             {period.range.replace('–', '-')} • {cloudCount(cloudsIn(period.id).length)}

@@ -11,4 +11,3 @@ export default function SkyBackground({ period, className = '' }) {
     </div>
   );
 }
-

@@ -86,11 +86,32 @@ export default function RecordScreen({ sky, onDone }) {
           <div style={riseDelay(90)} className="rise-in relative -mb-14 lg:scale-125 lg:my-6 short:scale-75 short:-my-10">
             {/* Rings sit behind the cloud body (176×112 at 40,15 inside the 256×192 image) */}
             <div className="absolute left-[40px] top-[15px] w-[176px] h-[112px] pointer-events-none" aria-hidden="true">
-              <div className="absolute -inset-3 bg-white/40 blur-xl transition-opacity duration-150" style={{ borderRadius: '50%', opacity: live ? Math.min(1, level * 1.6) : 0 }} />
+              <div
+                className="absolute -inset-3 bg-white/40 blur-xl transition-opacity duration-150"
+                style={{ borderRadius: '50%', opacity: live ? Math.min(1, level * 1.6) : 0 }}
+              />
               {/* Steady ring that follows the level — also the feedback when motion is reduced */}
-              <span className="absolute inset-0 border-white/80 transition-[transform,opacity] duration-150" style={{ borderWidth: 2, borderStyle: 'solid', borderRadius: '50%', opacity: live ? Math.min(0.9, level * 1.5) : 0, transform: `scale(${1.08 + (live ? Math.min(level, 1) : 0) * 0.35})` }} />
+              <span
+                className="absolute inset-0 border-white/80 transition-[transform,opacity] duration-150"
+                style={{
+                  borderWidth: 2,
+                  borderStyle: 'solid',
+                  borderRadius: '50%',
+                  opacity: live ? Math.min(0.9, level * 1.5) : 0,
+                  transform: `scale(${1.08 + (live ? Math.min(level, 1) : 0) * 0.35})`,
+                }}
+              />
               {rings.map((r) => (
-                <span key={r.id} className="voice-ring absolute inset-0 border-white/90" style={{ '--ring-strength': r.strength, borderWidth: 1.5 + r.strength * 2.5, borderStyle: 'solid', borderRadius: '50%' /* ellipse around the cloud */ }} />
+                <span
+                  key={r.id}
+                  className="voice-ring absolute inset-0 border-white/90"
+                  style={{
+                    '--ring-strength': r.strength,
+                    borderWidth: 1.5 + r.strength * 2.5,
+                    borderStyle: 'solid',
+                    borderRadius: '50%' /* ellipse around the cloud */,
+                  }}
+                />
               ))}
             </div>
             {/* Figma "Condensing" cloud (with its turquoise glow) swells a little with the voice; the label is live text so the dots can move */}
@@ -111,7 +132,9 @@ export default function RecordScreen({ sky, onDone }) {
               Your microphone isn't available, so your voice won't be kept. You can still finish — the thought will play a soft chime instead.
             </p>
           )}
-          {mic === 'asking' && phase === 'recording' && <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone to record your voice</p>}
+          {mic === 'asking' && phase === 'recording' && (
+            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone to record your voice</p>
+          )}
           {live && quiet && <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 fade-in">It's quiet — try speaking a little closer</p>}
         </div>
       </div>

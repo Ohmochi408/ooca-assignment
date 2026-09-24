@@ -55,7 +55,10 @@ export default function VoiceProgress({ progress, duration, onSeek, thick = fals
         className="group/bar relative w-full h-6 flex items-center cursor-pointer touch-none rounded-ooca-pill"
       >
         <div className={`w-full rounded-ooca-pill overflow-hidden ${track} ${onSky ? 'bg-white' : 'bg-gray-400'}`}>
-          <div className={`h-full rounded-ooca-pill bg-turquoise-500 ${drag === null ? 'transition-[width] duration-100' : ''}`} style={{ width: `${shown * 100}%` }} />
+          <div
+            className={`h-full rounded-ooca-pill bg-turquoise-500 ${drag === null ? 'transition-[width] duration-100' : ''}`}
+            style={{ width: `${shown * 100}%` }}
+          />
         </div>
         {/* Handle: shows on hover / focus / drag so the bar reads as something you can grab */}
         <span

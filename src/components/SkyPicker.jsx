@@ -22,19 +22,32 @@ export default function SkyPicker({ current, onPick }) {
               aria-current={p.id === current}
               className="w-10 h-6 flex items-center justify-center cursor-pointer"
             >
-              <SkyDot period={p.id} size={p.id === current ? 20 : 12} className={p.id === current ? 'ring-2 ring-white' : 'transition-transform hover:scale-150'} />
+              <SkyDot
+                period={p.id}
+                size={p.id === current ? 20 : 12}
+                className={p.id === current ? 'ring-2 ring-white' : 'transition-transform hover:scale-150'}
+              />
             </button>
           </Tip>
         ))
       ) : (
         <Tip side="left" label={`${now.label} · ${now.range}`}>
-          <button onClick={() => setOpen(true)} aria-label={`Now showing ${now.label} — choose another sky`} className="w-10 h-6 flex items-center justify-center cursor-pointer">
+          <button
+            onClick={() => setOpen(true)}
+            aria-label={`Now showing ${now.label} — choose another sky`}
+            className="w-10 h-6 flex items-center justify-center cursor-pointer"
+          >
             <SkyDot period={current} size={20} />
           </button>
         </Tip>
       )}
       <Tip side="left" label={open ? 'Close' : 'Skies of this day'}>
-        <button onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close sky list' : 'Choose a sky of this day'} className="w-10 h-7 flex items-center justify-center cursor-pointer">
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-label={open ? 'Close sky list' : 'Choose a sky of this day'}
+          className="w-10 h-7 flex items-center justify-center cursor-pointer"
+        >
           <Icon name="chevron-down" size={24} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
       </Tip>

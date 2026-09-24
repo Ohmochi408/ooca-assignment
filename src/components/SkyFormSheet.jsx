@@ -19,7 +19,11 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
   };
 
   return (
-    <Sheet title={styleOnly ? 'Favorites sky' : editing ? 'Edit sky' : 'Create new sky'} subtitle={styleOnly ? 'Pick how your Favorites sky looks.' : undefined} onClose={onClose}>
+    <Sheet
+      title={styleOnly ? 'Favorites sky' : editing ? 'Edit sky' : 'Create new sky'}
+      subtitle={styleOnly ? 'Pick how your Favorites sky looks.' : undefined}
+      onClose={onClose}
+    >
       <form onSubmit={submit} className="flex flex-col gap-5">
         {/* Live preview */}
         <div className={`sky-${style} relative h-28 rounded-ooca-16 overflow-hidden flex items-end p-3 transition-all`}>
@@ -49,7 +53,14 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
               <legend className="text-body4 uppercase text-bluegray-600 mb-2">Icon</legend>
               <div className="grid grid-cols-6 gap-2">
                 {SKY_ICON_CHOICES.map((n) => (
-                  <button key={n} type="button" onClick={() => setIcon(n)} aria-pressed={icon === n} aria-label={n} className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-500 bg-turquoise-50 text-turquoise-500' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}>
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setIcon(n)}
+                    aria-pressed={icon === n}
+                    aria-label={n}
+                    className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-500 bg-turquoise-50 text-turquoise-500' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}
+                  >
                     <Icon name={n} size={22} />
                   </button>
                 ))}
@@ -62,7 +73,13 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
           <legend className="text-body4 uppercase text-bluegray-600 mb-2">Sky</legend>
           <div className="grid grid-cols-6 gap-1.5">
             {SKY_PERIODS.map((p) => (
-              <button key={p.id} type="button" onClick={() => setStyle(p.id)} aria-pressed={style === p.id} className={`flex flex-col items-center gap-1 p-1 rounded-ooca-8 border-2 cursor-pointer ${style === p.id ? 'border-turquoise-500' : 'border-transparent'}`}>
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setStyle(p.id)}
+                aria-pressed={style === p.id}
+                className={`flex flex-col items-center gap-1 p-1 rounded-ooca-8 border-2 cursor-pointer ${style === p.id ? 'border-turquoise-500' : 'border-transparent'}`}
+              >
                 <span className={`sky-${p.id} w-full h-12 rounded-ooca-8`} />
                 <span className="text-small text-bluegray-700">{p.label}</span>
               </button>
@@ -71,7 +88,9 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
         </fieldset>
 
         <div className="flex items-center gap-3">
-          <button type="button" onClick={onClose} className="ooca-btn ooca-btn-secondary ooca-btn-turquoise flex-1">Cancel</button>
+          <button type="button" onClick={onClose} className="ooca-btn ooca-btn-secondary ooca-btn-turquoise flex-1">
+            Cancel
+          </button>
           <button type="submit" disabled={!valid} className="ooca-btn ooca-btn-primary ooca-btn-turquoise flex-[2]">
             {editing ? 'Save changes' : 'Create sky'}
           </button>

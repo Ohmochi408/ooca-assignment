@@ -7,7 +7,10 @@
 export const SUMMARY_FROM_SEC = 5;
 
 const SAMPLES = [
-  { title: 'Tomorrow’s presentation', points: ['Slides are done, the demo part isn’t yet', 'Wants one more run-through tonight', 'Asks Mai to check the numbers'] },
+  {
+    title: 'Tomorrow’s presentation',
+    points: ['Slides are done, the demo part isn’t yet', 'Wants one more run-through tonight', 'Asks Mai to check the numbers'],
+  },
   { title: 'Moving to the new flat', points: ['Lease starts on the 1st', 'Boxes, internet and the cat’s vet move', 'Deciding what to sell first'] },
   { title: 'Weekend with the family', points: ['Visiting grandma on Saturday', 'Picking a gift on the way', 'Sunday is kept free'] },
   { title: 'Saving for a laptop', points: ['Current one is five years old', 'Setting aside a bit each payday', 'Looking again in December'] },
@@ -17,7 +20,5 @@ const SAMPLES = [
 
 export function suggestFor(rec) {
   const pick = SAMPLES[Math.floor(Math.random() * SAMPLES.length)];
-  return new Promise((resolve) =>
-    setTimeout(() => resolve({ title: pick.title, summary: rec.duration >= SUMMARY_FROM_SEC ? pick.points : null }), 1600),
-  );
+  return new Promise((resolve) => setTimeout(() => resolve({ title: pick.title, summary: rec.duration >= SUMMARY_FROM_SEC ? pick.points : null }), 1600));
 }

@@ -30,7 +30,7 @@ export async function playSynthesizedHum(durationSec = 5, onEnd = null) {
 
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
-    
+
     // Master volume envelope: smooth fade in, gentle fade out
     masterGain.gain.setValueAtTime(0.0001, now);
     masterGain.gain.linearRampToValueAtTime(0.35, now + 0.15);

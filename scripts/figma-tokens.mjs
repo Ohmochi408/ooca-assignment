@@ -25,7 +25,12 @@ const FIG = path.resolve(ROOT, figArg);
 // ---------------------------------------------------------------------------
 
 const to255 = (x) => Math.round(x * 255);
-const hex = ({ r, g, b }) => '#' + [r, g, b].map((x) => to255(x).toString(16).padStart(2, '0')).join('').toUpperCase();
+const hex = ({ r, g, b }) =>
+  '#' +
+  [r, g, b]
+    .map((x) => to255(x).toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
 const rgba = (c, opacity = 1) => {
   const a = +(c.a * opacity).toFixed(2);
   return a >= 1 ? hex(c) : `rgba(${to255(c.r)}, ${to255(c.g)}, ${to255(c.b)}, ${a})`;
@@ -37,15 +42,27 @@ const WEIGHTS = { Thin: 100, ExtraLight: 200, Light: 300, Book: 400, Regular: 40
 // Font files installed locally (PostScript names) + free web copies for Prompt.
 const LOCAL_FACES = {
   'Gotham Rounded': { 300: ['GothamRounded-Light'], 400: ['GothamRounded-Book'], 500: ['GothamRounded-Medium'], 700: ['GothamRounded-Bold'] },
-  Prompt: { 300: ['Prompt-Light', 'Prompt Light'], 400: ['Prompt-Regular', 'Prompt Regular'], 500: ['Prompt-Medium', 'Prompt Medium'], 600: ['Prompt-SemiBold', 'Prompt SemiBold'], 700: ['Prompt-Bold', 'Prompt Bold'] },
+  Prompt: {
+    300: ['Prompt-Light', 'Prompt Light'],
+    400: ['Prompt-Regular', 'Prompt Regular'],
+    500: ['Prompt-Medium', 'Prompt Medium'],
+    600: ['Prompt-SemiBold', 'Prompt SemiBold'],
+    700: ['Prompt-Bold', 'Prompt Bold'],
+  },
 };
 const localSrc = (names) => names.map((n) => `local('${n}')`).join(', ');
 const THAI_RANGE = 'U+0E01-0E5B, U+200C-200D, U+25CC';
 const LATIN_RANGE = 'U+0000-0E00, U+0E5C-FFFF';
 
 const HUES = {
-  'OOCA Blue': 'blue', 'OOCA Turquoise': 'turquoise', 'OOCA Guava': 'guava', 'OOCA Marigo': 'marigo',
-  'OOCA Flamingo': 'flamingo', 'OOCA Sunshade': 'sunshade', 'Blue Grays': 'bluegray', 'Black Grays': 'gray',
+  'OOCA Blue': 'blue',
+  'OOCA Turquoise': 'turquoise',
+  'OOCA Guava': 'guava',
+  'OOCA Marigo': 'marigo',
+  'OOCA Flamingo': 'flamingo',
+  'OOCA Sunshade': 'sunshade',
+  'Blue Grays': 'bluegray',
+  'Black Grays': 'gray',
 };
 
 function colorToken(name) {
@@ -55,7 +72,12 @@ function colorToken(name) {
   if (last === 'Black') return 'black';
   if (parts[0] === 'OOCA All Shades and Hues') return `${HUES[parts[1]] ?? kebab(parts[1])}-${last}`;
   if (parts[0] === 'Main Colors') {
-    const slug = last.toLowerCase().replace('black gray', 'gray').replace('blue gray', 'bluegray').replace(/\s+/g, '').replace(/(\D)(\d+)$/, '$1-$2');
+    const slug = last
+      .toLowerCase()
+      .replace('black gray', 'gray')
+      .replace('blue gray', 'bluegray')
+      .replace(/\s+/g, '')
+      .replace(/(\D)(\d+)$/, '$1-$2');
     return `main-${slug}`;
   }
   if (parts[0].startsWith('Neutral')) return `neutral-${last.replace(/\D/g, '')}`;
@@ -132,9 +154,7 @@ function extract(nodes, meta) {
     votes[en.weight] ??= {};
     votes[en.weight][th.weight] = (votes[en.weight][th.weight] ?? 0) + 1;
   }
-  const thaiWeightFor = Object.fromEntries(
-    Object.entries(votes).map(([w, v]) => [w, +Object.entries(v).sort((a, b) => b[1] - a[1])[0][0]]),
-  );
+  const thaiWeightFor = Object.fromEntries(Object.entries(votes).map(([w, v]) => [w, +Object.entries(v).sort((a, b) => b[1] - a[1])[0][0]]));
 
   // Elevation: shadow cards in the "Elevation" frame, read left→right, top→bottom = 01..08
   const page = nodes.find((n) => n.type === 'CANVAS' && n.name === 'ooca CI');
@@ -157,7 +177,9 @@ function extract(nodes, meta) {
   const shapesFrame = topFrames.find((f) => f.name === 'Shapes' && kids(f).some((k) => k.name?.startsWith('Shapes/')));
   const pill = nodes.find((n) => n.type === 'SYMBOL' && n.name === 'Shapes/Fill/50px');
   const radii = new Set([
-    ...kids(shapesFrame ?? {}).filter((n) => n.name?.startsWith('Shapes/Fill') && n.cornerRadius).map((n) => n.cornerRadius),
+    ...kids(shapesFrame ?? {})
+      .filter((n) => n.name?.startsWith('Shapes/Fill') && n.cornerRadius)
+      .map((n) => n.cornerRadius),
     ...elevation.map((e) => e.cardRadius).filter(Boolean),
   ]);
   const radius = [
@@ -176,8 +198,13 @@ function extract(nodes, meta) {
       const textPaint = visiblePaints(text?.fillPaints)[0];
       return {
         figma: n.name,
-        type: props.Type, state: props.State, size: props.Size, color: props.Colors, icon: props.Icon,
-        width: Math.round(n.size.x), height: Math.round(n.size.y),
+        type: props.Type,
+        state: props.State,
+        size: props.Size,
+        color: props.Colors,
+        icon: props.Icon,
+        width: Math.round(n.size.x),
+        height: Math.round(n.size.y),
         radius: n.cornerRadius ?? 0,
         background: fill?.type === 'SOLID' ? rgba(fill.color, fill.opacity ?? 1) : null,
         border: stroke?.type === 'SOLID' && n.strokeWeight ? { width: n.strokeWeight, color: rgba(stroke.color, stroke.opacity ?? 1) } : null,
@@ -188,7 +215,13 @@ function extract(nodes, meta) {
 
   return {
     source: { file: path.basename(FIG), exportedAt: meta.exported_at ?? null },
-    colors, gradients, typography, thaiWeightFor, elevation, radius, buttons,
+    colors,
+    gradients,
+    typography,
+    thaiWeightFor,
+    elevation,
+    radius,
+    buttons,
     _colorByValue: colorByValue,
   };
 }
@@ -215,13 +248,15 @@ function buildCss(t) {
   for (const w of enWeights) {
     const thW = t.thaiWeightFor[w] ?? w;
     const ps = LOCAL_FACES.Prompt[thW];
-    L.push(`@font-face { font-family: 'OOCA Sans'; font-weight: ${w}; font-display: swap; unicode-range: ${THAI_RANGE}; src: ${localSrc(ps)}, url('@fontsource/prompt/files/prompt-thai-${thW}-normal.woff2') format('woff2'); }`);
+    L.push(
+      `@font-face { font-family: 'OOCA Sans'; font-weight: ${w}; font-display: swap; unicode-range: ${THAI_RANGE}; src: ${localSrc(ps)}, url('@fontsource/prompt/files/prompt-thai-${thW}-normal.woff2') format('woff2'); }`,
+    );
   }
   L.push('');
 
   L.push('@theme static {'); // static: keep every Figma variable even if no utility uses it yet
   L.push("  --font-sans: 'OOCA Sans', 'Nunito', 'Prompt', system-ui, sans-serif;", '');
-  L.push('  /* Colors — only OOCA colors exist; Tailwind\'s default palette is switched off */');
+  L.push("  /* Colors — only OOCA colors exist; Tailwind's default palette is switched off */");
   L.push('  --color-*: initial;');
   for (const c of t.colors) L.push(`  --color-${c.token}: ${c.value}; /* ${c.figma} */`);
   L.push('');
@@ -260,19 +295,28 @@ function buildCss(t) {
   L.push('/* ---- Buttons (Figma component "Button") ------------------------------ */');
   L.push('@layer components {');
   const base = t.buttons.find((b) => b.type === 'Primary' && b.state === 'Default' && b.size === 'Default');
-  const baseText = t.typography.find((s) => s.lang === 'en' && s.size === base?.font?.size && WEIGHTS[base?.font?.style] === s.weight && s.token.startsWith('button'));
-  L.push(`  .ooca-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: ${base.height}px; padding: 0 24px; border-radius: var(--radius-ooca-pill); border: 2px solid transparent; font-size: var(--text-${baseText.token}); line-height: var(--text-${baseText.token}--line-height); font-weight: var(--text-${baseText.token}--font-weight); white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .1s; }`);
+  const baseText = t.typography.find(
+    (s) => s.lang === 'en' && s.size === base?.font?.size && WEIGHTS[base?.font?.style] === s.weight && s.token.startsWith('button'),
+  );
+  L.push(
+    `  .ooca-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: ${base.height}px; padding: 0 24px; border-radius: var(--radius-ooca-pill); border: 2px solid transparent; font-size: var(--text-${baseText.token}); line-height: var(--text-${baseText.token}--line-height); font-weight: var(--text-${baseText.token}--font-weight); white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, color .15s, transform .1s; }`,
+  );
   L.push('  .ooca-btn:active { transform: scale(.97); }');
   L.push('  .ooca-btn-block { width: 100%; }');
   L.push('  .ooca-btn:disabled, .ooca-btn[aria-disabled="true"] { cursor: not-allowed; transform: none; }');
   const textBtn = t.buttons.find((b) => b.type === 'Text');
   if (textBtn) {
-    const tt = t.typography.find((s) => s.lang === 'en' && s.size === textBtn.font.size && WEIGHTS[textBtn.font.style] === s.weight && s.token.includes('underline'));
-    L.push(`  .ooca-btn-text { height: auto; padding: 0; border: 0; border-radius: 0; background: none; text-decoration: underline; text-underline-offset: 3px; font-size: var(--text-${tt.token}); line-height: var(--text-${tt.token}--line-height); font-weight: var(--text-${tt.token}--font-weight); }`);
+    const tt = t.typography.find(
+      (s) => s.lang === 'en' && s.size === textBtn.font.size && WEIGHTS[textBtn.font.style] === s.weight && s.token.includes('underline'),
+    );
+    L.push(
+      `  .ooca-btn-text { height: auto; padding: 0; border: 0; border-radius: 0; background: none; text-decoration: underline; text-underline-offset: 3px; font-size: var(--text-${tt.token}); line-height: var(--text-${tt.token}--line-height); font-weight: var(--text-${tt.token}--font-weight); }`,
+    );
   }
   const selector = { Default: '', Active: ':is(:hover, :focus-visible, [data-active="true"])', Loading: '[data-loading="true"]', Disabled: ':disabled' };
   const order = (list, v) => list.indexOf(v);
-  const TYPES = ['Primary', 'Secondary', 'Text'], STATES = ['Default', 'Active', 'Loading', 'Disabled'];
+  const TYPES = ['Primary', 'Secondary', 'Text'],
+    STATES = ['Default', 'Active', 'Loading', 'Disabled'];
   const listed = t.buttons
     .filter((b) => b.size === 'Default' && b.icon === 'No' && TYPES.includes(b.type))
     .sort((a, b) => order(TYPES, a.type) - order(TYPES, b.type) || order(STATES, a.state) - order(STATES, b.state) || a.color.localeCompare(b.color));
@@ -322,16 +366,31 @@ function checkTokens(t) {
   };
   count('Color styles', t.colors, (c) => expect(c.figma, `color-${c.token}`, c.value));
   count('Gradient styles', t.gradients, (g) => expect(g.figma, `gradient-${g.token}`, g.value));
-  count('Text styles (EN)', t.typography.filter((s) => s.lang === 'en'), (s) =>
-    [expect(s.figma, `text-${s.token}`, `${s.size}px`), expect(s.figma, `text-${s.token}--line-height`, `${s.lineHeight}px`), expect(s.figma, `text-${s.token}--font-weight`, s.weight)].every(Boolean));
+  count(
+    'Text styles (EN)',
+    t.typography.filter((s) => s.lang === 'en'),
+    (s) =>
+      [
+        expect(s.figma, `text-${s.token}`, `${s.size}px`),
+        expect(s.figma, `text-${s.token}--line-height`, `${s.lineHeight}px`),
+        expect(s.figma, `text-${s.token}--font-weight`, s.weight),
+      ].every(Boolean),
+  );
   const css = fs.readFileSync(CSS_OUT, 'utf8');
-  count('Text styles (TH)', t.typography.filter((s) => s.lang === 'th'), (s) => {
-    const en = t.typography.find((e) => e.lang === 'en' && e.token === s.token);
-    if (!en) { problems.push(`TH style ${s.figma} has no EN counterpart`); return false; }
-    const lhOk = s.lineHeight === en.lineHeight || css.includes(`:lang(th) .text-${s.token} { line-height: ${s.lineHeight}px; }`);
-    if (!lhOk) problems.push(`missing TH line-height override for ${s.figma}`);
-    return lhOk;
-  });
+  count(
+    'Text styles (TH)',
+    t.typography.filter((s) => s.lang === 'th'),
+    (s) => {
+      const en = t.typography.find((e) => e.lang === 'en' && e.token === s.token);
+      if (!en) {
+        problems.push(`TH style ${s.figma} has no EN counterpart`);
+        return false;
+      }
+      const lhOk = s.lineHeight === en.lineHeight || css.includes(`:lang(th) .text-${s.token} { line-height: ${s.lineHeight}px; }`);
+      if (!lhOk) problems.push(`missing TH line-height override for ${s.figma}`);
+      return lhOk;
+    },
+  );
   count('Elevation levels', t.elevation, (e) => expect(e.figma, `shadow-${e.token}`, e.value));
   count('Radius', t.radius, (r) => expect(r.figma, `radius-${r.token}`, r.value));
   const covered = t.buttons.filter((b) => b.size === 'Default' && b.icon === 'No' && ['Primary', 'Secondary', 'Text'].includes(b.type));
@@ -346,24 +405,34 @@ function checkTokens(t) {
   for (const th of t.typography.filter((s) => s.lang === 'th')) {
     const en = t.typography.find((e) => e.lang === 'en' && e.token === th.token);
     if (en && t.thaiWeightFor[en.weight] !== th.weight)
-      notes.push(`${th.figma} is Prompt ${th.style} (${th.weight}) but shares EN weight ${en.weight}, which maps to Prompt ${t.thaiWeightFor[en.weight]} — renders one step off`);
+      notes.push(
+        `${th.figma} is Prompt ${th.style} (${th.weight}) but shares EN weight ${en.weight}, which maps to Prompt ${t.thaiWeightFor[en.weight]} — renders one step off`,
+      );
   }
   // Small / icon variants must use exactly the colors of their Default counterpart, or the shared classes are wrong
   const others = t.buttons.filter((b) => !covered.includes(b));
   count('Button variants (Small / with icon) — same colors as Default', others, (b) => {
     const base = covered.find((c) => c.type === b.type && c.state === b.state && c.color === b.color);
-    const same = base && ['background', 'text'].every((k) => b[k] === base[k] || b[k] === null || base[k] === null) && (b.border?.color ?? null) === (base.border?.color ?? null);
+    const same =
+      base &&
+      ['background', 'text'].every((k) => b[k] === base[k] || b[k] === null || base[k] === null) &&
+      (b.border?.color ?? null) === (base.border?.color ?? null);
     if (!same) notes.push(`${b.figma} has its own colors (bg ${b.background}, text ${b.text}) — not covered by .ooca-btn classes`);
     return same;
   });
   for (const en of t.typography.filter((s) => s.lang === 'en'))
-    if (!t.typography.some((s) => s.lang === 'th' && s.token === en.token)) notes.push(`${en.figma} has no TH version in Figma — Thai text in .text-${en.token} uses the default weight mapping`);
+    if (!t.typography.some((s) => s.lang === 'th' && s.token === en.token))
+      notes.push(`${en.figma} has no TH version in Figma — Thai text in .text-${en.token} uses the default weight mapping`);
   return { rows, problems, notes };
 }
 
 const TAILWIND_ONLY_HUES = 'slate|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|indigo|violet|purple|fuchsia|pink|rose';
 const RULES = [
-  { level: 'error', what: 'Tailwind default color (not in OOCA palette)', re: new RegExp(`\\b[a-z]+-(?:${TAILWIND_ONLY_HUES})-\\d{2,3}\\b|\\b[a-z]+-(?:blue|gray)-950\\b`, 'g') },
+  {
+    level: 'error',
+    what: 'Tailwind default color (not in OOCA palette)',
+    re: new RegExp(`\\b[a-z]+-(?:${TAILWIND_ONLY_HUES})-\\d{2,3}\\b|\\b[a-z]+-(?:blue|gray)-950\\b`, 'g'),
+  },
   { level: 'error', what: 'Tailwind default font size (use an OOCA text style)', re: /\btext-(?:xs|sm|base|lg|[2-9]?xl)\b|\btext-\[\d+(?:px|rem)\]/g },
   { level: 'error', what: 'Non-OOCA radius', re: /\brounded(?:-[trblse]{1,2})?(?:-(?:sm|md|lg|xl|2xl|3xl|\[[^\]]+\]))?(?=[\s'"`]|$)/g },
   { level: 'error', what: 'Non-OOCA shadow', re: /\bshadow(?:-(?:sm|md|lg|xl|2xl|inner))?(?=[\s'"`]|$)/g },

@@ -8,7 +8,25 @@ import { RECORD, TOGGLE } from './sky/layout';
 
 // Ideate2 → Main Design: the sky screen — Time Sky or My Sky, with the record button and the view toggle.
 // Which sky is on screen (timeNav / myIndex) lives in App, so it is kept while visiting other screens.
-export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTimeNav, myIndex, setMyIndex, newCloudId, leaving, onAddThought, onEditCloud, onFavorite, onDeleteCloud, onMoveCloud, onCreateSky, onUpdateSky }) {
+export default function SkyScreen({
+  clouds,
+  skies,
+  view,
+  setView,
+  timeNav,
+  setTimeNav,
+  myIndex,
+  setMyIndex,
+  newCloudId,
+  leaving,
+  onAddThought,
+  onEditCloud,
+  onFavorite,
+  onDeleteCloud,
+  onMoveCloud,
+  onCreateSky,
+  onUpdateSky,
+}) {
   const [expandedId, setExpandedId] = useState(null);
   const [playingId, setPlayingId] = useState(null);
   const [form, setForm] = useState(null); // My Sky: null | 'new' | sky
@@ -46,7 +64,14 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
     <div className={`relative h-full overflow-hidden ${leaving ? 'sky-leaving' : ''}`}>
       <div className="absolute inset-0">
         {view === 'time' ? (
-          <TimeSky clouds={clouds} nav={timeNav} setNav={withClosedCard(setTimeNav)} cloudProps={cloudProps} onMoveCloud={onMoveCloud} expandedId={expandedId} />
+          <TimeSky
+            clouds={clouds}
+            nav={timeNav}
+            setNav={withClosedCard(setTimeNav)}
+            cloudProps={cloudProps}
+            onMoveCloud={onMoveCloud}
+            expandedId={expandedId}
+          />
         ) : (
           <MySkies
             clouds={clouds}
@@ -67,7 +92,10 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
       </div>
 
       {/* Soft white glow rising from the horizon behind the controls */}
-      <div className="fg absolute inset-x-0 bottom-0 h-[260px] pointer-events-none z-10 bg-[radial-gradient(400px_400px_at_50%_calc(100%+250px),var(--color-white),color-mix(in_srgb,var(--color-white)_50%,transparent)_50%,transparent)]" aria-hidden="true" />
+      <div
+        className="fg absolute inset-x-0 bottom-0 h-[260px] pointer-events-none z-10 bg-[radial-gradient(400px_400px_at_50%_calc(100%+250px),var(--color-white),color-mix(in_srgb,var(--color-white)_50%,transparent)_50%,transparent)]"
+        aria-hidden="true"
+      />
 
       {/* Record */}
       <div className={RECORD}>
@@ -88,7 +116,16 @@ export default function SkyScreen({ clouds, skies, view, setView, timeNav, setTi
       {/* Toggle (+ My Sky: all skies / new sky) */}
       <div className={TOGGLE}>
         {view === 'mine' && (
-          <RoundButton size={40} label={showAll ? 'Back to one sky' : 'Show all skies'} tip={showAll ? 'One sky' : 'All skies'} tipSide="top-start" place="absolute left-0" pressed={showAll} onClick={() => setShowAll((s) => !s)} className={showAll ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}>
+          <RoundButton
+            size={40}
+            label={showAll ? 'Back to one sky' : 'Show all skies'}
+            tip={showAll ? 'One sky' : 'All skies'}
+            tipSide="top-start"
+            place="absolute left-0"
+            pressed={showAll}
+            onClick={() => setShowAll((s) => !s)}
+            className={showAll ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+          >
             <Icon name="grid" size={20} />
           </RoundButton>
         )}

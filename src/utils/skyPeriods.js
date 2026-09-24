@@ -10,7 +10,11 @@ export const SKY_PERIODS = [
 ];
 
 export const periodById = (id) => SKY_PERIODS.find((p) => p.id === id) ?? SKY_PERIODS[0];
-export const periodIndex = (id) => Math.max(0, SKY_PERIODS.findIndex((p) => p.id === id));
+export const periodIndex = (id) =>
+  Math.max(
+    0,
+    SKY_PERIODS.findIndex((p) => p.id === id),
+  );
 
 export function getSkyPeriod(date = new Date()) {
   const hr = date.getHours() + date.getMinutes() / 60;

@@ -186,7 +186,10 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                       className="relative rounded-ooca-8 px-1 text-left cursor-text hover:bg-white/10"
                     >
                       <h1 className="text-h4 text-white text-center break-words">{label}</h1>
-                      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-8 h-8 rounded-full bg-white text-turquoise-500 shadow-elevation-2 flex items-center justify-center" aria-hidden="true">
+                      <span
+                        className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-8 h-8 rounded-full bg-white text-turquoise-500 shadow-elevation-2 flex items-center justify-center"
+                        aria-hidden="true"
+                      >
                         <Icon name="edit-square" size={16} />
                       </span>
                     </button>
@@ -208,10 +211,17 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
               <div className={`w-full ${compact ? 'mt-6' : 'mt-12'}`}>
                 <VoiceProgress progress={voice.progress} duration={cloud.duration} onSeek={voice.seek} thick onSky label={`Position in ${label}`} />
               </div>
-              <RoundButton size={56} label={voice.playing ? 'Pause' : 'Play'} onClick={voice.toggle} className={`bg-white text-turquoise-500 shadow-elevation-3 ${compact ? 'mt-3' : 'mt-6'}`}>
+              <RoundButton
+                size={56}
+                label={voice.playing ? 'Pause' : 'Play'}
+                onClick={voice.toggle}
+                className={`bg-white text-turquoise-500 shadow-elevation-3 ${compact ? 'mt-3' : 'mt-6'}`}
+              >
                 <Icon name={voice.playing ? 'pause' : 'play'} size={24} className={voice.playing ? '' : 'ml-0.5'} />
               </RoundButton>
-              {!cloud.audioUrl && <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 mt-3">No voice was kept — this plays a soft chime.</p>}
+              {!cloud.audioUrl && (
+                <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 mt-3">No voice was kept — this plays a soft chime.</p>
+              )}
             </div>
           </div>
 
@@ -239,7 +249,12 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                       aria-label="New sky name"
                       className="min-w-0 flex-1 text-body3 text-black bg-transparent outline-none placeholder:text-gray-400"
                     />
-                    <button onClick={() => setMenuOpen((o) => !o)} aria-label="Choose an existing sky instead" aria-expanded={menuOpen} className="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <button
+                      onClick={() => setMenuOpen((o) => !o)}
+                      aria-label="Choose an existing sky instead"
+                      aria-expanded={menuOpen}
+                      className="w-8 h-8 flex items-center justify-center cursor-pointer"
+                    >
                       <Icon name="chevron-down" size={24} className={`transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
                     </button>
                   </div>
@@ -265,7 +280,11 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                 )}
 
                 {menuOpen && (
-                  <ul role="listbox" aria-labelledby="pick-sky-label" className="absolute left-4 right-4 bottom-[calc(100%-4px)] z-20 rounded-ooca-24 bg-white shadow-elevation-6 overflow-hidden fade-in">
+                  <ul
+                    role="listbox"
+                    aria-labelledby="pick-sky-label"
+                    className="absolute left-4 right-4 bottom-[calc(100%-4px)] z-20 rounded-ooca-24 bg-white shadow-elevation-6 overflow-hidden fade-in"
+                  >
                     <li>
                       <button onClick={() => pick('new')} className={`${row} text-black hover:bg-turquoise-50 cursor-pointer`}>
                         + Create new
@@ -275,7 +294,10 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                       const on = !creating && s.id === skyId;
                       return (
                         <li key={s.id} role="option" aria-selected={on}>
-                          <button onClick={() => pick(s.id)} className={`${row} rounded-ooca-24 cursor-pointer ${on ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}>
+                          <button
+                            onClick={() => pick(s.id)}
+                            className={`${row} rounded-ooca-24 cursor-pointer ${on ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}
+                          >
                             <SkyDot period={s.style} size={24} />
                             <span className="truncate">{s.name}</span>
                           </button>
@@ -283,7 +305,10 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                       );
                     })}
                     <li role="option" aria-selected={!creating && !skyId}>
-                      <button onClick={() => pick(null)} className={`${row} rounded-ooca-24 cursor-pointer ${!creating && !skyId ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}>
+                      <button
+                        onClick={() => pick(null)}
+                        className={`${row} rounded-ooca-24 cursor-pointer ${!creating && !skyId ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}
+                      >
                         None
                       </button>
                     </li>
@@ -293,18 +318,32 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
 
               {/* New sky: which of the six skies it looks like */}
               {creating && (
-                <div className="mt-2 h-10 rounded-ooca-24 bg-white shadow-elevation-2 flex items-center justify-between px-4 fade-in" role="radiogroup" aria-label="Sky style">
+                <div
+                  className="mt-2 h-10 rounded-ooca-24 bg-white shadow-elevation-2 flex items-center justify-between px-4 fade-in"
+                  role="radiogroup"
+                  aria-label="Sky style"
+                >
                   {SKY_PERIODS.slice(1)
                     .concat(SKY_PERIODS[0])
                     .map((p) => (
                       <Tip key={p.id} label={`${p.label} · ${p.range}`}>
-                        <button role="radio" aria-checked={newStyle === p.id} aria-label={`${p.label} sky, ${p.range}`} onClick={() => setNewStyle(p.id)} className="w-8 h-8 flex items-center justify-center cursor-pointer">
+                        <button
+                          role="radio"
+                          aria-checked={newStyle === p.id}
+                          aria-label={`${p.label} sky, ${p.range}`}
+                          onClick={() => setNewStyle(p.id)}
+                          className="w-8 h-8 flex items-center justify-center cursor-pointer"
+                        >
                           <SkyDot period={p.id} size={24} className={newStyle === p.id ? 'ring-2 ring-turquoise-500' : ''} />
                         </button>
                       </Tip>
                     ))}
                   <Tip label="Surprise me">
-                    <button onClick={surprise} aria-label="Surprise me — pick a sky at random" className="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <button
+                      onClick={surprise}
+                      aria-label="Surprise me — pick a sky at random"
+                      className="w-8 h-8 flex items-center justify-center cursor-pointer"
+                    >
                       <span className="w-6 h-6 rounded-full bg-gray-400 text-white flex items-center justify-center">
                         <Icon name="magic-bold" size={16} />
                       </span>
@@ -315,7 +354,13 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
 
               {/* Actions */}
               <div className="flex items-center gap-4 mt-8">
-                <RoundButton size={40} label={favorite ? 'Remove from favorites' : 'Add to favorites'} pressed={favorite} onClick={() => setFavorite((f) => !f)} className={favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}>
+                <RoundButton
+                  size={40}
+                  label={favorite ? 'Remove from favorites' : 'Add to favorites'}
+                  pressed={favorite}
+                  onClick={() => setFavorite((f) => !f)}
+                  className={favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+                >
                   <Icon name="favorite" size={20} />
                 </RoundButton>
                 <button onClick={done} disabled={!canSave} className="ooca-btn ooca-btn-primary ooca-btn-turquoise flex-1">
