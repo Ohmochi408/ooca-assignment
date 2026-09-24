@@ -43,7 +43,7 @@ Thought → Voice → Cloud → Sky → Meaning → Look back
 
 ## 🛠️ Tech Stack & Engineering Highlights
 - **Framework:** React 19 + Vite 8
-- **UX base:** Screen flow and visual language from the Figma Make prototype (`Figma make/`), rebuilt on the OOCA design system
+- **Design:** Figma **Ideate2 → Main Design** (the Latest `.fig`), built on the OOCA design system
 - **Screens** (`src/screens/`): Lock screen → Sky (Time Sky / My Sky) → Record → Cloud ready (listen back, AI name + summary, pick a sky) → back to the sky
 - **Styling:** Tailwind CSS v4, mobile-first with a phone frame on desktop; six time-of-day skies in `src/styles/sky.css` built only from OOCA color tokens
 - **Audio Engine:** `MediaRecorder` capture with a live input level (Web Audio `AnalyserNode`) driving the voice rings, voice saved as a data URL in localStorage, soft synthesized chime when there is no recording

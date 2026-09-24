@@ -1,5 +1,7 @@
 # OOCA — Thought Cloud
 
+> The original concept brief. The built prototype follows the Figma **Ideate2 → Main Design** screens — see the [README](./README.md) for what it does today (lock-screen shortcut, six-sky Time Sky, My Sky with Favorites, AI name + summary).
+
 ### Exploratory Product Concept / UX Design Assignment
 **Role:** UX/UI Product Designer (Design Engineer)  
 **Topic:** The 2-Minute Mental Health Experience  

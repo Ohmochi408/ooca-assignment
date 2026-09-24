@@ -28,18 +28,6 @@ export function saveFavoritesStyle(style) {
 // Icons a user can give their own sky (all from the OOCA DS)
 export const SKY_ICON_CHOICES = ['star', 'favorite', 'moon', 'sunrise', 'home', 'music', 'chat', 'reward', 'magic', 'mood', 'user', 'lock'];
 
-// Earlier versions stored emoji — map them onto DS icons (ds-allow: migration data only)
-const EMOJI_ICONS = { '🌙': 'moon', '💼': 'folder', '♡': 'favorite', '🌌': 'lock', '🌱': 'star', '🍵': 'home', '🕊️': 'chat', '💡': 'magic', '☁️': 'star' };
-
-function migrateSky(sky) {
-  const preset = DEFAULT_SKIES.find((d) => d.id === sky.id);
-  return {
-    ...sky,
-    icon: SKY_ICON_CHOICES.includes(sky.icon) || sky.icon === 'folder' ? sky.icon : EMOJI_ICONS[sky.icon] ?? preset?.icon ?? 'star',
-    style: sky.style ?? preset?.style ?? 'morning',
-  };
-}
-
 export function getStoredClouds() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -70,7 +58,7 @@ export function getStoredSkies() {
       localStorage.setItem(SKIES_KEY, JSON.stringify(DEFAULT_SKIES));
       return DEFAULT_SKIES;
     }
-    return JSON.parse(raw).map(migrateSky);
+    return JSON.parse(raw);
   } catch (e) {
     return DEFAULT_SKIES;
   }
