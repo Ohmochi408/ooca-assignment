@@ -10,7 +10,7 @@ Topic: **The 2-Minute Mental Health Experience** (OOCA Assignment)
 ## 🔗 Project Deliverables
 - **Working web link:** [https://ohmochi408.github.io/ooca-assignment/](https://ohmochi408.github.io/ooca-assignment/) *(design system parity page: [/design-system.html](https://ohmochi408.github.io/ooca-assignment/design-system.html))*
 - **GitHub Repository:** [https://github.com/Ohmochi408/ooca-assignment](https://github.com/Ohmochi408/ooca-assignment)
-- **Figma:** [ooca CI for UX/UI Assignment — Ohm Wittawin](https://www.figma.com/design/GuezuljZCzCuTTdqfakRn5/ooca-CI-for-UX-UI-Assignment--Ohm_Wittawin-?node-id=2105-3800) — page **Ideate2**: Problem / Who / Approach boards, user flow, and the **Main Design** screens the app follows
+- **Figma:** [ooca CI for UX/UI Assignment — Ohm Wittawin](https://www.figma.com/design/GuezuljZCzCuTTdqfakRn5/ooca-CI-for-UX-UI-Assignment--Ohm_Wittawin-?node-id=2174-13112) — page **Ideate2**, section **Deliverables**: Problem / Who / Approach boards, user flow, and the **Main Design** screens the app follows
 - **Figma file (offline copy):** [`ooca CI for UX_UI Assignment_Latest Ver..fig`](./ooca%20CI%20for%20UX_UI%20Assignment_Latest%20Ver..fig) *(Import directly into Figma)*
 - **OOCA CI source for the design tokens:** [`ooca CI for UX_UI Assignment (Copy).fig`](./ooca%20CI%20for%20UX_UI%20Assignment%20(Copy).fig)
 - **Product Brief / Source of Truth:** [`PRODUCT_BRIEF.md`](./PRODUCT_BRIEF.md)
