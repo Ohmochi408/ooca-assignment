@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      /* Slides and the live prototype in one page: ← → (or a clicker) to move, F for full screen, R to reset the demo.
+      /* Slides and the live prototype in one page: ← → (or a clicker) to move (Shift + ← → inside the demo), F for full screen, R to reset the demo.
          Board slides are the Figma boards as images; demo slides are the real app, full window. */
       :root {
         --ink: #26313c;
@@ -147,13 +147,25 @@
       #note.on {
         opacity: 1;
       }
-      /* Only on the demo slide, out of the app's way in the bottom-left corner */
-      #reset {
+      /* Only on the demo slide, bottom-left; it appears when the mouse moves and fades after a moment */
+      #demo-bar {
         position: fixed;
         left: 16px;
         bottom: 16px;
         z-index: 11;
         display: none;
+        gap: 8px;
+      }
+      body.demo #demo-bar {
+        display: flex;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      body.demo #demo-bar.on,
+      body.demo #demo-bar:hover {
+        opacity: 1;
+      }
+      #demo-bar button {
         padding: 8px 14px;
         border: 1px solid rgba(255, 255, 255, 0.35);
         border-radius: 999px;
@@ -165,11 +177,8 @@
           sans-serif;
         cursor: pointer;
       }
-      #reset:hover {
+      #demo-bar button:hover {
         background: rgba(38, 49, 60, 0.95);
-      }
-      body.demo #reset {
-        display: block;
       }
       #prev {
         left: 0;
@@ -210,7 +219,11 @@
     <div id="bar"></div>
     <div id="count"></div>
     <div id="note" role="status"></div>
-    <button id="reset" type="button" title="Reset the demo (R)">↺ Reset demo</button>
+    <div id="demo-bar">
+      <button id="demo-prev" type="button" title="Previous slide (Shift + ←)">‹ Back</button>
+      <button id="reset" type="button" title="Reset the demo (R)">↺ Reset demo</button>
+      <button id="demo-next" type="button" title="Next slide (Shift + →)">Next ›</button>
+    </div>
 
     <script>
       const stage = document.getElementById('stage');
@@ -266,13 +279,14 @@
         e.preventDefault();
       };
       addEventListener('keydown', onKey);
-      // Inside the app: a clicker's PageUp/PageDown always move slides; ← → only when the app didn't use them
-      // (its sky pager and voice slider take them first). Space stays the app's.
+      // Inside the app, ← → and space are the app's (it pages skies with arrows). Slides move with Shift + ← →,
+      // a clicker's PageUp/PageDown, or the Back / Next buttons.
       [frame].forEach((f) =>
         f.addEventListener('load', () => {
           try {
+            f.contentWindow.addEventListener('mousemove', wake);
             f.contentWindow.addEventListener('keydown', (e) => {
-              const nav = ['PageDown', 'PageUp'].includes(e.key) || (['ArrowRight', 'ArrowLeft'].includes(e.key) && !e.defaultPrevented);
+              const nav = ['PageDown', 'PageUp'].includes(e.key) || (['ArrowRight', 'ArrowLeft'].includes(e.key) && e.shiftKey);
               if (nav || ((e.key === 'r' || e.key === 'R') && !typing(e.target))) onKey(e);
             });
           } catch {
@@ -281,7 +295,16 @@
         }),
       );
       addEventListener('hashchange', () => show(parseInt(location.hash.slice(1), 10) - 1 || 0));
+      const demoBar = document.getElementById('demo-bar');
+      const wake = () => {
+        demoBar.classList.add('on');
+        clearTimeout(wake.t);
+        wake.t = setTimeout(() => demoBar.classList.remove('on'), 2500);
+      };
+      addEventListener('mousemove', wake);
       document.getElementById('reset').onclick = resetDemo;
+      document.getElementById('demo-prev').onclick = () => show(i - 1);
+      document.getElementById('demo-next').onclick = () => show(i + 1);
       document.getElementById('prev').onclick = () => show(i - 1);
       document.getElementById('next').onclick = () => show(i + 1);
       addEventListener('resize', fit);
