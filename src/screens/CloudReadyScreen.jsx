@@ -14,6 +14,7 @@ import { SKY_PERIODS, periodById } from '../utils/skyPeriods';
 import { formatDate } from '../utils/dates';
 import { SKY_ICON_CHOICES } from '../utils/storageHelper';
 import { nameAndPoints, nameFrom, noSummaryReason } from '../utils/aiSummary';
+import { sharesOf, whoOf } from '../data/session';
 
 const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' : style === 'dawn' ? 'sunrise' : 'star');
 
@@ -52,6 +53,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
   const compact = !twoColumns && hasSummary && summaryOpen; // on one column, make room for the open key points
 
   const chosen = skies.find((s) => s.id === skyId);
+  const listeners = sharesOf(chosen);
   const canSave = label.trim() && (!creating || newName.trim());
 
   useEffect(() => {
@@ -286,6 +288,12 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                     <span className={`flex-1 text-left text-body3 ${chosen ? 'text-black' : 'text-bluegray-600'}`}>{chosen?.name ?? 'Time Sky only'}</span>
                     <Icon name="chevron-down" size={24} className={`transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
                   </button>
+                )}
+                {/* Keeping it in a shared sky shares it — say so before Done */}
+                {!creating && listeners.length > 0 && (
+                  <p className="-mt-2 text-center text-body5 text-bluegray-600">
+                    {whoOf(listeners).who} can listen to this before your session{whoOf(listeners).many ? 's' : ''}
+                  </p>
                 )}
 
                 {creating && (

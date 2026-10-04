@@ -20,6 +20,7 @@ import { getSkyPeriod } from './utils/skyPeriods';
 import { getAudioContext } from './utils/audioHelper';
 import { dateKey } from './utils/dates';
 import { prefersReducedMotion } from './utils/motion';
+import { SESSIONS, whoOf } from './data/session';
 
 // Flow (Ideate2 → Main Design): lock screen → Time Sky / My Sky → recording → Cloud ready → back to the sky
 export default function App() {
@@ -171,6 +172,20 @@ export default function App() {
     });
   };
 
+  // Bring a sky to the next session (or stop): the provider sees it until the session ends
+  // ids: the sessions whose providers can listen; [] = only the user again
+  const shareSky = (skyId, ids) => {
+    setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, sharedWith: ids } : s)));
+    const { who, many, count } = whoOf(SESSIONS.filter((s) => ids.includes(s.id)));
+    showToast({
+      icon: ids.length ? 'check' : 'lock',
+      message: ids.length ? `Shared with ${many ? `${count} providers` : who}` : 'This sky is just for you again',
+    });
+  };
+  // Prototype edge: ooca's own provider list would open here, filtered by the topics picked
+  const browseProviders = (topics) => showToast({ icon: 'user', message: `ooca's providers for ${topics.join(', ')}` });
+  const togglePrivate = (cloud) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, private: !c.private } : c)));
+
   const discardDraft = () => {
     const kept = draft;
     setDraft(null);
@@ -218,6 +233,9 @@ export default function App() {
         onMoveCloud={(cloud, view, pos) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, pos: { ...c.pos, [view]: pos } } : c)))}
         onCreateSky={createSky}
         onDeleteSkies={deleteSkies}
+        onShareSky={shareSky}
+        onBrowseProviders={browseProviders}
+        onTogglePrivate={togglePrivate}
         onUpdateSky={(skyId, data) =>
           skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)))
         }

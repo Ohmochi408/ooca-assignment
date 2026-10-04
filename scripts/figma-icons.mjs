@@ -56,6 +56,8 @@ export const ICONS = {
   reward: 'Icon/Reward/Regular',
   user: 'Icon/User2/Regular',
   volume: 'Icon/Volume/On/Regular',
+  share: 'Icon/Share/Regular',
+  'share-bold': 'Icon/Share/Bold',
 };
 
 const { nodes, blobs } = readFig(FIG);
