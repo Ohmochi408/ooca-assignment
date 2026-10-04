@@ -115,7 +115,7 @@
       }
       #count {
         position: fixed;
-        right: 16px;
+        left: 16px;
         bottom: 10px;
         color: rgba(255, 255, 255, 0.5);
         font-size: 13px;
@@ -147,23 +147,26 @@
       #note.on {
         opacity: 1;
       }
-      /* Only on the demo slide, bottom-left; it appears when the mouse moves and fades after a moment */
+      /* Back · (Reset on the demo) · Next, bottom-right on every slide; shows when the mouse moves, then fades */
       #demo-bar {
         position: fixed;
-        left: 16px;
+        right: 16px;
         bottom: 16px;
         z-index: 11;
-        display: none;
-        gap: 8px;
-      }
-      body.demo #demo-bar {
         display: flex;
+        gap: 8px;
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      body.demo #demo-bar.on,
-      body.demo #demo-bar:hover {
+      #demo-bar.on,
+      #demo-bar:hover {
         opacity: 1;
+      }
+      #reset {
+        display: none;
+      }
+      body.demo #reset {
+        display: block;
       }
       #demo-bar button {
         padding: 8px 14px;
@@ -219,7 +222,7 @@
     <div id="bar"></div>
     <div id="count"></div>
     <div id="note" role="status"></div>
-    <div id="demo-bar">
+    <div id="demo-bar" aria-label="Slide controls">
       <button id="demo-prev" type="button" title="Previous slide (Shift + ←)">‹ Back</button>
       <button id="reset" type="button" title="Reset the demo (R)">↺ Reset demo</button>
       <button id="demo-next" type="button" title="Next slide (Shift + →)">Next ›</button>
