@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thought Cloud — Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      /* Slides and the live prototype in one page: ← → (or a clicker) to move, F for full screen.
+         Board slides are the Figma boards as images; demo slides are the real app, full window. */
+      :root {
+        --ink: #26313c;
+        --t300: #4dd6ca;
+        --t500: #00c4b3;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        font-family: Nunito, system-ui, sans-serif;
+      }
+      /* One 1920×1080 stage, scaled to fit the window */
+      #stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: center;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.35s ease;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      .slide > img.board {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      /* Flow slide, built in HTML */
+      .sky-flow {
+        background: #454545;
+      }
+      .side {
+        position: absolute;
+        left: 120px;
+        top: 96px;
+        width: 760px;
+        color: #fff;
+      }
+      .label {
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        color: var(--t300);
+      }
+      .side h2 {
+        margin: 24px 0 0;
+        font-size: 64px;
+        line-height: 1.1;
+        font-weight: 900;
+      }
+      .side p {
+        font-size: 24px;
+        line-height: 1.5;
+        opacity: 0.92;
+        margin: 20px 0 0;
+      }
+      /* Demo slides: the live app fills the window, at the window's real size */
+      #demo {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #000;
+        display: none;
+        z-index: 4;
+      }
+      body.demo #demo {
+        display: block;
+      }
+      body.demo .nav {
+        display: none;
+      }
+      .flow-img {
+        position: absolute;
+        right: 120px;
+        top: 40px;
+        height: 1000px;
+        border-radius: 16px;
+      }
+      /* Controls: a thin progress line, hidden hints */
+      #bar {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        background: var(--t500);
+        transition: width 0.3s ease;
+        z-index: 10;
+      }
+      #count {
+        position: fixed;
+        right: 16px;
+        bottom: 10px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 13px;
+        z-index: 10;
+      }
+      .nav {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 8%;
+        z-index: 5;
+        cursor: pointer;
+      }
+      #prev {
+        left: 0;
+      }
+      #next {
+        right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <section class="slide"><img class="board" src="deck/board-00-cover.png" alt="Thought Cloud — cover" /></section>
+      <section class="slide"><img class="board" src="deck/board-01-start.png" alt="01 Where it started" /></section>
+      <section class="slide"><img class="board" src="deck/board-02-who-v4.png" alt="02 Who" /></section>
+      <section class="slide"><img class="board" src="deck/board-03-fit.png" alt="03 Where it fits in ooca" /></section>
+      <section class="slide"><img class="board" src="deck/board-04-ideas.png" alt="04 Ideas" /></section>
+      <section class="slide"><img class="board" src="deck/board-05-approach-v3.png" alt="05 Proposed approach" /></section>
+
+      <section class="slide sky-flow">
+        <div class="side">
+          <div class="label">USER FLOW</div>
+          <h2>About two minutes, start to end.</h2>
+          <p>Main path on the left; looking back any time on the right.</p>
+        </div>
+        <img class="flow-img" src="deck/user-flow.png" alt="User flow" />
+      </section>
+
+      <section class="slide" data-demo title="Live demo — leave a thought"></section>
+
+      <section class="slide"><img class="board" src="deck/board-06-session.png" alt="06 From a thought to the session" /></section>
+
+      <section class="slide" data-demo title="Live demo — bring a sky to a session"></section>
+
+      <section class="slide"><img class="board" src="deck/board-07-value.png" alt="07 What each side gets" /></section>
+    </div>
+
+    <iframe id="demo" title="Thought Cloud — live prototype" allow="microphone"></iframe>
+    <div class="nav" id="prev" title="Previous"></div>
+    <div class="nav" id="next" title="Next"></div>
+    <div id="bar"></div>
+    <div id="count"></div>
+
+    <script>
+      const stage = document.getElementById('stage');
+      const slides = [...document.querySelectorAll('.slide')];
+      const bar = document.getElementById('bar');
+      const count = document.getElementById('count');
+      const frame = document.getElementById('demo');
+      let i = Math.min(Math.max(parseInt(location.hash.slice(1), 10) - 1 || 0, 0), slides.length - 1);
+
+      const fit = () => {
+        const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+        stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+      };
+
+      // A demo slide loads the app when first shown (the two demos share its saved state)
+      const show = (n) => {
+        i = Math.min(Math.max(n, 0), slides.length - 1);
+        slides.forEach((el, k) => el.classList.toggle('on', k === i));
+        const demo = slides[i].hasAttribute('data-demo');
+        document.body.classList.toggle('demo', demo);
+        if (demo && !frame.src) frame.src = './';
+        if (!demo && document.activeElement === frame) frame.blur();
+        bar.style.width = `${((i + 1) / slides.length) * 100}%`;
+        count.textContent = `${i + 1} / ${slides.length}`;
+        history.replaceState(null, '', `#${i + 1}`);
+      };
+
+      const onKey = (e) => {
+        if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+        else if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+        else if (e.key === 'Home') show(0);
+        else if (e.key === 'End') show(slides.length - 1);
+        else if ((e.key === 'f' || e.key === 'F') && e.currentTarget === window)
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+        else return;
+        e.preventDefault();
+      };
+      addEventListener('keydown', onKey);
+      // Inside the app: a clicker's PageUp/PageDown always move slides; ← → only when the app didn't use them
+      // (its sky pager and voice slider take them first). Space stays the app's.
+      [frame].forEach((f) =>
+        f.addEventListener('load', () => {
+          try {
+            f.contentWindow.addEventListener('keydown', (e) => {
+              if (['PageDown', 'PageUp'].includes(e.key) || (['ArrowRight', 'ArrowLeft'].includes(e.key) && !e.defaultPrevented)) onKey(e);
+            });
+          } catch {
+            // another origin — keys stay inside the app
+          }
+        }),
+      );
+      addEventListener('hashchange', () => show(parseInt(location.hash.slice(1), 10) - 1 || 0));
+      document.getElementById('prev').onclick = () => show(i - 1);
+      document.getElementById('next').onclick = () => show(i + 1);
+      addEventListener('resize', fit);
+      fit();
+      show(i);
+    </script>
+  </body>
+</html>
