@@ -110,7 +110,7 @@ export default function App() {
   };
 
   const createSky = ({ name, icon, style }) => {
-    const sky = { id: `custom-${Date.now()}`, name, icon, style, description: 'A personal space defined by you.' };
+    const sky = { id: `custom-${Date.now()}`, name, icon, style };
     setSkies((prev) => [...prev, sky]);
     return sky;
   };

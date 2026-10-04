@@ -93,7 +93,7 @@ export default function SkyFormSheet({ sky, onSave, onClose, onDelete, styleOnly
         <button type="submit" disabled={!valid} className="ooca-btn ooca-btn-primary ooca-btn-turquoise ooca-btn-block">
           {editing ? 'Save' : 'Create sky'}
         </button>
-        {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name to create it.</p>}
+        {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name.</p>}
 
         {editing && onDelete && (
           <div className="flex flex-col items-center gap-1 pt-4 border-t border-gray-300">

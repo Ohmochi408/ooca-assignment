@@ -30,7 +30,11 @@ export default function AllSkies({ skies, clouds, inSky, onOpen, onEdit, onDelet
             )}
           </div>
           <p className="text-body1 text-bluegray-600 mt-2" aria-live="polite">
-            {selecting ? `${selected.length} selected — tap the skies you want` : `${own.length} skies · ${cloudCount(clouds.filter((c) => c.skyId).length)}`}
+            {selecting
+              ? selected.length
+                ? `${selected.length} selected`
+                : 'Tap the skies to select'
+              : `${own.length} skies · ${cloudCount(clouds.filter((c) => c.skyId).length)}`}
           </p>
           {selecting && (
             <div className="flex items-center gap-2 mt-3">

@@ -15,7 +15,6 @@ export const favoritesSky = (style) => ({
   icon: 'favorite',
   style,
   system: true,
-  description: 'Every thought you hearted.',
 });
 export function getFavoritesStyle() {
   try {
