@@ -79,9 +79,10 @@ export default function SkyFormSheet({ sky, onSave, onClose, onDelete, styleOnly
                 type="button"
                 onClick={() => setStyle(p.id)}
                 aria-pressed={style === p.id}
-                className={`flex flex-col items-center gap-1 p-1 rounded-ooca-8 border-2 cursor-pointer ${style === p.id ? 'border-turquoise-900' : 'border-transparent'}`}
+                className="flex flex-col items-center gap-1.5 p-1 rounded-ooca-8 cursor-pointer"
               >
-                <span className={`sky-${p.id} w-full h-12 rounded-ooca-8`} />
+                {/* The ring hugs the swatch (an offset ring follows its corners), the name sits outside it */}
+                <span className={`sky-${p.id} w-full h-12 rounded-ooca-8 ${style === p.id ? 'ring-2 ring-turquoise-900 ring-offset-2' : ''}`} />
                 <span className="text-small text-bluegray-700">{p.label}</span>
               </button>
             ))}

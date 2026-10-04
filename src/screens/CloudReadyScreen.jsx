@@ -360,7 +360,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                       aria-checked={newSkyIcon === n}
                       aria-label={n}
                       onClick={() => setNewIcon(n)}
-                      className={`h-8 rounded-ooca-8 flex items-center justify-center cursor-pointer ${newSkyIcon === n ? 'bg-turquoise-50 text-turquoise-900 ring-2 ring-turquoise-900' : 'text-bluegray-600 hover:bg-turquoise-50'}`}
+                      className={`h-8 rounded-ooca-16 flex items-center justify-center cursor-pointer ${newSkyIcon === n ? 'bg-turquoise-50 text-turquoise-900 ring-2 ring-turquoise-900' : 'text-bluegray-600 hover:bg-turquoise-50'}`}
                     >
                       <Icon name={n} size={20} />
                     </button>
