@@ -190,7 +190,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
               {suggested && label === suggested && !renaming && (
                 <p className="-mt-2 flex items-center gap-1.5 text-body4 text-white bg-black/30 rounded-ooca-pill px-3 py-1 fade-in" aria-live="polite">
                   <Icon name="magic" size={14} />
-                  Named from what you said most
+                  Mooca named it from what you said most
                 </p>
               )}
             </div>
@@ -241,11 +241,11 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
               />
             )}
 
-            {/* Pick your sky */}
+            {/* Where to keep it */}
             <div style={riseDelay(160)} className={`rise-in mt-auto lg:mt-6 lg:pt-0 ${compact ? 'pt-5' : 'pt-8'}`}>
               <div className="relative rounded-ooca-24 bg-gray-100 p-4 flex flex-col gap-4 shadow-elevation-2" ref={menuRef}>
                 <p className="text-title2 text-turquoise-900 text-center" id="pick-sky-label">
-                  Pick your sky
+                  Where would you like to keep it?
                 </p>
 
                 {creating ? (

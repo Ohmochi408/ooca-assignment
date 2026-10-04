@@ -34,7 +34,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
   const nextDisabled = new Date(month.getFullYear(), month.getMonth() + 1, 1) > new Date();
 
   return (
-    <Sheet title="Choose a day and sky" onClose={onClose}>
+    <Sheet title="Which day would you like to look back on?" onClose={onClose}>
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => shiftMonth(-1)}

@@ -162,13 +162,15 @@ export default function RecordScreen({ sky, onDone }) {
           {mic === 'off' && (
             <p role="alert" className="flex items-start gap-2 text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 max-w-[300px]">
               <Icon name="info" size={16} className="shrink-0 mt-px" />
-              The microphone isn't available, so no voice will be kept. You can still save this thought — it will play a soft chime.
+              Mooca can't hear you — the microphone is off. You can still save this thought; it'll play a soft chime.
             </p>
           )}
           {mic === 'asking' && phase === 'recording' && (
-            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone to record your voice</p>
+            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone so Mooca can listen</p>
           )}
-          {live && quiet && <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 fade-in">It's quiet — try speaking a little closer</p>}
+          {live && quiet && (
+            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 fade-in">Mooca can barely hear you — try a little closer</p>
+          )}
         </div>
       </div>
 

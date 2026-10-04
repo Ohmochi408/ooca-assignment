@@ -129,7 +129,7 @@ export default function App() {
     } else showCloud(cloud);
     setDraft(null);
     setEditingId(null);
-    showToast({ icon: 'check', message: sky ? `Saved to ${sky.name}` : 'Saved to your Time Sky' });
+    showToast({ icon: 'check', message: sky ? `Kept in ${sky.name}` : 'Kept in your Time Sky' });
     goTo('sky');
   };
 
