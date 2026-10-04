@@ -31,7 +31,7 @@ export default function SummaryCard({ points, open, onToggle, removed, onRemove,
   return (
     <section aria-label="Key points" className={`w-full rounded-ooca-24 bg-gray-100 px-4 shadow-elevation-2 fade-in ${open ? 'mt-4 py-2' : 'mt-4 py-1'}`}>
       <button onClick={onToggle} aria-expanded={open} aria-controls="ai-summary-points" className={`w-full text-left cursor-pointer uppercase ${row}`}>
-        <Icon name="magic" size={14} className="text-turquoise-500" />
+        <Icon name="magic" size={14} className="text-turquoise-900" />
         <span className="flex-1">Key points{!open && ` · ${points.length}`}</span>
         <Icon name="chevron-down" size={20} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
         <span className="sr-only">{open ? 'Fold' : 'Show'}</span>

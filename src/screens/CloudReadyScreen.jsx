@@ -173,7 +173,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                     >
                       <h1 className="text-h4 text-white text-center break-words">{label}</h1>
                       <span
-                        className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-8 h-8 rounded-full bg-white text-turquoise-500 shadow-elevation-2 flex items-center justify-center"
+                        className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-8 h-8 rounded-full bg-white text-turquoise-900 shadow-elevation-2 flex items-center justify-center"
                         aria-hidden="true"
                       >
                         <Icon name="edit-square" size={16} />
@@ -201,7 +201,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                 size={56}
                 label={voice.playing ? 'Pause' : 'Play'}
                 onClick={voice.toggle}
-                className={`bg-white text-turquoise-500 shadow-elevation-3 ${compact ? 'mt-3' : 'mt-6'}`}
+                className={`bg-white text-turquoise-900 shadow-elevation-3 ${compact ? 'mt-3' : 'mt-6'}`}
               >
                 <Icon name={voice.playing ? 'pause' : 'play'} size={24} className={voice.playing ? '' : 'ml-0.5'} />
               </RoundButton>
@@ -367,7 +367,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                   label={favorite ? 'Remove from favorites' : 'Add to favorites'}
                   pressed={favorite}
                   onClick={() => setFavorite((f) => !f)}
-                  className={favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+                  className={favorite ? 'bg-turquoise-900 text-white' : 'bg-white text-turquoise-900'}
                 >
                   <Icon name="favorite" size={20} />
                 </RoundButton>
@@ -381,7 +381,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                     voice.stop();
                     onDiscard();
                   }}
-                  className="bg-white text-flamingo-500"
+                  className="bg-white text-flamingo-900"
                 >
                   <Icon name="bin" size={16} />
                 </RoundButton>

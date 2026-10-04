@@ -42,7 +42,7 @@ export default function AboutSheet({ onClose }) {
       <div className="flex items-center justify-between p-4 rounded-ooca-16 bg-gray-100 mb-5">
         <div>
           <p className="text-subheader1 text-bluegray-800">Wittawin Archanuparb (Ohm)</p>
-          <p className="text-body5 text-bluegray-500">Product Designer • TOEIC 970</p>
+          <p className="text-body5 text-bluegray-500">Product Designer</p>
         </div>
         <a href="https://github.com/Ohmochi408/ooca-assignment" target="_blank" rel="noreferrer" className="ooca-btn ooca-btn-text ooca-btn-turquoise gap-1">
           GitHub <Icon name="next" size={14} />

@@ -59,7 +59,7 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
                     onClick={() => setIcon(n)}
                     aria-pressed={icon === n}
                     aria-label={n}
-                    className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-500 bg-turquoise-50 text-turquoise-500' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}
+                    className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-500 bg-turquoise-50 text-turquoise-900' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}
                   >
                     <Icon name={n} size={22} />
                   </button>
