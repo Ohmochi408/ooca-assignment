@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      /* Slides and the live prototype in one page: ← → (or a clicker) to move, F for full screen.
+      /* Slides and the live prototype in one page: ← → (or a clicker) to move, F for full screen, R to reset the demo.
          Board slides are the Figma boards as images; demo slides are the real app, full window. */
       :root {
         --ink: #26313c;
@@ -129,6 +129,24 @@
         z-index: 5;
         cursor: pointer;
       }
+      #note {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(38, 49, 60, 0.92);
+        color: #fff;
+        font-size: 15px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 11;
+        pointer-events: none;
+      }
+      #note.on {
+        opacity: 1;
+      }
       #prev {
         left: 0;
       }
@@ -155,11 +173,9 @@
         <img class="flow-img" src="deck/user-flow.png" alt="User flow" />
       </section>
 
-      <section class="slide" data-demo title="Live demo — leave a thought"></section>
+      <section class="slide" data-demo title="Live demo"></section>
 
       <section class="slide"><img class="board" src="deck/board-06-session.png" alt="06 From a thought to the session" /></section>
-
-      <section class="slide" data-demo title="Live demo — bring a sky to a session"></section>
 
       <section class="slide"><img class="board" src="deck/board-07-value.png" alt="07 What each side gets" /></section>
     </div>
@@ -169,6 +185,7 @@
     <div class="nav" id="next" title="Next"></div>
     <div id="bar"></div>
     <div id="count"></div>
+    <div id="note" role="status"></div>
 
     <script>
       const stage = document.getElementById('stage');
@@ -183,7 +200,7 @@
         stage.style.transform = `translate(-50%, -50%) scale(${s})`;
       };
 
-      // A demo slide loads the app when first shown (the two demos share its saved state)
+      // The demo slide loads the app when first shown
       const show = (n) => {
         i = Math.min(Math.max(n, 0), slides.length - 1);
         slides.forEach((el, k) => el.classList.toggle('on', k === i));
@@ -196,11 +213,28 @@
         history.replaceState(null, '', `#${i + 1}`);
       };
 
+      const note = document.getElementById('note');
+      const say = (t) => {
+        note.textContent = t;
+        note.classList.add('on');
+        clearTimeout(say.t);
+        say.t = setTimeout(() => note.classList.remove('on'), 1800);
+      };
+      const resetDemo = () => {
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith('ooca_') && k !== 'ooca_speech_lang_v1')
+          .forEach((k) => localStorage.removeItem(k));
+        frame.src = './?reset=' + Date.now();
+        say('Demo reset');
+      };
+      const typing = (el) => el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+
       const onKey = (e) => {
         if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
         else if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
         else if (e.key === 'Home') show(0);
         else if (e.key === 'End') show(slides.length - 1);
+        else if ((e.key === 'r' || e.key === 'R') && !typing(e.target)) resetDemo();
         else if ((e.key === 'f' || e.key === 'F') && e.currentTarget === window)
           document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
         else return;
@@ -213,7 +247,8 @@
         f.addEventListener('load', () => {
           try {
             f.contentWindow.addEventListener('keydown', (e) => {
-              if (['PageDown', 'PageUp'].includes(e.key) || (['ArrowRight', 'ArrowLeft'].includes(e.key) && !e.defaultPrevented)) onKey(e);
+              const nav = ['PageDown', 'PageUp'].includes(e.key) || (['ArrowRight', 'ArrowLeft'].includes(e.key) && !e.defaultPrevented);
+              if (nav || ((e.key === 'r' || e.key === 'R') && !typing(e.target))) onKey(e);
             });
           } catch {
             // another origin — keys stay inside the app
