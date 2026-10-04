@@ -60,7 +60,8 @@ export default function AllSkies({ skies, clouds, inSky, onOpen, onEdit, onDelet
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 pb-6 mx-auto max-w-[992px]">
+      {/* pt-2: room for the selected ring (drawn 4px outside the card) under the sticky header */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 pt-2 pb-6 mx-auto max-w-[992px]">
         {skies.map((s, k) => {
           const list = inSky(s);
           const locked = selecting && s.system;
