@@ -122,7 +122,7 @@ export default function MySkies({
               onClick={() => setSharing(true)}
               className="mt-2 inline-flex items-center gap-1.5 min-h-8 rounded-ooca-pill bg-black/30 px-3 text-body4 text-white cursor-pointer"
             >
-              <Icon name="user" size={14} />
+              <Icon name="share-bold" size={14} />
               Shared with {SESSION.provider} · until {sessionDay}
             </button>
           )}
@@ -133,13 +133,14 @@ export default function MySkies({
             <RoundButton
               size={40}
               label="Bring to my session"
-              tip="Bring to my session"
+              tip={shared ? `Shared with ${SESSION.provider}` : 'Bring to my session'}
               tipSide="left"
               pressed={shared}
               onClick={() => setSharing(true)}
               className={shared ? 'bg-turquoise-900 text-white' : 'bg-white text-turquoise-900'}
             >
-              <Icon name="calendar" size={18} />
+              {/* Outline until shared, filled while it is */}
+              <Icon name={shared ? 'share-bold' : 'share'} size={18} />
             </RoundButton>
           )}
           <RoundButton size={40} label={`Edit ${sky.name}`} tip="Edit this sky" tipSide="left" onClick={() => setForm(sky)}>

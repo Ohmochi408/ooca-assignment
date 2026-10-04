@@ -103,7 +103,7 @@ export default function MoocaCloud({
           {/* In a sky shared with a provider: who can hear this one, and a way to keep it private */}
           {sharedWith && (
             <div className="-mt-2 border-t border-gray-300 pt-2 flex items-start gap-2">
-              <Icon name={cloud.private ? 'lock' : 'user'} size={14} className="mt-0.5 text-turquoise-900" />
+              <Icon name={cloud.private ? 'lock' : 'share-bold'} size={14} className="mt-0.5 text-turquoise-900" />
               <div className="min-w-0">
                 <p className="text-body5 text-bluegray-600">{cloud.private ? 'Only you can hear this' : `${sharedWith} can hear this before your session`}</p>
                 <button
