@@ -8,9 +8,8 @@ import CloudField from '../../components/CloudField';
 import AllSkies from './AllSkies';
 import SkyFormSheet from '../../components/SkyFormSheet';
 import { cloudCount } from '../../utils/format';
+import { formatDate } from '../../utils/dates';
 import { HEADER, ARROWS } from './layout';
-
-const shortDate = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
 
 // Recording doesn't fill Favorites — hearting does, so it says so
 const EMPTY_FAVORITES = { title: 'No favorites yet', line: 'Tap ♡ on a thought to keep it here.' };
@@ -97,7 +96,7 @@ export default function MySkies({
               onMoveCloud={onMoveCloud}
               expandedId={expandedId}
               clouds={inSky(skies[k])}
-              metaOf={(c) => shortDate(c.timestamp)}
+              metaOf={(c) => formatDate(c.timestamp)}
               empty={skies[k].system ? EMPTY_FAVORITES : undefined}
               cloudProps={cloudProps}
               newestFirst

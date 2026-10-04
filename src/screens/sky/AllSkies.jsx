@@ -52,6 +52,7 @@ export default function AllSkies({ skies, clouds, inSky, onOpen, onEdit, onDelet
                 disabled={!selected.length}
                 className="ooca-btn ooca-btn-secondary ooca-btn-red h-10 px-4"
               >
+                <Icon name="bin" size={16} />
                 Delete{selected.length ? ` (${selected.length})` : ''}
               </button>
               {selected.length > 1 && <p className="text-body5 text-bluegray-600">Edit one at a time</p>}

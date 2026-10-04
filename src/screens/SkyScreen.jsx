@@ -105,7 +105,7 @@ export default function SkyScreen({
           <button
             onClick={() => onAddThought(currentSky)}
             disabled={leaving}
-            aria-label="Add a thought"
+            aria-label="Record a thought"
             className="w-16 h-16 rounded-full bg-white shadow-elevation-3 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer"
           >
             <span className="w-[55px] h-[55px] rounded-full bg-turquoise-500 text-white flex items-center justify-center">
@@ -141,14 +141,14 @@ export default function SkyScreen({
               role="tab"
               aria-selected={view === v}
               onClick={() => switchView(v)}
-              className={`w-[100px] h-10 rounded-ooca-pill text-button-small transition-colors cursor-pointer ${view === v ? 'bg-turquoise-500 text-white' : 'text-turquoise-500 hover:bg-turquoise-50'}`}
+              className={`w-[100px] h-10 rounded-ooca-pill text-button-small transition-colors cursor-pointer ${view === v ? 'bg-turquoise-900 text-white' : 'text-turquoise-500 hover:bg-turquoise-50'}`}
             >
               {label}
             </button>
           ))}
         </div>
         {view === 'mine' && (
-          <RoundButton size={40} label="Create a new sky" tip="New sky" tipSide="top-end" place="absolute right-0" onClick={() => setForm('new')}>
+          <RoundButton size={40} label="New sky" tip="New sky" tipSide="top-end" place="absolute right-0" onClick={() => setForm('new')}>
             <Icon name="add" size={20} />
           </RoundButton>
         )}

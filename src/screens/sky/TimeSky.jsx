@@ -62,7 +62,7 @@ export default function TimeSky({ clouds, nav, setNav, cloudProps, onMoveCloud, 
         >
           <h1 className="text-h4 text-white">{formatLongDate(nav.date)}</h1>
           <p className="text-body1 text-turquoise-50 mt-2">
-            {period.range.replace('–', '-')} • {cloudCount(cloudsIn(period.id).length)}
+            {period.range} • {cloudCount(cloudsIn(period.id).length)}
           </p>
         </button>
         <div className="flex items-start gap-2">

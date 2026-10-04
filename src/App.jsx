@@ -139,7 +139,7 @@ export default function App() {
     setClouds((prev) => prev.filter((c) => c.id !== cloud.id));
     showToast({
       icon: 'bin',
-      message: 'Thought removed',
+      message: 'Thought deleted',
       action: 'Undo',
       duration: 6000,
       onAction: () => setClouds((prev) => [...prev.slice(0, at), cloud, ...prev.slice(at)]),

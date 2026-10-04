@@ -17,4 +17,6 @@ export const addDays = (key, n) => {
   return dateKey(d);
 };
 
-export const formatLongDate = (key) => fromKey(key).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+// One date format across the app: "Sep 25, 2026" — screen headers add the weekday ("Fri, Sep 25, 2026")
+export const formatDate = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+export const formatLongDate = (key) => fromKey(key).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });

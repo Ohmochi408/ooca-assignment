@@ -29,7 +29,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
   const first = month.getDay();
   const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
   const cells = [...Array(first).fill(null), ...Array.from({ length: days }, (_, i) => dateKey(new Date(month.getFullYear(), month.getMonth(), i + 1)))];
-  const weekdays = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString([], { weekday: 'narrow' }));
+  const weekdays = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString('en-US', { weekday: 'narrow' }));
   const shiftMonth = (n) => setMonth(new Date(month.getFullYear(), month.getMonth() + n, 1));
   const nextDisabled = new Date(month.getFullYear(), month.getMonth() + 1, 1) > new Date();
 
@@ -43,7 +43,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
         >
           <Icon name="back" size={20} />
         </button>
-        <p className="text-title3 text-bluegray-800">{month.toLocaleDateString([], { month: 'long', year: 'numeric' })}</p>
+        <p className="text-title3 text-bluegray-800">{month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
         <button
           onClick={() => shiftMonth(1)}
           disabled={nextDisabled}
@@ -69,7 +69,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
               aria-pressed={day === k}
               className={`relative h-10 rounded-ooca-8 text-body3 transition-colors cursor-pointer disabled:text-bluegray-200 disabled:cursor-default ${
                 day === k
-                  ? 'bg-turquoise-500 text-white'
+                  ? 'bg-turquoise-900 text-white'
                   : k === today
                     ? 'border-2 border-turquoise-300 text-bluegray-800'
                     : 'text-bluegray-800 hover:bg-turquoise-50'
@@ -95,7 +95,7 @@ export default function CalendarSheet({ date, period, clouds, onApply, onClose }
               key={p.id}
               onClick={() => setSky(p.id)}
               aria-pressed={sky === p.id}
-              className={`flex flex-col items-center gap-1 p-1.5 rounded-ooca-8 border-2 cursor-pointer ${sky === p.id ? 'border-turquoise-500 bg-turquoise-50' : 'border-transparent hover:bg-gray-100'}`}
+              className={`flex flex-col items-center gap-1 p-1.5 rounded-ooca-8 border-2 cursor-pointer ${sky === p.id ? 'border-turquoise-900 bg-turquoise-50' : 'border-transparent hover:bg-gray-100'}`}
             >
               <span className={`sky-${p.id} w-9 h-9 rounded-full`} />
               <span className="text-small text-bluegray-700">{p.label}</span>
