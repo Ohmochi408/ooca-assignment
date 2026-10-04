@@ -105,13 +105,15 @@ export default function MoocaCloud({
             <div className="-mt-2 border-t border-gray-300 pt-2 flex items-start gap-2">
               <Icon name={cloud.private ? 'lock' : 'share-bold'} size={14} className="mt-0.5 text-turquoise-900" />
               <div className="min-w-0">
-                <p className="text-body5 text-bluegray-600">{cloud.private ? 'Only you can hear this' : `${sharedWith} can hear this before your session`}</p>
+                <p className="text-body5 text-bluegray-600">
+                  {cloud.private ? 'Only you can hear this' : `${sharedWith.who} can listen before your session${sharedWith.many ? 's' : ''}`}
+                </p>
                 <button
                   onClick={() => onTogglePrivate(cloud)}
                   aria-pressed={!!cloud.private}
                   className="min-h-8 -ml-2 px-2 rounded-ooca-pill text-body5 text-turquoise-900 underline underline-offset-2 hover:bg-turquoise-50 cursor-pointer"
                 >
-                  {cloud.private ? `Share with ${sharedWith}` : 'Keep to myself'}
+                  {cloud.private ? 'Share this one' : 'Keep to myself'}
                 </button>
               </div>
             </div>

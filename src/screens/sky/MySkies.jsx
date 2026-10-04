@@ -8,7 +8,7 @@ import CloudField from '../../components/CloudField';
 import AllSkies from './AllSkies';
 import SkyFormSheet from '../../components/SkyFormSheet';
 import ShareSheet from '../../components/ShareSheet';
-import { SESSION, isShared, sessionDay } from '../../data/session';
+import { sharesOf, whoOf, dayOf } from '../../data/session';
 import { cloudCount } from '../../utils/format';
 import { formatDate } from '../../utils/dates';
 import { HEADER, ARROWS } from './layout';
@@ -30,6 +30,7 @@ export default function MySkies({
   onUpdateSky,
   onDeleteSkies,
   onShareSky,
+  onBrowseProviders,
   form,
   setForm,
   showAll,
@@ -39,7 +40,10 @@ export default function MySkies({
   const [sharing, setSharing] = useState(false); // the share sheet for the sky on screen
   const sky = skies[Math.min(index, skies.length - 1)];
   // Favorites gathers every hearted thought; any other sky holds the thoughts saved to it
-  const shared = isShared(sky);
+  const shares = sharesOf(sky);
+  const shared = shares.length > 0;
+  const { who, many, count } = whoOf(shares);
+  const sharedLabel = many ? `Shared with ${count} providers` : `Shared with ${who}`;
   const inSky = (s) => clouds.filter((c) => (s.system ? c.favorite : c.skyId === s.id));
 
   const sheet = form && (
@@ -120,10 +124,12 @@ export default function MySkies({
           {shared && (
             <button
               onClick={() => setSharing(true)}
-              className="mt-2 inline-flex items-center gap-1.5 min-h-8 rounded-ooca-pill bg-black/30 px-3 text-body4 text-white cursor-pointer"
+              className="mt-2 inline-flex max-w-full items-center gap-1.5 min-h-8 rounded-ooca-pill bg-black/30 px-3 text-body4 text-white cursor-pointer"
             >
               <Icon name="share-bold" size={14} />
-              Shared with {SESSION.provider} · until {sessionDay}
+              {/* A long name gives way; "until …" always shows */}
+              <span className="truncate">{sharedLabel}</span>
+              {!many && <span className="shrink-0">· until {dayOf(shares[0])}</span>}
             </button>
           )}
         </div>
@@ -133,7 +139,7 @@ export default function MySkies({
             <RoundButton
               size={40}
               label="Bring to my session"
-              tip={shared ? `Shared with ${SESSION.provider}` : 'Bring to my session'}
+              tip={shared ? sharedLabel : 'Bring to my session'}
               tipSide="left"
               pressed={shared}
               onClick={() => setSharing(true)}
@@ -158,9 +164,13 @@ export default function MySkies({
       {sharing && (
         <ShareSheet
           thoughts={inSky(sky)}
-          shared={shared}
-          onShare={(on) => {
-            onShareSky(sky.id, on);
+          sharedIds={shares.map((s) => s.id)}
+          onShare={(ids) => {
+            onShareSky(sky.id, ids);
+            setSharing(false);
+          }}
+          onBrowse={(topics) => {
+            onBrowseProviders(topics);
             setSharing(false);
           }}
           onClose={() => setSharing(false)}

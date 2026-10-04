@@ -20,7 +20,7 @@ import { getSkyPeriod } from './utils/skyPeriods';
 import { getAudioContext } from './utils/audioHelper';
 import { dateKey } from './utils/dates';
 import { prefersReducedMotion } from './utils/motion';
-import { SESSION } from './data/session';
+import { SESSIONS, whoOf } from './data/session';
 
 // Flow (Ideate2 → Main Design): lock screen → Time Sky / My Sky → recording → Cloud ready → back to the sky
 export default function App() {
@@ -173,10 +173,17 @@ export default function App() {
   };
 
   // Bring a sky to the next session (or stop): the provider sees it until the session ends
-  const shareSky = (skyId, on) => {
-    setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, sharedWith: on ? SESSION.id : null } : s)));
-    showToast({ icon: on ? 'check' : 'lock', message: on ? `Shared with ${SESSION.provider}` : 'Only you can see this sky now' });
+  // ids: the sessions whose providers can listen; [] = only the user again
+  const shareSky = (skyId, ids) => {
+    setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, sharedWith: ids } : s)));
+    const { who, many, count } = whoOf(SESSIONS.filter((s) => ids.includes(s.id)));
+    showToast({
+      icon: ids.length ? 'check' : 'lock',
+      message: ids.length ? `Shared with ${many ? `${count} providers` : who}` : 'Only you can see this sky now',
+    });
   };
+  // Prototype edge: ooca's own provider list would open here, filtered by the topics picked
+  const browseProviders = (topics) => showToast({ icon: 'user', message: `ooca's providers for ${topics.join(', ')}` });
   const togglePrivate = (cloud) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, private: !c.private } : c)));
 
   const discardDraft = () => {
@@ -227,6 +234,7 @@ export default function App() {
         onCreateSky={createSky}
         onDeleteSkies={deleteSkies}
         onShareSky={shareSky}
+        onBrowseProviders={browseProviders}
         onTogglePrivate={togglePrivate}
         onUpdateSky={(skyId, data) =>
           skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)))
