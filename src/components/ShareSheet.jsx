@@ -3,9 +3,10 @@ import Icon from './Icon';
 import Sheet from './Sheet';
 import { SESSION, sessionWhen } from '../data/session';
 
-// Bring a sky to the next ooca session: say plainly what the provider will see, and what they won't, before
-// anything is shared. Sharing follows the sky until the session ends; any thought can stay private.
-export default function ShareSheet({ sky, thoughts, shared, onShare, onClose }) {
+// Bring a sky to the next ooca session. ooca's Privacy Policy already lets providers see a user's data and share it
+// "at your instruction" (§4), with consent withdrawable anytime (§8) — so one tap is enough; the sheet only says what
+// they'll hear, and that they may not hear it right away (Terms §4ง: providers can't reply at once — emergencies: 1669).
+export default function ShareSheet({ thoughts, shared, onShare, onClose }) {
   const kept = thoughts.filter((c) => c.private).length;
   const shown = thoughts.length - kept;
   const { provider } = SESSION;
@@ -32,12 +33,9 @@ export default function ShareSheet({ sky, thoughts, shared, onShare, onClose }) 
             shared too, until the session ends.
           </p>
         ) : (
-          <div className="flex flex-col gap-3">
-            <p className="text-body4 uppercase text-bluegray-600">What {provider} will see</p>
-            <Line icon="check">The voice, name and key points of each thought in {sky.name}</Line>
-            <Line icon="check">New thoughts you keep here, until the session ends</Line>
-            <Line icon="lock">Not your other skies, or any thought you keep to yourself</Line>
-          </div>
+          <p className="text-body3 text-bluegray-800">
+            {provider} will hear the thoughts in this sky, and new ones you keep here, until the session ends. Any thought can stay just yours.
+          </p>
         )}
 
         <div className="flex flex-col items-center gap-2">
@@ -47,20 +45,15 @@ export default function ShareSheet({ sky, thoughts, shared, onShare, onClose }) 
           >
             {shared ? 'Stop sharing' : `Share with ${provider}`}
           </button>
-          <p className="text-body5 text-bluegray-600 text-center">
-            {shared ? `${provider} won't see this sky anymore.` : 'You can stop sharing anytime. Your thoughts stay confidential.'}
-          </p>
+          <p className="text-body5 text-bluegray-600 text-center">{shared ? `${provider} won't see this sky from now on.` : 'You can stop sharing anytime.'}</p>
         </div>
+
+        {/* Shared isn't the same as heard: a thought left at 3 AM may wait until the session */}
+        <p className="flex items-start gap-2 rounded-ooca-16 bg-gray-100 p-3 text-body5 text-bluegray-800">
+          <Icon name="info" size={16} className="shrink-0 text-turquoise-900" />
+          {provider} may listen just before your session. If you need help now, call 1669 or go to the nearest hospital.
+        </p>
       </div>
     </Sheet>
-  );
-}
-
-function Line({ icon, children }) {
-  return (
-    <p className="flex items-start gap-2 text-body3 text-bluegray-800">
-      <Icon name={icon} size={18} className={`mt-px ${icon === 'lock' ? 'text-bluegray-600' : 'text-turquoise-900'}`} />
-      {children}
-    </p>
   );
 }

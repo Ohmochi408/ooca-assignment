@@ -156,7 +156,6 @@ export default function MySkies({
       {sheet}
       {sharing && (
         <ShareSheet
-          sky={sky}
           thoughts={inSky(sky)}
           shared={shared}
           onShare={(on) => {
