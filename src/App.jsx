@@ -179,7 +179,7 @@ export default function App() {
     const { who, many, count } = whoOf(SESSIONS.filter((s) => ids.includes(s.id)));
     showToast({
       icon: ids.length ? 'check' : 'lock',
-      message: ids.length ? `Shared with ${many ? `${count} providers` : who}` : 'Only you can see this sky now',
+      message: ids.length ? `Shared with ${many ? `${count} providers` : who}` : 'This sky is just for you again',
     });
   };
   // Prototype edge: ooca's own provider list would open here, filtered by the topics picked

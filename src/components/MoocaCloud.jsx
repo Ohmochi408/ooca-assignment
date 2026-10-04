@@ -100,13 +100,13 @@ export default function MoocaCloud({
           </button>
           {/* The gist of a long voice, so it can be found again without listening to all of it */}
           {cloud.summary?.length > 0 && <SummaryPoints points={cloud.summary} textClass="text-bluegray-800" className="-mt-2 border-t border-gray-300 pt-2" />}
-          {/* In a sky shared with a provider: who can hear this one, and a way to keep it private */}
+          {/* In a sky shared with a provider: who can listen to this one, and a way to keep it private */}
           {sharedWith && (
             <div className="-mt-2 border-t border-gray-300 pt-2 flex items-start gap-2">
               <Icon name={cloud.private ? 'lock' : 'share-bold'} size={14} className="mt-0.5 text-turquoise-900" />
               <div className="min-w-0">
                 <p className="text-body5 text-bluegray-600">
-                  {cloud.private ? 'Only you can hear this' : `${sharedWith.who} can listen before your session${sharedWith.many ? 's' : ''}`}
+                  {cloud.private ? 'Just for you' : `${sharedWith.who} can listen before your session${sharedWith.many ? 's' : ''}`}
                 </p>
                 <button
                   onClick={() => onTogglePrivate(cloud)}

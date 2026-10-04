@@ -115,7 +115,7 @@ export default function ShareSheet({ thoughts, sharedIds, onShare, onBrowse, onC
             {action.label}
           </button>
           <p className="text-body5 text-bluegray-600 text-center">
-            {action.label === 'Stop sharing' ? `${now.many ? 'They' : now.who} won't see this sky from now on.` : 'You can stop sharing anytime.'}
+            {action.label === 'Stop sharing' ? `${now.many ? 'They' : now.who} can't listen to this sky from now on.` : 'You can stop sharing anytime.'}
           </p>
         </div>
 

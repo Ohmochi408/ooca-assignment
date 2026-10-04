@@ -24,7 +24,6 @@ export const sharesOf = (sky) => {
   const ids = [].concat(sky?.sharedWith ?? []);
   return SESSIONS.filter((s) => ids.includes(s.id) && Date.now() < endOf(s));
 };
-export const isShared = (sky) => sharesOf(sky).length > 0;
 
 // Who can listen, in words: the provider's name when it's one, a plain word when it's more
 export const whoOf = (sessions) =>

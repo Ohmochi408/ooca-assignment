@@ -47,7 +47,7 @@ export default function SkyScreen({
       onDeleteCloud(cloud);
     },
     onEdit: onEditCloud,
-    // A thought in a shared sky says who can hear it, wherever it shows up
+    // A thought in a shared sky says who can listen to it, wherever it shows up
     sharedWith: (() => {
       const shares = sharesOf(skies.find((s) => s.id === c.skyId));
       return shares.length ? whoOf(shares) : null;
