@@ -6,7 +6,8 @@ import { SKY_ICON_CHOICES } from '../utils/storageHelper';
 
 // Create a new sky, or edit one: name first (required), then its icon and which of the six skies it looks like.
 // styleOnly: a system sky (Favorites) — only its look can change.
-export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }) {
+// onDelete: shown when editing a sky the user made; its thoughts stay in Time Sky (and Undo brings it back).
+export default function SkyFormSheet({ sky, onSave, onClose, onDelete, styleOnly = false }) {
   const editing = Boolean(sky);
   const [name, setName] = useState(sky?.name ?? '');
   const [icon, setIcon] = useState(sky?.icon ?? 'star');
@@ -20,7 +21,7 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
 
   return (
     <Sheet
-      title={styleOnly ? 'Favorites sky' : editing ? 'Edit sky' : 'Create new sky'}
+      title={styleOnly ? 'Favorites sky' : editing ? 'Edit sky' : 'New sky'}
       subtitle={styleOnly ? 'Pick how your Favorites sky looks.' : undefined}
       onClose={onClose}
     >
@@ -59,7 +60,7 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
                     onClick={() => setIcon(n)}
                     aria-pressed={icon === n}
                     aria-label={n}
-                    className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-500 bg-turquoise-50 text-turquoise-900' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}
+                    className={`h-11 rounded-ooca-8 flex items-center justify-center border-2 cursor-pointer ${icon === n ? 'border-turquoise-900 bg-turquoise-50 text-turquoise-900' : 'border-gray-200 text-bluegray-600 hover:border-turquoise-300'}`}
                   >
                     <Icon name={n} size={22} />
                   </button>
@@ -78,24 +79,31 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
                 type="button"
                 onClick={() => setStyle(p.id)}
                 aria-pressed={style === p.id}
-                className={`flex flex-col items-center gap-1 p-1 rounded-ooca-8 border-2 cursor-pointer ${style === p.id ? 'border-turquoise-500' : 'border-transparent'}`}
+                className="flex flex-col items-center gap-1.5 p-1 rounded-ooca-8 cursor-pointer"
               >
-                <span className={`sky-${p.id} w-full h-12 rounded-ooca-8`} />
+                {/* The ring hugs the swatch (an offset ring follows its corners), the name sits outside it */}
+                <span className={`sky-${p.id} w-full h-12 rounded-ooca-8 ${style === p.id ? 'ring-2 ring-turquoise-900 ring-offset-2' : ''}`} />
                 <span className="text-small text-bluegray-700">{p.label}</span>
               </button>
             ))}
           </div>
         </fieldset>
 
-        <div className="flex items-center gap-3">
-          <button type="button" onClick={onClose} className="ooca-btn ooca-btn-secondary ooca-btn-turquoise flex-1">
-            Cancel
-          </button>
-          <button type="submit" disabled={!valid} className="ooca-btn ooca-btn-primary ooca-btn-turquoise flex-[2]">
-            {editing ? 'Save changes' : 'Create sky'}
-          </button>
-        </div>
-        {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name to create it.</p>}
+        {/* Leaving without saving is the sheet's ✕, as on every other sheet */}
+        <button type="submit" disabled={!valid} className="ooca-btn ooca-btn-primary ooca-btn-turquoise ooca-btn-block">
+          {editing ? 'Save' : 'Create sky'}
+        </button>
+        {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name.</p>}
+
+        {editing && onDelete && (
+          <div className="flex flex-col items-center gap-1 pt-4 border-t border-gray-300">
+            <button type="button" onClick={onDelete} className="ooca-btn ooca-btn-secondary ooca-btn-red ooca-btn-block">
+              <Icon name="bin" size={16} />
+              Delete sky
+            </button>
+            <p className="text-body5 text-bluegray-600">Its thoughts stay in Time Sky.</p>
+          </div>
+        )}
       </form>
     </Sheet>
   );

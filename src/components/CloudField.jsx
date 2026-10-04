@@ -13,7 +13,7 @@ const EDGE = 8; // side margin
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 // Same words on every empty sky — plain, and just says how a thought gets here
-const EMPTY_SKY = { title: 'No thoughts yet', line: 'Tap the mic to say what’s on your mind.' };
+const EMPTY_SKY = { title: 'No thoughts here yet — and that’s okay.', line: 'Tap the mic whenever something’s on your mind.' };
 
 // The thoughts of one sky. The area stops above the record/toggle controls and below the header (soft-faded edges),
 // so nothing ever slides under a tool. Drag a Mooca to place it; the spot is kept per view (time / mine / fav).

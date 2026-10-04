@@ -1,5 +1,5 @@
 // Six equal sky periods of 4 hours. Dawn holds sunrise (~06:00 in Thailand), Sunset holds sundown (~18:00).
-// Ids are stable (saved in My Skies styles): 'day' is shown as "Afternoon".
+// Ids are stable (saved in My Sky styles): 'day' is shown as "Afternoon".
 export const SKY_PERIODS = [
   { id: 'midnight', label: 'Midnight', range: '00:00–04:00', from: 0, to: 4 },
   { id: 'dawn', label: 'Dawn', range: '04:00–08:00', from: 4, to: 8 },

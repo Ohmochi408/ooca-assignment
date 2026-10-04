@@ -21,14 +21,18 @@
 /* Type roles — every text in the app uses one of these OOCA DS styles, by what the text is:
    screen title ........ text-h4        (20 Medium)  Time/My Sky header, Add cloud, Cloud ready, sheets
    screen subtitle ..... text-body1     (16 Book)    line under a screen title (time • count, date, prompt)
-   section title ....... text-title2    (18 Medium)  title inside a card ("Pick your Sky")
+   section title ....... text-title2    (18 Medium)  title inside a card ("Where would you like to keep it?")
    item ................ text-body2     (14 Medium)  main line of a card / tile (cloud name)
    meta / option ....... text-body3     (14 Book)    time, date, duration, dropdown options, calendar days
    field label ......... text-body4 uppercase        small labels above a control ("Icon", "Sky")
    hint ................ text-body4 on a sky (in a dark pill) · text-body5 on a white/grey surface
    caption ............. text-body5     (12 Book)    counts, weekday letters, tooltips
    button .............. text-button-small (16 Medium) — .ooca-btn and the Time/My Sky toggle
-   Colours: on a sky → white (titles) / turquoise-50 (subtitles); on surfaces → black or bluegray-800 (main), bluegray-600 (secondary). */
+   Colours: on a sky → white (titles) / turquoise-50 (subtitles); on surfaces → black or bluegray-800 (main), bluegray-600 (secondary).
+   Corners nest: inner radius = outer radius − the space between them (padding + border), so both curves stay parallel.
+     e.g. a 24 card with 8 padding holds 16-radius items. To outline a selected swatch, use an offset ring
+     (ring-2 ring-offset-2): a ring follows the corner it wraps by itself.
+     Circles and pills keep their own shape (a pill in a pill, a dot in a row). Radii come only from 8 / 16 / 24 / pill. */
 
 /* Screen change */
 .screen-fade {

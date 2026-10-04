@@ -1,16 +1,15 @@
 import React, { useRef } from 'react';
 import Icon from '../../components/Icon';
-import Mooca from '../../components/Mooca';
 import RoundButton from '../../components/RoundButton';
 import NavArrow from '../../components/NavArrow';
 import SkyCarousel from '../../components/SkyCarousel';
 import SkyBackground from '../../components/SkyBackground';
 import CloudField from '../../components/CloudField';
+import AllSkies from './AllSkies';
 import SkyFormSheet from '../../components/SkyFormSheet';
 import { cloudCount } from '../../utils/format';
+import { formatDate } from '../../utils/dates';
 import { HEADER, ARROWS } from './layout';
-
-const shortDate = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
 
 // Recording doesn't fill Favorites — hearting does, so it says so
 const EMPTY_FAVORITES = { title: 'No favorites yet', line: 'Tap ♡ on a thought to keep it here.' };
@@ -27,6 +26,7 @@ export default function MySkies({
   expandedId,
   onCreateSky,
   onUpdateSky,
+  onDeleteSkies,
   form,
   setForm,
   showAll,
@@ -41,6 +41,14 @@ export default function MySkies({
     <SkyFormSheet
       sky={form === 'new' ? null : form}
       styleOnly={form !== 'new' && form?.system}
+      onDelete={
+        form !== 'new' && !form?.system
+          ? () => {
+              onDeleteSkies([form.id]);
+              setForm(null);
+            }
+          : undefined
+      }
       onClose={() => setForm(null)}
       onSave={(data) => {
         if (form === 'new') {
@@ -55,44 +63,19 @@ export default function MySkies({
 
   if (showAll) {
     return (
-      <div className="absolute inset-0 bg-gray-100 overflow-y-auto pb-40">
-        <div className="sticky top-0 z-10 bg-gray-100/90 backdrop-blur-sm px-4 pt-8 pb-3 short:pt-4">
-          <div className="mx-auto max-w-[960px]">
-            <h1 className="text-h4 text-black">All skies</h1>
-            <p className="text-body1 text-bluegray-600 mt-2">
-              {skies.filter((s) => !s.system).length} skies · {cloudCount(clouds.filter((c) => c.skyId).length)}
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 pb-6 mx-auto max-w-[992px]">
-          {skies.map((s, k) => {
-            const list = inSky(s);
-            return (
-              <button
-                key={s.id}
-                onClick={() => {
-                  setIndex(k);
-                  setShowAll(false);
-                }}
-                className="relative h-44 rounded-ooca-24 overflow-hidden text-left shadow-elevation-3 cursor-pointer group"
-              >
-                <div className={`sky-${s.style} absolute inset-0 transition-transform duration-300 group-hover:scale-105`} />
-                <div className="absolute inset-x-0 top-5 flex justify-center -space-x-8 pointer-events-none" aria-hidden="true">
-                  {list.slice(-2).map((c) => (
-                    <Mooca key={c.id} id={c.mooca} width={78} />
-                  ))}
-                </div>
-                <div className="absolute bottom-2 inset-x-2 flex items-center gap-1.5 bg-gray-100 rounded-ooca-16 pl-2 pr-2.5 py-1.5 text-black">
-                  <Icon name={s.icon} size={16} className="shrink-0" />
-                  <span className="text-body4 line-clamp-2 flex-1 min-w-0">{s.name}</span>
-                  <span className="text-body5 text-bluegray-600">{list.length}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+      <AllSkies
+        skies={skies}
+        clouds={clouds}
+        inSky={inSky}
+        onOpen={(k) => {
+          setIndex(k);
+          setShowAll(false);
+        }}
+        onEdit={setForm}
+        onDelete={onDeleteSkies}
+      >
         {sheet}
-      </div>
+      </AllSkies>
     );
   }
 
@@ -113,7 +96,7 @@ export default function MySkies({
               onMoveCloud={onMoveCloud}
               expandedId={expandedId}
               clouds={inSky(skies[k])}
-              metaOf={(c) => shortDate(c.timestamp)}
+              metaOf={(c) => formatDate(c.timestamp)}
               empty={skies[k].system ? EMPTY_FAVORITES : undefined}
               cloudProps={cloudProps}
               newestFirst

@@ -8,7 +8,7 @@ import useVoicePlayback from '../utils/useVoicePlayback';
 import { formatDuration } from '../utils/format';
 import { scrollBehavior } from '../utils/motion';
 
-const T = 'var(--color-turquoise-500)';
+const T = 'var(--color-turquoise-900)'; // selected = turquoise-900 everywhere
 const SELECTED_OUTLINE = `drop-shadow(2px 0 0 ${T}) drop-shadow(-2px 0 0 ${T}) drop-shadow(0 2px 0 ${T}) drop-shadow(0 -2px 0 ${T}) drop-shadow(0 6px 12px color-mix(in srgb, ${T} 45%, transparent))`;
 
 // A thought in the sky: Mooca + its Preview card. Tapping opens the player; while it plays, Mooca talks.
@@ -91,7 +91,7 @@ export default function MoocaCloud({
       )}
 
       {expanded ? (
-        <div className="w-full rounded-ooca-24 bg-gray-100 px-4 py-3 flex flex-col gap-4 shadow-elevation-3 ring-2 ring-turquoise-500 fade-in">
+        <div className="w-full rounded-ooca-24 bg-gray-100 px-4 py-3 flex flex-col gap-4 shadow-elevation-3 ring-2 ring-turquoise-900 fade-in">
           <button onClick={onCollapse} className="text-left cursor-pointer">
             <p className="text-body2 text-black">{cloud.label}</p>
             <p className="text-body3 text-black">{meta}</p>
@@ -114,7 +114,7 @@ export default function MoocaCloud({
               <RoundButton size={48} label={voice.playing ? 'Pause' : 'Play'} onClick={voice.toggle} className="bg-white text-turquoise-900 shadow-elevation-3">
                 <Icon name={voice.playing ? 'pause' : 'play'} size={24} className={voice.playing ? '' : 'ml-0.5'} />
               </RoundButton>
-              <RoundButton size={32} label={`Remove ${cloud.label}`} tip="Remove" onClick={() => onDelete(cloud)} className="bg-white text-flamingo-900">
+              <RoundButton size={32} label={`Delete ${cloud.label}`} tip="Delete" onClick={() => onDelete(cloud)} className="bg-white text-flamingo-900">
                 <Icon name="bin" size={14} />
               </RoundButton>
             </div>

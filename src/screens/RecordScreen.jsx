@@ -91,7 +91,7 @@ export default function RecordScreen({ sky, onDone }) {
       <div className="relative h-full flex flex-col items-center px-6 pt-8 pb-[108px] short:pt-4 short:pb-20">
         <div style={riseDelay(0)} className="rise-in text-center">
           <h1 className="text-h4 text-white">What’s on your mind?</h1>
-          <p className="text-body1 text-turquoise-50 mt-2 max-w-[260px]">Say it. Hum it. Sigh it. It doesn't have to make sense</p>
+          <p className="text-body1 text-turquoise-50 mt-2 max-w-[260px]">Say it. Hum it. Sigh it. It doesn't have to make sense.</p>
           {/* Which language to listen for — the name and key points come from these words */}
           {speechSupported && mic !== 'off' && (
             <div
@@ -99,7 +99,7 @@ export default function RecordScreen({ sky, onDone }) {
               role="radiogroup"
               aria-label="Language you speak in"
             >
-              <span className="pr-1">Words in</span>
+              <span className="pr-1">Language</span>
               {SPEECH_LANGS.map((l) => (
                 <button
                   key={l.id}
@@ -162,13 +162,15 @@ export default function RecordScreen({ sky, onDone }) {
           {mic === 'off' && (
             <p role="alert" className="flex items-start gap-2 text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 max-w-[300px]">
               <Icon name="info" size={16} className="shrink-0 mt-px" />
-              Your microphone isn't available, so your voice won't be kept. You can still finish — the thought will play a soft chime instead.
+              Mooca can't hear you — the microphone is off. You can still save this thought; it'll play a soft chime.
             </p>
           )}
           {mic === 'asking' && phase === 'recording' && (
-            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone to record your voice</p>
+            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2">Allow the microphone so Mooca can listen</p>
           )}
-          {live && quiet && <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 fade-in">It's quiet — try speaking a little closer</p>}
+          {live && quiet && (
+            <p className="text-body4 text-white bg-black/30 rounded-ooca-8 px-3 py-2 fade-in">Mooca can barely hear you — try a little closer</p>
+          )}
         </div>
       </div>
 

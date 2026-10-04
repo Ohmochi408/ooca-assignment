@@ -134,11 +134,11 @@ export function noSummaryReason(transcript, duration) {
   if (duration < SUMMARY_FROM_SEC) return null;
   switch (transcript?.status) {
     case 'unsupported':
-      return 'No summary — this browser can’t turn speech into text. Try Chrome, Edge or Safari.';
+      return 'Mooca can’t listen for words in this browser — try Chrome, Edge or Safari.';
     case 'failed':
-      return 'No summary — speech-to-text wasn’t available (it needs the internet).';
+      return 'Mooca couldn’t listen for words — it needs the internet.';
     case 'nothing':
-      return 'No summary — no words were caught this time.';
+      return 'Mooca couldn’t catch the words this time.';
     default:
       return null;
   }

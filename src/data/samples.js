@@ -3,9 +3,9 @@
 
 // icon = OOCA DS icon name (src/icons), style = which of the 6 time-of-day skies this space uses
 export const DEFAULT_SKIES = [
-  { id: '3am', name: '3AM Thoughts', icon: 'moon', style: 'midnight', description: 'Deep late-night thoughts, and old things that come back.' },
-  { id: 'vent', name: 'Just wanna vent out!', icon: 'chat', style: 'sunset', description: 'Say it and let it go.' },
-  { id: 'ideas', name: 'Quick ideas', icon: 'magic', style: 'morning', description: 'Little sparks worth keeping.' },
+  { id: '3am', name: '3AM Thoughts', icon: 'moon', style: 'midnight' },
+  { id: 'vent', name: 'Just wanna vent out!', icon: 'chat', style: 'sunset' },
+  { id: 'ideas', name: 'Quick ideas', icon: 'magic', style: 'morning' },
 ];
 
 // Sample clouds — the ones shown in the Figma design (fixed dates), plus two from today so "now" isn't empty

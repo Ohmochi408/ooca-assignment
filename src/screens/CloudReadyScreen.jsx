@@ -11,13 +11,14 @@ import useVoicePlayback from '../utils/useVoicePlayback';
 import useMediaQuery from '../utils/useMediaQuery';
 import { riseDelay } from '../utils/motion';
 import { SKY_PERIODS, periodById } from '../utils/skyPeriods';
+import { formatDate } from '../utils/dates';
+import { SKY_ICON_CHOICES } from '../utils/storageHelper';
 import { nameAndPoints, nameFrom, noSummaryReason } from '../utils/aiSummary';
 
-const longDate = (ms) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const iconFor = (style) => (style === 'night' || style === 'midnight' ? 'moon' : style === 'dawn' ? 'sunrise' : 'star');
 
 // Ideate2 → "Cloud ready" (+ "New sky" and the open "Pick sky" dropdown).
-// One screen to listen back, name the cloud and — only if they want — give it a My Sky. "None" keeps it in Time Sky only.
+// One screen to listen back, name the cloud and — only if they want — give it a My Sky. "Time Sky only" keeps it out of My Sky.
 // Also used to edit a saved cloud (mode = 'edit').
 // Phone: one column. Large screens: two — listening (name, Mooca, player) on the left, deciding (summary, sky) on the right.
 export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop, onDone, onDiscard, onCancel }) {
@@ -34,7 +35,10 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [newStyle, setNewStyle] = useState(backdrop ?? 'midnight');
-  const newSkyRef = useRef(null); // the "Name new Sky here" field
+  const [newIcon, setNewIcon] = useState(null); // null = follow the look (moon at night, sunrise at dawn…) until one is picked
+  const [pickingIcon, setPickingIcon] = useState(false); // the new sky's look: one picker at a time — Sky or Icon
+  const newSkyIcon = newIcon ?? iconFor(newStyle);
+  const newSkyRef = useRef(null); // the "Name your new sky" field
   const nameBefore = useRef(label); // restored if a rename is cancelled or left empty
   const menuRef = useRef(null);
 
@@ -90,7 +94,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
       favorite,
       summary,
       skyId: creating ? null : skyId,
-      newSky: creating ? { name: newName.trim(), style: newStyle, icon: iconFor(newStyle) } : null,
+      newSky: creating ? { name: newName.trim(), style: newStyle, icon: newSkyIcon } : null,
     });
   };
 
@@ -182,11 +186,11 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                   </Tip>
                 )}
               </div>
-              <p className="text-body1 text-turquoise-50">{longDate(cloud.timestamp)}</p>
+              <p className="text-body1 text-turquoise-50">{formatDate(cloud.timestamp)}</p>
               {suggested && label === suggested && !renaming && (
                 <p className="-mt-2 flex items-center gap-1.5 text-body4 text-white bg-black/30 rounded-ooca-pill px-3 py-1 fade-in" aria-live="polite">
                   <Icon name="magic" size={14} />
-                  Named from what you talked about most — tap to change
+                  Mooca named it from what you said most
                 </p>
               )}
             </div>
@@ -237,23 +241,27 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
               />
             )}
 
-            {/* Pick your Sky */}
+            {/* Where to keep it */}
             <div style={riseDelay(160)} className={`rise-in mt-auto lg:mt-6 lg:pt-0 ${compact ? 'pt-5' : 'pt-8'}`}>
               <div className="relative rounded-ooca-24 bg-gray-100 p-4 flex flex-col gap-4 shadow-elevation-2" ref={menuRef}>
                 <p className="text-title2 text-turquoise-900 text-center" id="pick-sky-label">
-                  Pick your Sky
+                  Where would you like to keep it?
                 </p>
 
                 {creating ? (
                   <div className="h-10 rounded-ooca-24 bg-white shadow-elevation-2 flex items-center gap-2 pl-4 pr-2">
-                    <SkyDot period={newStyle} size={24} className="ring-2 ring-turquoise-500" />
+                    {/* The new sky as it will look: its sky with its icon on top */}
+                    <span className="relative shrink-0 rounded-full ring-2 ring-turquoise-900" aria-hidden="true">
+                      <SkyDot period={newStyle} size={24} />
+                      <Icon name={newSkyIcon} size={14} className="absolute inset-0 m-auto text-white" />
+                    </span>
                     <input
                       ref={newSkyRef}
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && done()}
                       maxLength={32}
-                      placeholder="Name new Sky here"
+                      placeholder="Name your new sky"
                       aria-label="New sky name"
                       className="min-w-0 flex-1 text-body3 text-black bg-transparent outline-none placeholder:text-gray-400"
                     />
@@ -275,16 +283,34 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                     className="h-10 rounded-ooca-24 bg-white shadow-elevation-2 flex items-center gap-2 pl-4 pr-2 cursor-pointer"
                   >
                     {chosen && <SkyDot period={chosen.style} size={24} />}
-                    <span className={`flex-1 text-left text-body3 ${chosen ? 'text-black' : 'text-bluegray-600'}`}>{chosen?.name ?? 'None'}</span>
+                    <span className={`flex-1 text-left text-body3 ${chosen ? 'text-black' : 'text-bluegray-600'}`}>{chosen?.name ?? 'Time Sky only'}</span>
                     <Icon name="chevron-down" size={24} className={`transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
                   </button>
                 )}
 
                 {creating && (
-                  <p className="-mt-2 text-body5 text-bluegray-600 text-center" aria-live="polite">
-                    {periodById(newStyle).label} sky · {periodById(newStyle).range}
-                    {!newName.trim() && ' — name it to save'}
-                  </p>
+                  <div className="-mt-2 flex items-center justify-between gap-2">
+                    {/* Pick the sky or the icon — one picker at a time (same pill toggle as Time Sky / My Sky) */}
+                    <div className="flex p-0.5 rounded-ooca-pill bg-white shadow-elevation-2" role="tablist" aria-label="New sky look">
+                      {[
+                        [false, 'Sky'],
+                        [true, 'Icon'],
+                      ].map(([icon, text]) => (
+                        <button
+                          key={text}
+                          role="tab"
+                          aria-selected={pickingIcon === icon}
+                          onClick={() => setPickingIcon(icon)}
+                          className={`h-7 px-3 rounded-ooca-pill text-body5 cursor-pointer ${pickingIcon === icon ? 'bg-turquoise-900 text-white' : 'text-bluegray-600 hover:bg-turquoise-50'}`}
+                        >
+                          {text}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-body5 text-bluegray-600 text-right" aria-live="polite">
+                      {newName.trim() ? `${periodById(newStyle).label} sky` : 'Name it to save'}
+                    </p>
+                  </div>
                 )}
 
                 {menuOpen && (
@@ -295,7 +321,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                   >
                     <li>
                       <button onClick={() => pick('new')} className={`${row} text-black hover:bg-turquoise-50 cursor-pointer`}>
-                        + Create new
+                        + New sky
                       </button>
                     </li>
                     {skies.map((s) => {
@@ -304,7 +330,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                         <li key={s.id} role="option" aria-selected={on}>
                           <button
                             onClick={() => pick(s.id)}
-                            className={`${row} rounded-ooca-24 cursor-pointer ${on ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}
+                            className={`${row} rounded-ooca-24 cursor-pointer ${on ? 'bg-turquoise-900 text-white' : 'text-black hover:bg-turquoise-50'}`}
                           >
                             <SkyDot period={s.style} size={24} />
                             <span className="truncate">{s.name}</span>
@@ -315,37 +341,53 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                     <li role="option" aria-selected={!creating && !skyId}>
                       <button
                         onClick={() => pick(null)}
-                        className={`${row} rounded-ooca-24 cursor-pointer ${!creating && !skyId ? 'bg-turquoise-500 text-white' : 'text-black hover:bg-turquoise-50'}`}
+                        className={`${row} rounded-ooca-24 cursor-pointer ${!creating && !skyId ? 'bg-turquoise-900 text-white' : 'text-black hover:bg-turquoise-50'}`}
                       >
-                        None
+                        Time Sky only
                       </button>
                     </li>
                   </ul>
                 )}
               </div>
 
-              {/* New sky: which of the six skies it looks like */}
-              {creating && (
+              {/* New sky: its icon (same choices as the sky sheet) … */}
+              {creating && pickingIcon && (
+                <div className="mt-2 rounded-ooca-24 bg-white shadow-elevation-2 grid grid-cols-6 gap-1 p-2 fade-in" role="radiogroup" aria-label="Sky icon">
+                  {SKY_ICON_CHOICES.map((n) => (
+                    <button
+                      key={n}
+                      role="radio"
+                      aria-checked={newSkyIcon === n}
+                      aria-label={n}
+                      onClick={() => setNewIcon(n)}
+                      className={`h-8 rounded-ooca-16 flex items-center justify-center cursor-pointer ${newSkyIcon === n ? 'bg-turquoise-50 text-turquoise-900 ring-2 ring-turquoise-900' : 'text-bluegray-600 hover:bg-turquoise-50'}`}
+                    >
+                      <Icon name={n} size={20} />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* … or which of the six skies it looks like */}
+              {creating && !pickingIcon && (
                 <div
                   className="mt-2 h-10 rounded-ooca-24 bg-white shadow-elevation-2 flex items-center justify-between px-4 fade-in"
                   role="radiogroup"
                   aria-label="Sky style"
                 >
-                  {SKY_PERIODS.slice(1)
-                    .concat(SKY_PERIODS[0])
-                    .map((p) => (
-                      <Tip key={p.id} label={`${p.label} · ${p.range}`}>
-                        <button
-                          role="radio"
-                          aria-checked={newStyle === p.id}
-                          aria-label={`${p.label} sky, ${p.range}`}
-                          onClick={() => setNewStyle(p.id)}
-                          className="w-8 h-8 flex items-center justify-center cursor-pointer"
-                        >
-                          <SkyDot period={p.id} size={24} className={newStyle === p.id ? 'ring-2 ring-turquoise-500' : ''} />
-                        </button>
-                      </Tip>
-                    ))}
+                  {SKY_PERIODS.map((p) => (
+                    <Tip key={p.id} label={`${p.label} sky`}>
+                      <button
+                        role="radio"
+                        aria-checked={newStyle === p.id}
+                        aria-label={`${p.label} sky`}
+                        onClick={() => setNewStyle(p.id)}
+                        className="w-8 h-8 flex items-center justify-center cursor-pointer"
+                      >
+                        <SkyDot period={p.id} size={24} className={newStyle === p.id ? 'ring-2 ring-turquoise-900' : ''} />
+                      </button>
+                    </Tip>
+                  ))}
                   <Tip label="Surprise me">
                     <button
                       onClick={surprise}
@@ -376,7 +418,7 @@ export default function CloudReadyScreen({ cloud, mode = 'new', skies, backdrop,
                 </button>
                 <RoundButton
                   size={40}
-                  label={mode === 'edit' ? 'Remove this thought' : 'Discard this thought'}
+                  label={mode === 'edit' ? 'Delete this thought' : 'Discard this thought'}
                   onClick={() => {
                     voice.stop();
                     onDiscard();

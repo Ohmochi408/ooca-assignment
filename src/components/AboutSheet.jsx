@@ -33,7 +33,7 @@ export default function AboutSheet({ onClose }) {
           <h3 className="text-subheader1 text-bluegray-800 mb-1">The sky</h3>
           <p className="text-body3 text-bluegray-600">
             Each thought you say out loud appears as a small cloud — a Mooca. <strong>Time Sky</strong> lays thoughts out by when they happened, under a sky
-            that follows the real time of day. <strong>My Skies</strong> are spaces the user names — "the system provides the space; the user defines the
+            that follows the real time of day. <strong>My Sky</strong> holds spaces the user names — "the system provides the space; the user defines the
             meaning."
           </p>
         </section>
