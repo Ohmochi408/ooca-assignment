@@ -6,7 +6,8 @@ import { SKY_ICON_CHOICES } from '../utils/storageHelper';
 
 // Create a new sky, or edit one: name first (required), then its icon and which of the six skies it looks like.
 // styleOnly: a system sky (Favorites) — only its look can change.
-export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }) {
+// onDelete: shown when editing a sky the user made; its thoughts stay in Time Sky (and Undo brings it back).
+export default function SkyFormSheet({ sky, onSave, onClose, onDelete, styleOnly = false }) {
   const editing = Boolean(sky);
   const [name, setName] = useState(sky?.name ?? '');
   const [icon, setIcon] = useState(sky?.icon ?? 'star');
@@ -96,6 +97,15 @@ export default function SkyFormSheet({ sky, onSave, onClose, styleOnly = false }
           </button>
         </div>
         {!valid && <p className="text-body5 text-bluegray-600 -mt-2 text-center">Give your sky a name to create it.</p>}
+
+        {editing && onDelete && (
+          <div className="flex flex-col items-center gap-1 pt-4 border-t border-gray-300">
+            <button type="button" onClick={onDelete} className="ooca-btn ooca-btn-secondary ooca-btn-red ooca-btn-block">
+              Delete sky
+            </button>
+            <p className="text-body5 text-bluegray-600">Its thoughts stay in Time Sky.</p>
+          </div>
+        )}
       </form>
     </Sheet>
   );

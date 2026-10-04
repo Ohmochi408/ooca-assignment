@@ -146,6 +146,31 @@ export default function App() {
     });
   };
 
+  // Deleting skies never deletes thoughts: the ones inside go back to Time Sky only. Undo puts both back.
+  const deleteSkies = (ids) => {
+    const removed = skies.filter((s) => ids.includes(s.id));
+    if (!removed.length) return;
+    const before = skies;
+    const movedTo = Object.fromEntries(clouds.filter((c) => ids.includes(c.skyId)).map((c) => [c.id, c.skyId]));
+    setSkies((prev) => prev.filter((s) => !ids.includes(s.id)));
+    setClouds((prev) => prev.map((c) => (movedTo[c.id] ? { ...c, skyId: null } : c)));
+    const what = removed.length === 1 ? 'Sky deleted' : `${removed.length} skies deleted`;
+    showToast({
+      icon: 'bin',
+      message: Object.keys(movedTo).length ? `${what} · thoughts kept in Time Sky` : what,
+      action: 'Undo',
+      duration: 6000,
+      onAction: () => {
+        // the original order, keeping any edits or new skies made since
+        setSkies((prev) => [
+          ...before.map((s) => prev.find((p) => p.id === s.id) ?? (ids.includes(s.id) ? s : null)).filter(Boolean),
+          ...prev.filter((p) => !before.some((s) => s.id === p.id)),
+        ]);
+        setClouds((prev) => prev.map((c) => (movedTo[c.id] && c.skyId === null ? { ...c, skyId: movedTo[c.id] } : c)));
+      },
+    });
+  };
+
   const discardDraft = () => {
     const kept = draft;
     setDraft(null);
@@ -192,6 +217,7 @@ export default function App() {
         onDeleteCloud={deleteCloud}
         onMoveCloud={(cloud, view, pos) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, pos: { ...c.pos, [view]: pos } } : c)))}
         onCreateSky={createSky}
+        onDeleteSkies={deleteSkies}
         onUpdateSky={(skyId, data) =>
           skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)))
         }

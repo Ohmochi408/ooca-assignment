@@ -26,6 +26,7 @@ export default function SkyScreen({
   onMoveCloud,
   onCreateSky,
   onUpdateSky,
+  onDeleteSkies,
 }) {
   const [expandedId, setExpandedId] = useState(null);
   const [playingId, setPlayingId] = useState(null);
@@ -83,6 +84,7 @@ export default function SkyScreen({
             expandedId={expandedId}
             onCreateSky={onCreateSky}
             onUpdateSky={onUpdateSky}
+            onDeleteSkies={onDeleteSkies}
             form={form}
             setForm={setForm}
             showAll={showAll}
