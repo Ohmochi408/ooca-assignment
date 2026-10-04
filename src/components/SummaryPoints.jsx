@@ -9,7 +9,7 @@ export default function SummaryPoints({ points, id, className = '', textClass = 
       {points.map((p) => {
         const picked = isPicked?.(p);
         const mark = picked ? (
-          <Icon name="check" size={14} className="shrink-0 mt-[3px] text-turquoise-500" />
+          <Icon name="check" size={14} className="shrink-0 mt-[3px] text-turquoise-900" />
         ) : (
           <span className="mt-[7px] mx-[4px] w-1.5 h-1.5 shrink-0 rounded-full bg-turquoise-500" aria-hidden="true" />
         );

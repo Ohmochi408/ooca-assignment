@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import LockStage from './components/LockStage';
 import AboutSheet from './components/AboutSheet';
 import Toast from './components/Toast';
 import { randomMooca } from './data/moocas';
@@ -231,17 +230,11 @@ export default function App() {
   };
 
   return (
-    // Full screen at every size: the sky fills the window, each screen lays its content out for the space it has.
-    // Only the lock screen (a phone idea) sits in a phone frame on larger screens.
+    // Full screen at every size, the lock screen included: the sky fills the window, each screen lays its content out
+    // for the space it has.
     <main className="relative h-[100dvh] w-full overflow-hidden bg-bluegray-900">
       <div key={screen} className={`h-full ${fadeScreens ? 'screen-fade' : ''}`}>
-        {screen === 'lock' ? (
-          <LockStage period={period} onOpenWeb={openSkyNow} onOpenAbout={() => setAboutOpen(true)}>
-            {screens.lock}
-          </LockStage>
-        ) : (
-          (screens[screen] ?? screens.sky)
-        )}
+        {screens[screen] ?? screens.sky}
       </div>
       <Toast toast={toast} onDismiss={hideToast} />
       {aboutOpen && <AboutSheet onClose={() => setAboutOpen(false)} />}

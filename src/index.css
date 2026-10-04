@@ -4,8 +4,6 @@
 
 /* Short screens (a phone turned sideways, a small laptop window): tighter vertical layouts */
 @custom-variant short (@media (max-height: 540px));
-/* Room for the lock screen's phone frame: wide enough and tall enough (a phone turned sideways is neither) */
-@custom-variant framed (@media (min-width: 640px) and (min-height: 541px));
 
 @layer base {
   body {
@@ -160,7 +158,7 @@
   }
 }
 
-/* Hide scrollbars inside the phone frame */
+/* Hide scrollbars (the app is a full-screen experience) */
 ::-webkit-scrollbar {
   display: none;
 }

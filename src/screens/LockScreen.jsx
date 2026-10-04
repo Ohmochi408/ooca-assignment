@@ -59,9 +59,12 @@ export default function LockScreen({ period, onOpenSky, onAddThought, onOpenAbou
           <img src={lockShortcut} alt="" width={180} height={45} draggable="false" />
         </button>
 
-        {/* Home bar: tap or swipe up to open ooca */}
+        {/* Home bar: tap or swipe up to open ooca (the hint says “click” where there is a mouse) */}
         <button onClick={onOpenSky} aria-label="Open ooca" className="flex flex-col items-center gap-2 px-10 pt-2 pb-1 cursor-pointer group">
-          <span className="text-body5 text-white/70 group-hover:text-white">Swipe up to open</span>
+          <span className="text-body5 text-white/70 group-hover:text-white">
+            <span className="[@media(hover:hover)]:hidden">Swipe up to open</span>
+            <span className="hidden [@media(hover:hover)]:inline">Click or swipe up to open</span>
+          </span>
           <span className="w-[134px] h-[5px] rounded-ooca-pill bg-white/85" />
         </button>
       </div>

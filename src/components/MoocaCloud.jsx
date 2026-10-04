@@ -107,14 +107,14 @@ export default function MoocaCloud({
                 tip={cloud.favorite ? 'Unfavorite' : 'Favorite'}
                 pressed={cloud.favorite}
                 onClick={() => onFavorite(cloud)}
-                className={cloud.favorite ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+                className={cloud.favorite ? 'bg-turquoise-900 text-white' : 'bg-white text-turquoise-900'}
               >
                 <Icon name="favorite" size={18} />
               </RoundButton>
-              <RoundButton size={48} label={voice.playing ? 'Pause' : 'Play'} onClick={voice.toggle} className="bg-white text-turquoise-500 shadow-elevation-3">
+              <RoundButton size={48} label={voice.playing ? 'Pause' : 'Play'} onClick={voice.toggle} className="bg-white text-turquoise-900 shadow-elevation-3">
                 <Icon name={voice.playing ? 'pause' : 'play'} size={24} className={voice.playing ? '' : 'ml-0.5'} />
               </RoundButton>
-              <RoundButton size={32} label={`Remove ${cloud.label}`} tip="Remove" onClick={() => onDelete(cloud)} className="bg-white text-flamingo-500">
+              <RoundButton size={32} label={`Remove ${cloud.label}`} tip="Remove" onClick={() => onDelete(cloud)} className="bg-white text-flamingo-900">
                 <Icon name="bin" size={14} />
               </RoundButton>
             </div>
@@ -127,7 +127,7 @@ export default function MoocaCloud({
         >
           {/* Hearted clouds carry a small ♡, in every sky */}
           {cloud.favorite && (
-            <span className="absolute top-2.5 right-3 text-turquoise-500">
+            <span className="absolute top-2.5 right-3 text-turquoise-900">
               <Icon name="favorite" size={14} />
               <span className="sr-only">Favorite</span>
             </span>

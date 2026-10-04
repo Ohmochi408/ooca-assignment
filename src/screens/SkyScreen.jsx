@@ -124,7 +124,7 @@ export default function SkyScreen({
             place="absolute left-0"
             pressed={showAll}
             onClick={() => setShowAll((s) => !s)}
-            className={showAll ? 'bg-turquoise-500 text-white' : 'bg-white text-turquoise-500'}
+            className={showAll ? 'bg-turquoise-900 text-white' : 'bg-white text-turquoise-900'}
           >
             <Icon name="grid" size={20} />
           </RoundButton>
