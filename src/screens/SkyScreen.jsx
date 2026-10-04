@@ -5,6 +5,7 @@ import RoundButton from '../components/RoundButton';
 import TimeSky from './sky/TimeSky';
 import MySkies from './sky/MySkies';
 import { RECORD, TOGGLE } from './sky/layout';
+import { SESSION, isShared } from '../data/session';
 
 // Ideate2 → Main Design: the sky screen — Time Sky or My Sky, with the record button and the view toggle.
 // Which sky is on screen (timeNav / myIndex) lives in App, so it is kept while visiting other screens.
@@ -27,6 +28,8 @@ export default function SkyScreen({
   onCreateSky,
   onUpdateSky,
   onDeleteSkies,
+  onShareSky,
+  onTogglePrivate,
 }) {
   const [expandedId, setExpandedId] = useState(null);
   const [playingId, setPlayingId] = useState(null);
@@ -43,6 +46,9 @@ export default function SkyScreen({
       onDeleteCloud(cloud);
     },
     onEdit: onEditCloud,
+    // A thought in a shared sky says who can hear it, wherever it shows up
+    sharedWith: isShared(skies.find((s) => s.id === c.skyId)) ? SESSION.provider : null,
+    onTogglePrivate,
     isNew: c.id === newCloudId,
     playingId,
     setPlayingId,
@@ -85,6 +91,7 @@ export default function SkyScreen({
             onCreateSky={onCreateSky}
             onUpdateSky={onUpdateSky}
             onDeleteSkies={onDeleteSkies}
+            onShareSky={onShareSky}
             form={form}
             setForm={setForm}
             showAll={showAll}

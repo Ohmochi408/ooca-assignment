@@ -20,6 +20,7 @@ import { getSkyPeriod } from './utils/skyPeriods';
 import { getAudioContext } from './utils/audioHelper';
 import { dateKey } from './utils/dates';
 import { prefersReducedMotion } from './utils/motion';
+import { SESSION } from './data/session';
 
 // Flow (Ideate2 → Main Design): lock screen → Time Sky / My Sky → recording → Cloud ready → back to the sky
 export default function App() {
@@ -171,6 +172,13 @@ export default function App() {
     });
   };
 
+  // Bring a sky to the next session (or stop): the provider sees it until the session ends
+  const shareSky = (skyId, on) => {
+    setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, sharedWith: on ? SESSION.id : null } : s)));
+    showToast({ icon: on ? 'check' : 'lock', message: on ? `Shared with ${SESSION.provider}` : 'Only you can see this sky now' });
+  };
+  const togglePrivate = (cloud) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, private: !c.private } : c)));
+
   const discardDraft = () => {
     const kept = draft;
     setDraft(null);
@@ -218,6 +226,8 @@ export default function App() {
         onMoveCloud={(cloud, view, pos) => setClouds((prev) => prev.map((c) => (c.id === cloud.id ? { ...c, pos: { ...c.pos, [view]: pos } } : c)))}
         onCreateSky={createSky}
         onDeleteSkies={deleteSkies}
+        onShareSky={shareSky}
+        onTogglePrivate={togglePrivate}
         onUpdateSky={(skyId, data) =>
           skyId === FAVORITES_ID ? setFavStyle(data.style) : setSkies((prev) => prev.map((s) => (s.id === skyId ? { ...s, ...data } : s)))
         }

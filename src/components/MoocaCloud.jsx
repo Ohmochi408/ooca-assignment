@@ -27,6 +27,8 @@ export default function MoocaCloud({
   setPlayingId,
   grabProps,
   dragging,
+  sharedWith,
+  onTogglePrivate,
 }) {
   const voice = useVoicePlayback(cloud.audioUrl, cloud.duration);
   const card = useRef(null);
@@ -98,6 +100,22 @@ export default function MoocaCloud({
           </button>
           {/* The gist of a long voice, so it can be found again without listening to all of it */}
           {cloud.summary?.length > 0 && <SummaryPoints points={cloud.summary} textClass="text-bluegray-800" className="-mt-2 border-t border-gray-300 pt-2" />}
+          {/* In a sky shared with a provider: who can hear this one, and a way to keep it private */}
+          {sharedWith && (
+            <div className="-mt-2 border-t border-gray-300 pt-2 flex items-start gap-2">
+              <Icon name={cloud.private ? 'lock' : 'user'} size={14} className="mt-0.5 text-turquoise-900" />
+              <div className="min-w-0">
+                <p className="text-body5 text-bluegray-600">{cloud.private ? 'Only you can hear this' : `${sharedWith} can hear this before your session`}</p>
+                <button
+                  onClick={() => onTogglePrivate(cloud)}
+                  aria-pressed={!!cloud.private}
+                  className="min-h-8 -ml-2 px-2 rounded-ooca-pill text-body5 text-turquoise-900 underline underline-offset-2 hover:bg-turquoise-50 cursor-pointer"
+                >
+                  {cloud.private ? `Share with ${sharedWith}` : 'Keep to myself'}
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <VoiceProgress progress={voice.progress} duration={cloud.duration} onSeek={voice.seek} label={`Position in ${cloud.label}`} />
             <div className="flex items-center justify-between">

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Icon from '../../components/Icon';
 import RoundButton from '../../components/RoundButton';
 import NavArrow from '../../components/NavArrow';
@@ -7,6 +7,8 @@ import SkyBackground from '../../components/SkyBackground';
 import CloudField from '../../components/CloudField';
 import AllSkies from './AllSkies';
 import SkyFormSheet from '../../components/SkyFormSheet';
+import ShareSheet from '../../components/ShareSheet';
+import { SESSION, isShared, sessionDay } from '../../data/session';
 import { cloudCount } from '../../utils/format';
 import { formatDate } from '../../utils/dates';
 import { HEADER, ARROWS } from './layout';
@@ -27,14 +29,17 @@ export default function MySkies({
   onCreateSky,
   onUpdateSky,
   onDeleteSkies,
+  onShareSky,
   form,
   setForm,
   showAll,
   setShowAll,
 }) {
   const carousel = useRef(null);
+  const [sharing, setSharing] = useState(false); // the share sheet for the sky on screen
   const sky = skies[Math.min(index, skies.length - 1)];
   // Favorites gathers every hearted thought; any other sky holds the thoughts saved to it
+  const shared = isShared(sky);
   const inSky = (s) => clouds.filter((c) => (s.system ? c.favorite : c.skyId === s.id));
 
   const sheet = form && (
@@ -112,10 +117,35 @@ export default function MySkies({
             <span className="truncate">{sky.name}</span>
           </h1>
           <p className="text-body1 text-turquoise-50 mt-2">{cloudCount(inSky(sky).length)}</p>
+          {shared && (
+            <button
+              onClick={() => setSharing(true)}
+              className="mt-2 inline-flex items-center gap-1.5 min-h-8 rounded-ooca-pill bg-black/30 px-3 text-body4 text-white cursor-pointer"
+            >
+              <Icon name="user" size={14} />
+              Shared with {SESSION.provider} · until {sessionDay}
+            </button>
+          )}
         </div>
-        <RoundButton size={40} label={`Edit ${sky.name}`} tip="Edit this sky" tipSide="left" onClick={() => setForm(sky)}>
-          <Icon name="edit-square" size={18} />
-        </RoundButton>
+        <div className="flex gap-2">
+          {/* Favorites gathers thoughts from every sky, so only the user's own skies are brought to a session */}
+          {!sky.system && (
+            <RoundButton
+              size={40}
+              label="Bring to my session"
+              tip="Bring to my session"
+              tipSide="left"
+              pressed={shared}
+              onClick={() => setSharing(true)}
+              className={shared ? 'bg-turquoise-900 text-white' : 'bg-white text-turquoise-900'}
+            >
+              <Icon name="calendar" size={18} />
+            </RoundButton>
+          )}
+          <RoundButton size={40} label={`Edit ${sky.name}`} tip="Edit this sky" tipSide="left" onClick={() => setForm(sky)}>
+            <Icon name="edit-square" size={18} />
+          </RoundButton>
+        </div>
       </div>
 
       {/* Loops: after the last sky comes the first again */}
@@ -124,6 +154,18 @@ export default function MySkies({
         <NavArrow dir="right" label="Next sky" onClick={() => carousel.current?.step(1)} hidden={skies.length < 2} />
       </div>
       {sheet}
+      {sharing && (
+        <ShareSheet
+          sky={sky}
+          thoughts={inSky(sky)}
+          shared={shared}
+          onShare={(on) => {
+            onShareSky(sky.id, on);
+            setSharing(false);
+          }}
+          onClose={() => setSharing(false)}
+        />
+      )}
     </>
   );
 }
