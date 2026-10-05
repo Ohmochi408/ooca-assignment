@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from './Icon';
 import Sheet from './Sheet';
+import HelpNow from './HelpNow';
 import { SESSIONS, TOPICS, whenOf, whoOf } from '../data/session';
 
 // Bring a sky to the next ooca session(s). ooca's Privacy Policy already lets providers see a user's data and share it
@@ -47,6 +48,7 @@ export default function ShareSheet({ thoughts, sharedIds, onShare, onBrowse, onC
               Back to sharing
             </button>
           )}
+          <HelpNow compact />
         </div>
       </Sheet>
     );
@@ -125,6 +127,7 @@ export default function ShareSheet({ thoughts, sharedIds, onShare, onBrowse, onC
             Browse providers
           </button>
         </p>
+        <HelpNow compact />
       </div>
     </Sheet>
   );

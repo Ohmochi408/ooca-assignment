@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from './Icon';
 import Sheet from './Sheet';
+import HelpNow from './HelpNow';
 
 export default function AboutSheet({ onClose }) {
   return (
@@ -14,10 +15,10 @@ export default function AboutSheet({ onClose }) {
 
       <div className="flex flex-col gap-4 mb-6">
         <section>
-          <h3 className="text-subheader1 text-bluegray-800 mb-1">Why voice over typing?</h3>
+          <h3 className="text-subheader1 text-bluegray-800 mb-1">Why voice?</h3>
           <p className="text-body3 text-bluegray-600">
-            When people are overwhelmed, typing coherent sentences adds friction. Voice lets them hum, sigh, or speak in fragments without needing to make sense
-            yet.
+            Writing it down helps, and many people already do. But some moments, finding the words is the hard part. Voice lets a thought out before it has
+            words — a ramble, a hum or a sigh. Whether people would rather talk or write, and when, is the first thing to test with them.
           </p>
         </section>
         <section>
@@ -38,6 +39,8 @@ export default function AboutSheet({ onClose }) {
           </p>
         </section>
       </div>
+
+      <HelpNow />
 
       <div className="flex items-center justify-between p-4 rounded-ooca-16 bg-gray-100 mb-5">
         <div>
