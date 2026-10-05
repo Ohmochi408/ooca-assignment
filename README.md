@@ -43,6 +43,8 @@ Thought → Voice → Cloud → Sky → Meaning → Look back
    The flow starts where a thought happens: a lock-screen shortcut (*“Leave a thought here?”*) starts recording at once; swipe up opens the sky.
 7. **Bring a sky to your session:**  
    From My Sky, the user chooses which ooca provider(s) can listen to a sky before their next session (sample bookings in `src/data/session.js`). The sky shows who it's shared with; any thought can be *Keep to myself*; a new thought kept in a shared sky says who can listen; sharing stops by itself when the session ends. *Browse providers* finds someone by ooca's own topic tags, picked by the user — with nothing booked, that's what the share sheet leads with (open the app with `?nosession` to see it). Sharing builds on the consent users already give ooca; nothing asks the user to book after recording.
+8. **A quiet way to get help now:**  
+   The About sheet and the foot of the share sheet always offer *“Need to talk to someone now?”* — the Thai Mental Health Hotline **1323** (free, any time). It never pops up and has nothing to do with what the user said (the first layer of a safety plan; detecting risk and any contact from ooca are left to design with its clinical team).
 
 ---
 
