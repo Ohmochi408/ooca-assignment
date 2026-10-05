@@ -19,7 +19,7 @@ Topic: **The 2-Minute Mental Health Experience** (OOCA Assignment)
 ---
 
 ## 💡 Where the idea came from
-It started from a belief: getting what's on our mind out is a foundation of mental health (research agrees — expressive writing, Pennebaker 1986; affect labeling, Lieberman et al. 2007; unfinished thoughts, Masicampo & Baumeister 2011). Three things then came together:
+Mental health is big, so I started small: what we do with what's on our mind. Research says getting it out helps (expressive writing, Pennebaker 1986; affect labeling, Lieberman et al. 2007; unfinished thoughts, Masicampo & Baumeister 2011). Three things then came together:
 - **ooca's own mascot is a cloud** — a character its users already know.
 - **“Cloud of Thoughts”** — thoughts come and go like clouds, light or dark; we are not our thoughts, we're the one watching them.
 - **MyVoiceZoo** (a game where your recorded voice becomes the animals' cries) — two ideas from it: *your voice in a character* (hearing yourself feels less awkward) and *free arrangement* (place them where you like, near or far). In Thought Cloud, each thought is a Mooca that plays back in your voice, and you drag it anywhere in the sky you chose.
