@@ -17,7 +17,7 @@ export default function AboutSheet({ onClose }) {
         <section>
           <h3 className="text-subheader1 text-bluegray-800 mb-1">Why voice?</h3>
           <p className="text-body3 text-bluegray-600">
-            Writing it down helps, and many people already do. But some moments, finding the words is the hard part. Voice lets a thought out before it has
+            Writing it down helps, and many people already do. But some moments, what's on our mind isn't words yet. Voice lets a thought out before it has
             words — a ramble, a hum or a sigh. Whether people would rather talk or write, and when, is the first thing to test with them.
           </p>
         </section>
