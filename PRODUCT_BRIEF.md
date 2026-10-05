@@ -2,7 +2,7 @@
 
 > The original concept brief. The built prototype follows the Figma **Ideate2 → Main Design** screens — see the [README](./README.md) for what it does today (lock-screen shortcut, six-sky Time Sky, My Sky with Favorites, AI name + summary, bringing a sky to an ooca session).
 >
-> Since this brief: voice is treated as a design hypothesis to test with users (some people write their thoughts on paper instead), and the work now connects to ooca's providers — a sky can be shared with a psychologist or psychiatrist before a session, and someone who hasn't booked yet can find a provider by topic.
+> Since this brief: voice is treated as a design hypothesis to test with users (some people write their thoughts on paper instead), and the work now connects to ooca's providers — a sky can be shared with a psychologist or psychiatrist before a session, and someone who hasn't booked yet can find a provider by topic. The README now records where the idea came from (ooca's cloud mascot, the "Cloud of Thoughts" metaphor, and the game MyVoiceZoo — a voice in a character, and free arrangement).
 
 ### Exploratory Product Concept / UX Design Assignment
 **Role:** UX/UI Product Designer (Design Engineer)  
